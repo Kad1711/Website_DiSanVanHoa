@@ -64,36 +64,36 @@ const EthnicGroupListPage = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="space-y-4 sm:space-y-6 font-sans">
+      <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 sm:gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Quản lý Dân Tộc</h1>
-          <p className="text-gray-500 text-sm mt-1">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Quản lý Dân Tộc</h1>
+          <p className="text-gray-500 text-xs sm:text-sm mt-0.5 sm:mt-1">
             Danh sách các dân tộc thiểu số và dữ liệu di sản liên kết
           </p>
         </div>
-        <Link to="/admin/ethnic-groups/create" className="btn-primary">
-          <PlusIcon className="w-5 h-5" /> Thêm dân tộc
+        <Link to="/admin/ethnic-groups/create" className="btn-primary text-xs sm:text-sm py-2.5 w-full sm:w-auto">
+          <PlusIcon className="w-4 h-4 sm:w-5 sm:h-5" /> Thêm dân tộc
         </Link>
       </div>
 
-      <div className="card">
+      <div className="card rounded-2xl">
         {/* Toolbar */}
-        <div className="p-4 border-b border-gray-100 flex gap-4 bg-gray-50/50">
+        <div className="p-3 sm:p-4 border-b border-gray-100 flex gap-3 sm:gap-4 bg-gray-50/50">
           <form onSubmit={handleSearch} className="relative flex-1 max-w-md">
-            <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <MagnifyingGlassIcon className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               name="search"
               placeholder="Tìm kiếm theo tên dân tộc..."
               defaultValue={params.search}
-              className="input pl-10"
+              className="input pl-9 sm:pl-10 text-xs sm:text-sm"
             />
           </form>
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto no-scrollbar">
           {loading ? (
             <Loading />
           ) : error ? (

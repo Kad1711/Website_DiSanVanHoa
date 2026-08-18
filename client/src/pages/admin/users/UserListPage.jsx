@@ -50,35 +50,35 @@ const UserListPage = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 font-sans">
       <div>
-        <h1 className="text-2xl font-bold text-gray-800">Quản lý Người Dùng</h1>
-        <p className="text-gray-500 text-sm mt-1">Danh sách thành viên trên hệ thống</p>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Quản lý Người Dùng</h1>
+        <p className="text-gray-500 text-xs sm:text-sm mt-0.5 sm:mt-1">Danh sách thành viên trên hệ thống</p>
       </div>
 
-      <div className="card">
+      <div className="card rounded-2xl">
         {/* Toolbar */}
-        <div className="p-4 border-b border-gray-100 flex gap-4 bg-gray-50/50">
+        <div className="p-3 sm:p-4 border-b border-gray-100 flex gap-3 sm:gap-4 bg-gray-50/50">
           <form onSubmit={handleSearch} className="relative flex-1 max-w-md">
-            <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <MagnifyingGlassIcon className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               name="search"
               placeholder="Tìm kiếm theo tên hoặc email..."
               defaultValue={params.search}
-              className="input pl-10"
+              className="input pl-9 sm:pl-10 text-xs sm:text-sm"
             />
           </form>
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto no-scrollbar">
           {loading ? (
             <Loading />
           ) : error ? (
             <ErrorState message={error} onRetry={fetchData} />
           ) : (
-            <table className="table-admin min-w-[800px]">
+            <table className="table-admin min-w-[650px]">
               <thead>
                 <tr>
                   <th>Người dùng</th>
@@ -92,37 +92,37 @@ const UserListPage = () => {
                 {data.users.map((item) => (
                   <tr key={item._id}>
                     <td>
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold">
+                      <div className="flex items-center gap-2.5 sm:gap-3">
+                        <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs sm:text-sm flex-shrink-0">
                           {item.displayName[0].toUpperCase()}
                         </div>
-                        <div className="font-medium text-gray-800">{item.displayName}</div>
+                        <div className="font-medium text-gray-800 line-clamp-1">{item.displayName}</div>
                       </div>
                     </td>
-                    <td className="text-gray-600">{item.email}</td>
+                    <td className="text-gray-600 text-xs sm:text-sm">{item.email}</td>
                     <td>
                       <span className={`badge ${item.role === 'admin' ? 'badge-primary' : 'bg-gray-100 text-gray-700'}`}>
                         {item.role === 'admin' ? 'Quản trị viên' : 'Thành viên'}
                       </span>
                     </td>
-                    <td className="text-sm text-gray-500">
+                    <td className="text-xs text-gray-500">
                       {new Date(item.createdAt).toLocaleDateString('vi-VN')}
                     </td>
                     <td className="text-right">
                       {item._id !== currentUser?._id && (
                         <button
                           onClick={() => setDeleteModal({ isOpen: true, id: item._id, name: item.displayName })}
-                          className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"
+                          className="p-1.5 text-gray-400 hover:text-red-600 transition-colors rounded-lg hover:bg-gray-100 cursor-pointer"
                           title="Xóa người dùng"
                         >
-                          <TrashIcon className="w-5 h-5" />
+                          <TrashIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                         </button>
                       )}
                     </td>
                   </tr>
                 ))}
                 {data.users.length === 0 && (
-                  <tr><td colSpan="5" className="text-center py-8 text-gray-500">Không tìm thấy người dùng nào.</td></tr>
+                  <tr><td colSpan="5" className="text-center py-8 text-gray-400 text-xs sm:text-sm">Không tìm thấy người dùng nào.</td></tr>
                 )}
               </tbody>
             </table>
@@ -131,8 +131,8 @@ const UserListPage = () => {
 
         {/* Pagination */}
         {!loading && !error && data.pagination && (
-          <div className="p-4 border-t border-gray-100 bg-gray-50/50 flex justify-between items-center">
-            <span className="text-sm text-gray-500">
+          <div className="p-3.5 sm:p-4 border-t border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <span className="text-xs sm:text-sm text-gray-500">
               Tổng số: <span className="font-medium text-gray-800">{data.pagination.totalItems}</span>
             </span>
             <Pagination

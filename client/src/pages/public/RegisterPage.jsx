@@ -41,15 +41,18 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="container-lg section-padding min-h-[calc(100vh-64px)] flex items-center justify-center">
-      <div className="w-full max-w-md">
-        <div className="card p-8 shadow-lg">
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-gray-800 mb-2">Đăng ký tài khoản</h1>
-            <p className="text-gray-500">Tham gia cộng đồng Di Sản Văn Học</p>
+    <div className="container-lg section-padding min-h-[calc(100vh-64px)] flex items-center justify-center font-sans">
+      <div className="w-full max-w-md mx-auto">
+        <div className="card p-5 sm:p-8 shadow-xl rounded-2xl sm:rounded-3xl border border-gray-100 bg-white">
+          <div className="text-center mb-6 sm:mb-8">
+            <div className="w-12 h-12 bg-primary/10 text-primary rounded-2xl mx-auto flex items-center justify-center mb-3 font-serif font-bold text-xl">
+              DS
+            </div>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-2">Đăng ký tài khoản</h1>
+            <p className="text-xs sm:text-sm text-gray-500">Tham gia cộng đồng Di Sản Văn Học</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="label" htmlFor="displayName">Tên hiển thị</label>
               <input
@@ -61,6 +64,7 @@ const RegisterPage = () => {
                 value={formData.displayName}
                 onChange={handleChange}
                 disabled={loading}
+                required
               />
             </div>
 
@@ -75,6 +79,7 @@ const RegisterPage = () => {
                 value={formData.email}
                 onChange={handleChange}
                 disabled={loading}
+                required
               />
             </div>
 
@@ -85,10 +90,11 @@ const RegisterPage = () => {
                 name="password"
                 type="password"
                 className="input"
-                placeholder="••••••••"
+                placeholder="Ít nhất 6 ký tự"
                 value={formData.password}
                 onChange={handleChange}
                 disabled={loading}
+                required
               />
             </div>
 
@@ -99,25 +105,26 @@ const RegisterPage = () => {
                 name="confirmPassword"
                 type="password"
                 className="input"
-                placeholder="••••••••"
+                placeholder="Nhập lại mật khẩu"
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 disabled={loading}
+                required
               />
             </div>
 
             <button
               type="submit"
-              className="btn-primary w-full py-3 mt-4"
+              className="btn-primary w-full py-3 mt-3 text-sm sm:text-base font-bold shadow-md shadow-primary/30"
               disabled={loading}
             >
-              {loading ? 'Đang đăng ký...' : 'Đăng ký'}
+              {loading ? 'Đang đăng ký...' : 'Đăng ký tài khoản'}
             </button>
           </form>
 
-          <div className="mt-6 text-center text-sm text-gray-600">
+          <div className="mt-6 text-center text-xs sm:text-sm text-gray-600">
             Đã có tài khoản?{' '}
-            <Link to="/login" className="text-primary font-medium hover:underline">
+            <Link to="/login" className="text-primary font-bold hover:underline">
               Đăng nhập
             </Link>
           </div>

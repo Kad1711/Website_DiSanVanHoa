@@ -104,19 +104,19 @@ const EthnicGroupEditPage = () => {
   if (error) return <ErrorState message={error} onRetry={fetchDetail} />;
 
   return (
-    <div className="space-y-6 max-w-4xl">
-      <div className="flex items-center gap-4">
-        <Link to="/admin/ethnic-groups" className="p-2 bg-white rounded-lg border border-gray-200 hover:bg-gray-50">
+    <div className="space-y-4 sm:space-y-6 max-w-4xl font-sans">
+      <div className="flex items-center gap-3 sm:gap-4">
+        <Link to="/admin/ethnic-groups" className="p-2 bg-white rounded-xl border border-gray-200 hover:bg-gray-50 flex-shrink-0">
           <ArrowLeftIcon className="w-5 h-5 text-gray-600" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Chỉnh Sửa Dân Tộc</h1>
-          <p className="text-gray-500 text-sm">Cập nhật thông tin và văn hóa của {formData.name}</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Chỉnh Sửa Dân Tộc</h1>
+          <p className="text-gray-500 text-xs sm:text-sm">Cập nhật hồ sơ văn hóa và hình ảnh</p>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="card p-6 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <form onSubmit={handleSubmit} className="card p-4 sm:p-6 space-y-4 sm:space-y-6 rounded-2xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           <div>
             <label className="label">Tên dân tộc <span className="text-red-500">*</span></label>
             <input
@@ -169,23 +169,23 @@ const EthnicGroupEditPage = () => {
           ></textarea>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 pt-2 border-t border-gray-100">
           {/* Thumbnail */}
           <div>
             <label className="label">Ảnh đại diện (Avatar / Thumbnail)</label>
-            <div className="mt-1 flex items-center gap-4">
+            <div className="mt-1 flex items-center gap-3 sm:gap-4 flex-wrap">
               {thumbnailPreview ? (
-                <img src={thumbnailPreview} alt="Preview" className="w-16 h-16 rounded-full object-cover border-2 border-primary" />
+                <img src={thumbnailPreview} alt="Preview" className="w-16 h-16 rounded-xl object-cover border-2 border-primary flex-shrink-0" />
               ) : (
-                <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 border border-dashed border-gray-300">
-                  <PhotoIcon className="w-8 h-8" />
+                <div className="w-16 h-16 rounded-xl bg-gray-100 flex items-center justify-center text-gray-400 border border-dashed border-gray-300 flex-shrink-0">
+                  <PhotoIcon className="w-7 h-7" />
                 </div>
               )}
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleThumbnailChange}
-                className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
+                className="text-xs sm:text-sm text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
               />
             </div>
           </div>
@@ -193,19 +193,19 @@ const EthnicGroupEditPage = () => {
           {/* Cover image */}
           <div>
             <label className="label">Ảnh bìa (Cover Banner)</label>
-            <div className="mt-1 flex items-center gap-4">
+            <div className="mt-1 flex items-center gap-3 sm:gap-4 flex-wrap">
               {coverPreview ? (
-                <img src={coverPreview} alt="Preview" className="w-24 h-16 rounded-lg object-cover border-2 border-primary" />
+                <img src={coverPreview} alt="Preview" className="w-20 h-14 rounded-xl object-cover border-2 border-primary flex-shrink-0" />
               ) : (
-                <div className="w-24 h-16 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400 border border-dashed border-gray-300">
-                  <PhotoIcon className="w-8 h-8" />
+                <div className="w-20 h-14 rounded-xl bg-gray-100 flex items-center justify-center text-gray-400 border border-dashed border-gray-300 flex-shrink-0">
+                  <PhotoIcon className="w-7 h-7" />
                 </div>
               )}
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleCoverChange}
-                className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
+                className="text-xs sm:text-sm text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
               />
             </div>
           </div>
@@ -225,9 +225,9 @@ const EthnicGroupEditPage = () => {
           </select>
         </div>
 
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
-          <Link to="/admin/ethnic-groups" className="btn-ghost">Hủy</Link>
-          <button type="submit" disabled={saving} className="btn-primary">
+        <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 pt-4 border-t border-gray-100">
+          <Link to="/admin/ethnic-groups" className="btn-ghost text-center text-xs sm:text-sm py-2.5">Hủy</Link>
+          <button type="submit" disabled={saving} className="btn-primary text-xs sm:text-sm py-2.5">
             {saving ? 'Đang cập nhật...' : 'Cập nhật thay đổi'}
           </button>
         </div>

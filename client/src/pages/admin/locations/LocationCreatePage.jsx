@@ -133,19 +133,19 @@ const LocationCreatePage = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl">
-      <div className="flex items-center gap-4">
-        <Link to="/admin/locations" className="p-2 bg-white rounded-lg border border-gray-200 hover:bg-gray-50">
+    <div className="space-y-4 sm:space-y-6 max-w-4xl font-sans">
+      <div className="flex items-center gap-3 sm:gap-4">
+        <Link to="/admin/locations" className="p-2 bg-white rounded-xl border border-gray-200 hover:bg-gray-50 flex-shrink-0">
           <ArrowLeftIcon className="w-5 h-5 text-gray-600" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Thêm Địa Điểm Di Sản Mới</h1>
-          <p className="text-gray-500 text-sm">Điền thông tin địa danh và tọa độ bản đồ</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Thêm Địa Điểm Mới</h1>
+          <p className="text-gray-500 text-xs sm:text-sm">Điền thông tin và định vị tọa độ địa danh</p>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="card p-6 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <form onSubmit={handleSubmit} className="card p-4 sm:p-6 space-y-4 sm:space-y-6 rounded-2xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           <div>
             <label className="label">Tên địa điểm <span className="text-red-500">*</span></label>
             <input
@@ -153,29 +153,29 @@ const LocationCreatePage = () => {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              placeholder="Ví dụ: Bản Lác - Mai Châu, Hồ Ba Bể..."
+              placeholder="Ví dụ: Đỉnh Mẫu Sơn, Hồ Ba Bể..."
               className="input"
               required
             />
           </div>
 
           <div>
-            <label className="label">Dân tộc gắn liền</label>
+            <label className="label">Dân tộc liên quan</label>
             <select
               name="ethnicGroup"
               value={formData.ethnicGroup}
               onChange={handleChange}
               className="input"
             >
-              <option value="">-- Chọn dân tộc --</option>
-              {ethnicGroups.map((eg) => (
-                <option key={eg._id} value={eg._id}>{eg.name} ({eg.region || 'VN'})</option>
+              <option value="">-- Không chọn --</option>
+              {ethnicGroups.map((g) => (
+                <option key={g._id} value={g._id}>{g.name}</option>
               ))}
             </select>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           <div>
             <label className="label">Tỉnh / Thành phố <span className="text-red-500">*</span></label>
             <input
@@ -183,60 +183,62 @@ const LocationCreatePage = () => {
               name="province"
               value={formData.province}
               onChange={handleChange}
-              placeholder="Ví dụ: Hòa Bình, Hà Giang..."
+              placeholder="Ví dụ: Lạng Sơn, Bắc Kạn..."
               className="input"
               required
             />
           </div>
 
           <div>
-            <label className="label">Quận / Huyện / Thị xã</label>
+            <label className="label">Quận / Huyện</label>
             <input
               type="text"
               name="district"
               value={formData.district}
               onChange={handleChange}
-              placeholder="Ví dụ: Mai Châu, Đồng Văn..."
-              className="input"
-            />
-          </div>
-
-          <div>
-            <label className="label">Địa chỉ chi tiết</label>
-            <input
-              type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              placeholder="Ví dụ: Xã Chiềng Châu..."
+              placeholder="Ví dụ: Huyện Lộc Bình..."
               className="input"
             />
           </div>
         </div>
 
-        {/* Coordinates Section with Interactive Mini Map */}
-        <div className="p-5 bg-gradient-to-br from-orange-50/70 via-amber-50/40 to-orange-50/20 rounded-2xl border border-orange-200 space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm font-bold text-earth">
-              <MapPinIcon className="w-5 h-5 text-primary" />
-              <span>Tọa độ GPS & Bản đồ chọn vị trí trực quan</span>
-            </div>
-            <span className="text-xs text-gray-500 font-normal">
-              Hỗ trợ xem ảnh Vệ tinh sắc nét
-            </span>
+        <div>
+          <label className="label">Địa chỉ chi tiết</label>
+          <input
+            type="text"
+            name="address"
+            value={formData.address}
+            onChange={handleChange}
+            placeholder="Ví dụ: Xã Mẫu Sơn, huyện Lộc Bình..."
+            className="input"
+          />
+        </div>
+
+        <div className="p-4 sm:p-5 bg-orange-50/50 rounded-2xl border border-orange-100 space-y-3 sm:space-y-4">
+          <div>
+            <h3 className="font-bold text-gray-800 text-sm sm:text-base">Tọa độ địa lý (GIS)</h3>
+            <p className="text-xs text-gray-500 mt-0.5">
+              Click trực tiếp trên bản đồ hoặc chọn tỉnh/thành mẫu để tự động điền tọa độ chính xác.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <LocationCoordinatePicker
+            lat={formData.coordinates.lat}
+            lng={formData.coordinates.lng}
+            onChange={(coords) => setFormData((prev) => ({ ...prev, coordinates: coords }))}
+          />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pt-1">
             <div>
               <label className="label text-xs">Vĩ độ (Latitude) <span className="text-red-500">*</span></label>
               <input
                 type="number"
                 step="any"
-                name="lat"
-                value={formData.lat}
+                name="coordinates.lat"
+                value={formData.coordinates.lat}
                 onChange={handleChange}
-                placeholder="20.6500"
-                className="input text-sm font-mono font-semibold"
+                placeholder="21.8486"
+                className="input bg-white"
                 required
               />
             </div>
@@ -245,92 +247,68 @@ const LocationCreatePage = () => {
               <input
                 type="number"
                 step="any"
-                name="lng"
-                value={formData.lng}
+                name="coordinates.lng"
+                value={formData.coordinates.lng}
                 onChange={handleChange}
-                placeholder="104.9833"
-                className="input text-sm font-mono font-semibold"
+                placeholder="106.9538"
+                className="input bg-white"
                 required
               />
             </div>
           </div>
-
-          {/* Mini Interactive Map Picker */}
-          <LocationCoordinatePicker
-            lat={formData.lat}
-            lng={formData.lng}
-            onChange={({ lat, lng }) => {
-              setFormData((prev) => ({ ...prev, lat, lng }));
-            }}
-          />
         </div>
 
         <div>
           <label className="label">Mô tả ngắn</label>
-          <input
-            type="text"
+          <textarea
             name="shortDescription"
+            rows="2"
             value={formData.shortDescription}
             onChange={handleChange}
-            placeholder="Tóm tắt ngắn gọn vị trí hoặc ý nghĩa địa danh..."
+            placeholder="Tóm tắt về địa danh trong 1-2 câu..."
             className="input"
-          />
+          ></textarea>
         </div>
 
         <div>
-          <label className="label">Nội dung chi tiết & Giá trị văn hóa lịch sử</label>
+          <label className="label">Thông tin chi tiết</label>
           <textarea
             name="description"
             rows="5"
             value={formData.description}
             onChange={handleChange}
-            placeholder="Mô tả cụ thể về di tích, cảnh quan, câu chuyện sử thi gắn liền..."
+            placeholder="Lịch sử hình thành, giá trị văn hóa, các truyền thuyết gắn liền..."
             className="input"
           ></textarea>
         </div>
 
-        {/* Video URL */}
-        <div>
-          <label className="label">Video URL (YouTube / MP4)</label>
-          <input
-            type="url"
-            name="videoUrl"
-            value={formData.videoUrl}
-            onChange={handleChange}
-            placeholder="https://www.youtube.com/watch?v=..."
-            className="input"
-          />
-        </div>
-
-        {/* Multiple Image Uploads */}
-        <div>
-          <label className="label">Hình ảnh địa danh</label>
-          <div className="mt-2">
+        <div className="space-y-4 pt-2 border-t border-gray-100">
+          <div>
+            <label className="label">Hình ảnh địa danh (tối đa 5 ảnh)</label>
             <input
               type="file"
-              multiple
               accept="image/*"
+              multiple
               onChange={handleImageChange}
-              className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
+              className="text-xs sm:text-sm text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
             />
+            {imagePreviews.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-3">
+                {imagePreviews.map((preview, idx) => (
+                  <div key={idx} className="relative aspect-video rounded-xl overflow-hidden border border-gray-200">
+                    <img src={preview} alt="Upload preview" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(idx)}
+                      className="absolute top-1 right-1 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-700 shadow"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-
-          {imagePreviews.length > 0 && (
-            <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {imagePreviews.map((preview, idx) => (
-                <div key={idx} className="relative rounded-lg overflow-hidden border border-gray-200 aspect-[4/3]">
-                  <img src={preview} alt="Upload preview" className="w-full h-full object-cover" />
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveImage(idx)}
-                    className="absolute top-1 right-1 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-700"
-                  >
-                    ✕
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
 
         {/* Related Works Selection */}

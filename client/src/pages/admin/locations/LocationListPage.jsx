@@ -49,40 +49,40 @@ const LocationListPage = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="space-y-4 sm:space-y-6 font-sans">
+      <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 sm:gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Quản lý Địa Điểm</h1>
-          <p className="text-gray-500 text-sm mt-1">Danh sách các địa điểm văn hóa, du lịch</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Quản lý Địa Điểm</h1>
+          <p className="text-gray-500 text-xs sm:text-sm mt-0.5 sm:mt-1">Danh sách các địa điểm văn hóa, du lịch</p>
         </div>
-        <Link to="/admin/locations/create" className="btn-primary">
-          <PlusIcon className="w-5 h-5" /> Thêm địa điểm
+        <Link to="/admin/locations/create" className="btn-primary text-xs sm:text-sm py-2.5 w-full sm:w-auto">
+          <PlusIcon className="w-4 h-4 sm:w-5 sm:h-5" /> Thêm địa điểm
         </Link>
       </div>
 
-      <div className="card">
+      <div className="card rounded-2xl">
         {/* Toolbar */}
-        <div className="p-4 border-b border-gray-100 flex gap-4 bg-gray-50/50">
+        <div className="p-3 sm:p-4 border-b border-gray-100 flex gap-3 sm:gap-4 bg-gray-50/50">
           <form onSubmit={handleSearch} className="relative flex-1 max-w-md">
-            <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <MagnifyingGlassIcon className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               name="search"
               placeholder="Tìm kiếm theo tên hoặc tỉnh thành..."
               defaultValue={params.search}
-              className="input pl-10"
+              className="input pl-9 sm:pl-10 text-xs sm:text-sm"
             />
           </form>
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto no-scrollbar">
           {loading ? (
             <Loading />
           ) : error ? (
             <ErrorState message={error} onRetry={fetchData} />
           ) : (
-            <table className="table-admin min-w-[800px]">
+            <table className="table-admin min-w-[700px]">
               <thead>
                 <tr>
                   <th>Tên địa điểm</th>
@@ -98,20 +98,20 @@ const LocationListPage = () => {
                     <td>
                       <div className="flex items-center gap-3">
                         {item.images && item.images.length > 0 ? (
-                          <img src={item.images[0].url} alt={item.name} className="w-10 h-10 rounded-lg object-cover bg-gray-100" />
+                          <img src={item.images[0].url} alt={item.name} className="w-10 h-10 rounded-xl object-cover bg-gray-100 flex-shrink-0" />
                         ) : (
-                          <div className="w-10 h-10 rounded-lg bg-orange-50 text-earth flex items-center justify-center font-bold text-lg">
+                          <div className="w-10 h-10 rounded-xl bg-orange-50 text-earth flex items-center justify-center font-bold text-base flex-shrink-0">
                             {item.name[0]}
                           </div>
                         )}
-                        <div>
-                          <div className="font-medium text-gray-800">{item.name}</div>
-                          <div className="text-xs text-gray-500 truncate max-w-[200px]">{item.slug}</div>
+                        <div className="min-w-0">
+                          <div className="font-medium text-gray-800 line-clamp-1">{item.name}</div>
+                          <div className="text-[11px] text-gray-400 truncate max-w-[180px]">{item.slug}</div>
                         </div>
                       </div>
                     </td>
                     <td>{item.province || '—'}</td>
-                    <td className="text-sm font-mono text-gray-500">
+                    <td className="text-xs font-mono text-gray-500">
                       {item.coordinates?.lat !== undefined && item.coordinates?.lng !== undefined
                         ? `${item.coordinates.lat.toFixed(4)}, ${item.coordinates.lng.toFixed(4)}`
                         : '—'}
@@ -122,22 +122,22 @@ const LocationListPage = () => {
                       </span>
                     </td>
                     <td className="text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <Link to={`/admin/locations/${item._id}/edit`} className="p-1.5 text-gray-400 hover:text-primary transition-colors">
-                          <PencilSquareIcon className="w-5 h-5" />
+                      <div className="flex items-center justify-end gap-1.5">
+                        <Link to={`/admin/locations/${item._id}/edit`} className="p-1.5 text-gray-400 hover:text-primary transition-colors rounded-lg hover:bg-gray-100">
+                          <PencilSquareIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                         </Link>
                         <button
                           onClick={() => setDeleteModal({ isOpen: true, id: item._id, name: item.name })}
-                          className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"
+                          className="p-1.5 text-gray-400 hover:text-red-600 transition-colors rounded-lg hover:bg-gray-100 cursor-pointer"
                         >
-                          <TrashIcon className="w-5 h-5" />
+                          <TrashIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                         </button>
                       </div>
                     </td>
                   </tr>
                 ))}
                 {data.locations.length === 0 && (
-                  <tr><td colSpan="5" className="text-center py-8 text-gray-500">Không tìm thấy địa điểm nào.</td></tr>
+                  <tr><td colSpan="5" className="text-center py-8 text-gray-400 text-xs sm:text-sm">Không tìm thấy địa điểm nào.</td></tr>
                 )}
               </tbody>
             </table>
@@ -146,8 +146,8 @@ const LocationListPage = () => {
 
         {/* Pagination */}
         {!loading && !error && data.pagination && (
-          <div className="p-4 border-t border-gray-100 bg-gray-50/50 flex justify-between items-center">
-            <span className="text-sm text-gray-500">
+          <div className="p-3.5 sm:p-4 border-t border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <span className="text-xs sm:text-sm text-gray-500">
               Tổng số: <span className="font-medium text-gray-800">{data.pagination.totalItems}</span>
             </span>
             <Pagination

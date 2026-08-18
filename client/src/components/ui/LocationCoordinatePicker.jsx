@@ -126,15 +126,15 @@ const LocationCoordinatePicker = ({ lat, lng, onChange }) => {
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 font-sans">
       {/* Mini Map Controls Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-gray-700">Chọn vị trí nhanh:</span>
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="text-xs font-bold text-gray-700">Chọn nhanh:</span>
           <select
             onChange={handlePresetSelect}
             defaultValue=""
-            className="text-xs py-1 px-2.5 bg-white border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-primary/40 text-gray-700"
+            className="text-xs py-1.5 px-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-primary/40 text-gray-700 max-w-[200px] truncate"
           >
             <option value="" disabled>-- Chọn địa phương mẫu --</option>
             {QUICK_PRESETS.map((p) => (
@@ -146,12 +146,12 @@ const LocationCoordinatePicker = ({ lat, lng, onChange }) => {
         </div>
 
         {/* Layer switch */}
-        <div className="flex items-center bg-gray-100 p-0.5 rounded-lg text-[11px] font-semibold">
+        <div className="flex items-center self-start sm:self-auto bg-gray-100 p-0.5 rounded-xl text-[11px] font-semibold">
           <button
             type="button"
             onClick={() => setMapLayer('satellite')}
-            className={`px-2.5 py-1 rounded-md transition-colors ${
-              mapLayer === 'satellite' ? 'bg-emerald-600 text-white shadow-sm' : 'text-gray-600 hover:text-gray-900'
+            className={`px-2.5 py-1 rounded-lg transition-colors ${
+              mapLayer === 'satellite' ? 'bg-emerald-600 text-white shadow-sm font-bold' : 'text-gray-600 hover:text-gray-900'
             }`}
           >
             🛰️ Vệ tinh
@@ -159,8 +159,8 @@ const LocationCoordinatePicker = ({ lat, lng, onChange }) => {
           <button
             type="button"
             onClick={() => setMapLayer('streets')}
-            className={`px-2.5 py-1 rounded-md transition-colors ${
-              mapLayer === 'streets' ? 'bg-primary text-white shadow-sm' : 'text-gray-600 hover:text-gray-900'
+            className={`px-2.5 py-1 rounded-lg transition-colors ${
+              mapLayer === 'streets' ? 'bg-primary text-white shadow-sm font-bold' : 'text-gray-600 hover:text-gray-900'
             }`}
           >
             🗺️ Bản đồ
@@ -169,7 +169,7 @@ const LocationCoordinatePicker = ({ lat, lng, onChange }) => {
       </div>
 
       {/* Mini Map Container */}
-      <div className="relative h-64 sm:h-72 w-full rounded-2xl overflow-hidden border-2 border-orange-200 shadow-inner">
+      <div className="relative h-60 sm:h-72 w-full rounded-2xl overflow-hidden border-2 border-orange-200 shadow-inner">
         <MapContainer
           center={mapCenter}
           zoom={mapZoom}
@@ -210,9 +210,9 @@ const LocationCoordinatePicker = ({ lat, lng, onChange }) => {
         </MapContainer>
 
         {/* Tip floating badge */}
-        <div className="absolute bottom-2 left-2 right-2 sm:right-auto z-[1000] bg-black/75 backdrop-blur-sm text-white px-3 py-1.5 rounded-xl text-[11px] flex items-center gap-1.5 shadow">
+        <div className="absolute bottom-2 left-2 right-2 sm:right-auto z-[1000] bg-black/80 backdrop-blur-sm text-white px-3 py-1.5 rounded-xl text-[10px] sm:text-[11px] flex items-center gap-1.5 shadow">
           <SparklesIcon className="w-3.5 h-3.5 text-amber-300 flex-shrink-0" />
-          <span>💡 <strong>Click bất kỳ đâu</strong> hoặc <strong>kéo thả ghim</strong> để lấy tọa độ</span>
+          <span>💡 <strong>Click bản đồ</strong> hoặc <strong>kéo thả ghim</strong> để lấy tọa độ</span>
         </div>
       </div>
     </div>

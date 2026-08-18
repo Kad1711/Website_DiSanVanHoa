@@ -146,23 +146,23 @@ const WorkDetailPage = () => {
   return (
     <div className="bg-cream min-h-screen pb-20 font-sans">
       {/* Top Breadcrumb Bar */}
-      <div className="bg-white border-b border-gray-200 py-3">
-        <div className="container-lg flex items-center gap-2 text-xs sm:text-sm text-gray-500 overflow-x-auto">
-          <Link to="/" className="hover:text-primary transition-colors">Trang chủ</Link>
+      <div className="bg-white border-b border-gray-200 py-2.5 sm:py-3">
+        <div className="container-lg flex items-center gap-2 text-xs sm:text-sm text-gray-500 overflow-x-auto no-scrollbar whitespace-nowrap">
+          <Link to="/" className="hover:text-primary transition-colors flex-shrink-0">Trang chủ</Link>
           <span>/</span>
-          <Link to="/works" className="hover:text-primary transition-colors">Tác phẩm</Link>
+          <Link to="/works" className="hover:text-primary transition-colors flex-shrink-0">Tác phẩm</Link>
           <span>/</span>
-          <span className="text-gray-800 font-medium truncate max-w-[200px] sm:max-w-md">{work.title}</span>
+          <span className="text-gray-800 font-medium truncate">{work.title}</span>
         </div>
       </div>
 
       {/* Hero Header */}
-      <div className="bg-gradient-to-r from-gray-900 via-primary-950 to-gray-900 text-white py-12 lg:py-16 relative overflow-hidden">
+      <div className="bg-gradient-to-r from-gray-900 via-primary-950 to-gray-900 text-white py-8 sm:py-12 lg:py-16 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/src/assets/hero-pattern.svg')] opacity-15"></div>
         <div className="container-lg relative z-10">
-          <div className="flex flex-col lg:flex-row gap-8 items-center">
+          <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 items-center">
             {/* Cover image */}
-            <div className="w-full sm:w-64 lg:w-72 aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl bg-gray-800 flex-shrink-0 border-2 border-white/20 relative group">
+            <div className="w-48 sm:w-64 lg:w-72 aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl bg-gray-800 flex-shrink-0 border-2 border-white/20 relative group">
               {work.coverImage?.url ? (
                 <img
                   src={work.coverImage.url}
@@ -171,69 +171,69 @@ const WorkDetailPage = () => {
                 />
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-gradient-to-br from-primary-800 to-primary-950">
-                  <BookOpenIcon className="w-16 h-16 text-amber-300/60 mb-2" />
-                  <span className="font-serif text-2xl font-bold text-white/80">{work.title}</span>
+                  <BookOpenIcon className="w-12 h-12 sm:w-16 sm:h-16 text-amber-300/60 mb-2" />
+                  <span className="font-serif text-xl sm:text-2xl font-bold text-white/80">{work.title}</span>
                 </div>
               )}
             </div>
 
             {/* Details */}
             <div className="flex-1 text-center lg:text-left">
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5 mb-4">
-                <span className="badge bg-amber-400/20 text-amber-300 border border-amber-300/30 text-xs px-3 py-1 font-semibold">
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 mb-3 sm:mb-4">
+                <span className="badge bg-amber-400/20 text-amber-300 border border-amber-300/30 text-[11px] sm:text-xs px-2.5 sm:px-3 py-1 font-semibold">
                   {categoryLabel}
                 </span>
                 {work.ethnicGroup && (
                   <Link
                     to={`/ethnic-groups/${work.ethnicGroup.slug}`}
-                    className="badge bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs px-3 py-1 font-medium transition-colors"
+                    className="badge bg-white/10 hover:bg-white/20 text-white border border-white/20 text-[11px] sm:text-xs px-2.5 sm:px-3 py-1 font-medium transition-colors"
                   >
                     Dân tộc {work.ethnicGroup.name}
                   </Link>
                 )}
               </div>
 
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-white mb-4 leading-tight">
+              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-bold text-white mb-3 sm:mb-4 leading-tight">
                 {work.title}
               </h1>
 
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 text-sm text-gray-300 mb-6">
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 sm:gap-6 text-xs sm:text-sm text-gray-300 mb-4 sm:mb-6">
                 <div className="flex items-center gap-1.5">
-                  <UserIcon className="w-4 h-4 text-amber-400" />
+                  <UserIcon className="w-4 h-4 text-amber-400 flex-shrink-0" />
                   <span>Tác giả: <strong>{work.author || 'Dân gian'}</strong></span>
                 </div>
                 {work.createdAt && (
                   <div className="flex items-center gap-1.5">
-                    <CalendarDaysIcon className="w-4 h-4 text-amber-400" />
+                    <CalendarDaysIcon className="w-4 h-4 text-amber-400 flex-shrink-0" />
                     <span>Lưu trữ: {new Date(work.createdAt).toLocaleDateString('vi-VN')}</span>
                   </div>
                 )}
               </div>
 
               {work.summary && (
-                <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/10 max-w-3xl text-sm sm:text-base text-gray-200 leading-relaxed font-light italic mb-6">
+                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-3.5 sm:p-4 border border-white/10 max-w-3xl text-xs sm:text-base text-gray-200 leading-relaxed font-light italic mb-5 sm:mb-6 text-left">
                   "{work.summary}"
                 </div>
               )}
 
               {/* Action Buttons: Like & Jump to Comments */}
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-2.5 sm:gap-3">
                 {/* Like Button */}
                 <button
                   type="button"
                   onClick={handleToggleLike}
                   disabled={liking}
-                  className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm transition-all duration-200 shadow-lg cursor-pointer ${
+                  className={`flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl sm:rounded-full font-bold text-xs sm:text-sm transition-all duration-200 shadow-lg cursor-pointer ${
                     isLiked
-                      ? 'bg-rose-600 text-white hover:bg-rose-700 shadow-rose-600/40 ring-4 ring-rose-600/20 scale-105'
+                      ? 'bg-rose-600 text-white hover:bg-rose-700 shadow-rose-600/40 ring-4 ring-rose-600/20'
                       : 'bg-white/15 hover:bg-white/25 text-white border border-white/30 backdrop-blur'
                   }`}
                   title={user ? (isLiked ? 'Bỏ thích' : 'Thả tim yêu thích') : 'Đăng nhập để thả tim'}
                 >
                   {isLiked ? (
-                    <HeartIcon className="w-5 h-5 text-white animate-bounce" />
+                    <HeartIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white animate-bounce" />
                   ) : (
-                    <HeartOutlineIcon className="w-5 h-5 text-rose-300" />
+                    <HeartOutlineIcon className="w-4 h-4 sm:w-5 sm:h-5 text-rose-300" />
                   )}
                   <span>{likesCount} Yêu thích</span>
                 </button>
@@ -241,9 +241,9 @@ const WorkDetailPage = () => {
                 {/* Jump to comments */}
                 <a
                   href="#comments-section"
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-full font-medium text-sm bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-colors"
+                  className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl sm:rounded-full font-medium text-xs sm:text-sm bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-colors"
                 >
-                  <ChatBubbleBottomCenterTextIcon className="w-5 h-5 text-amber-300" />
+                  <ChatBubbleBottomCenterTextIcon className="w-4 h-4 sm:w-5 sm:h-5 text-amber-300" />
                   <span>{comments.length} Bình luận</span>
                 </a>
               </div>
@@ -253,14 +253,14 @@ const WorkDetailPage = () => {
       </div>
 
       {/* Main Content Layout */}
-      <div className="container-lg mt-10">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="container-lg mt-6 sm:mt-10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
           {/* Main Reading Column */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-6 sm:space-y-8">
             {/* Story / Content Reading Container */}
-            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 sm:p-10">
-              <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-6">
-                <div className="flex items-center gap-2 text-primary font-serif font-bold text-lg">
+            <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 p-4 sm:p-8 lg:p-10">
+              <div className="flex items-center justify-between border-b border-gray-100 pb-3 sm:pb-4 mb-4 sm:mb-6">
+                <div className="flex items-center gap-2 text-primary font-serif font-bold text-base sm:text-lg">
                   <BookOpenIcon className="w-5 h-5 text-secondary" />
                   <span>Nội Dung Tác Phẩm</span>
                 </div>
@@ -271,8 +271,8 @@ const WorkDetailPage = () => {
                     isLiked ? 'bg-rose-100 text-rose-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                 >
-                  <HeartIcon className={`w-4 h-4 ${isLiked ? 'text-rose-600' : 'text-gray-400'}`} />
-                  <span>{isLiked ? 'Đã yêu thích' : 'Thả tim'}</span>
+                  <HeartIcon className={`w-3.5 h-3.5 ${isLiked ? 'text-rose-600' : 'text-gray-400'}`} />
+                  <span>{isLiked ? 'Đã thích' : 'Thả tim'}</span>
                 </button>
               </div>
 
@@ -287,20 +287,20 @@ const WorkDetailPage = () => {
 
             {/* Video Player Section */}
             {work.videos && work.videos.length > 0 && (
-              <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 sm:p-8">
-                <div className="flex items-center gap-2 text-lg font-serif font-bold text-gray-800 mb-6">
-                  <VideoCameraIcon className="w-6 h-6 text-red-500" />
+              <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 p-4 sm:p-8">
+                <div className="flex items-center gap-2 text-base sm:text-lg font-serif font-bold text-gray-800 mb-4 sm:mb-6">
+                  <VideoCameraIcon className="w-5 h-5 sm:w-6 sm:h-6 text-red-500" />
                   <span>Tái Hiện Đa Phương Tiện & AI Video</span>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   {work.videos.map((vid, idx) => (
                     <div key={idx} className="bg-gray-50 rounded-2xl overflow-hidden border border-gray-200 shadow-sm">
-                      <div className="p-3 bg-gray-900 text-white flex items-center justify-between">
-                        <span className="text-sm font-medium">{vid.title || `Video minh họa #${idx + 1}`}</span>
+                      <div className="p-3 bg-gray-900 text-white flex items-center justify-between gap-2">
+                        <span className="text-xs sm:text-sm font-medium truncate">{vid.title || `Video minh họa #${idx + 1}`}</span>
                         {vid.type === 'ai-video' && (
-                          <span className="inline-flex items-center gap-1 text-[11px] bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-2.5 py-0.5 rounded-full font-bold">
-                            <SparklesIcon className="w-3.5 h-3.5" /> AI Visualized
+                          <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-2.5 py-0.5 rounded-full font-bold flex-shrink-0">
+                            <SparklesIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> AI Visualized
                           </span>
                         )}
                       </div>
@@ -329,28 +329,28 @@ const WorkDetailPage = () => {
               </div>
             )}
 
-            {/* Image Gallery */}
+            {/* Gallery images */}
             {work.gallery && work.gallery.length > 0 && (
-              <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 sm:p-8">
-                <div className="flex items-center gap-2 text-lg font-serif font-bold text-gray-800 mb-6">
-                  <PhotoIcon className="w-6 h-6 text-secondary" />
+              <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 p-4 sm:p-8">
+                <div className="flex items-center gap-2 text-base sm:text-lg font-serif font-bold text-gray-800 mb-4 sm:mb-6">
+                  <PhotoIcon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                   <span>Bộ Sưu Tập Hình Ảnh Di Sản</span>
                 </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-4">
                   {work.gallery.map((img, idx) => (
                     <div
                       key={idx}
                       onClick={() => setSelectedImage(img.url)}
-                      className="aspect-[4/3] rounded-2xl overflow-hidden bg-gray-100 cursor-pointer group relative shadow-sm border border-gray-200"
+                      className="aspect-square rounded-xl sm:rounded-2xl overflow-hidden bg-gray-100 cursor-pointer group relative shadow-sm"
                     >
                       <img
                         src={img.url}
                         alt={`Ảnh minh họa ${idx + 1}`}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        loading="lazy"
                       />
-                      <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
-                        <PhotoIcon className="w-8 h-8" />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                        <span className="text-white opacity-0 group-hover:opacity-100 text-xs font-semibold bg-black/60 px-2 py-1 rounded-lg">Xem lớn</span>
                       </div>
                     </div>
                   ))}
@@ -358,55 +358,37 @@ const WorkDetailPage = () => {
               </div>
             )}
 
-            {/* ======================================================== */}
-            {/* 💬 COMMENTS & DISCUSSIONS SECTION                         */}
-            {/* ======================================================== */}
-            <div id="comments-section" className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 sm:p-8 space-y-6">
-              <div className="flex items-center justify-between border-b border-gray-100 pb-4">
-                <div className="flex items-center gap-2">
-                  <ChatBubbleLeftRightIcon className="w-6 h-6 text-primary" />
-                  <h3 className="text-xl font-serif font-bold text-gray-900">
-                    Bình Luận & Cảm Nhận Độc Giả ({comments.length})
-                  </h3>
+            {/* 💬 Comments Section */}
+            <div id="comments-section" className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 p-4 sm:p-8 space-y-5 sm:space-y-6">
+              <div className="flex items-center justify-between border-b border-gray-100 pb-3 sm:pb-4">
+                <div className="flex items-center gap-2 text-base sm:text-lg font-serif font-bold text-gray-800">
+                  <ChatBubbleLeftRightIcon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                  <span>Bình Luận & Cảm Nghĩ ({comments.length})</span>
                 </div>
               </div>
 
-              {/* Case 1: Logged In -> Active Comment Form */}
+              {/* Comment input form */}
               {user ? (
                 <form onSubmit={handleCommentSubmit} className="space-y-3">
-                  <div className="flex items-center gap-2 text-xs text-gray-600 font-medium">
-                    <div className="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold">
-                      {((user.displayName || user.name || user.email || 'U')[0]).toUpperCase()}
+                  <div className="flex items-start gap-2.5 sm:gap-3">
+                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs sm:text-sm flex-shrink-0 mt-1">
+                      {user.displayName?.[0]?.toUpperCase() || 'U'}
                     </div>
-                    <span>
-                      Đang bình luận dưới tên:{' '}
-                      <strong className="text-gray-900 font-bold">
-                        {user.displayName || user.name || user.email?.split('@')[0]}
-                      </strong>
-                    </span>
-                    {user.role === 'admin' && (
-                      <span className="badge bg-purple-100 text-purple-800 text-[10px] px-2 py-0.5 font-bold">
-                        Quản trị viên
-                      </span>
-                    )}
+                    <div className="flex-1">
+                      <textarea
+                        rows="3"
+                        value={commentContent}
+                        onChange={(e) => setCommentContent(e.target.value)}
+                        placeholder="Chia sẻ cảm nghĩ hoặc hiểu biết của bạn về tác phẩm này..."
+                        className="input text-xs sm:text-sm resize-none rounded-2xl"
+                      ></textarea>
+                    </div>
                   </div>
-
-                  <div className="relative">
-                    <textarea
-                      rows="3"
-                      value={commentContent}
-                      onChange={(e) => setCommentContent(e.target.value)}
-                      placeholder="Chia sẻ suy nghĩ, cảm nhận hoặc góc nhìn của bạn về tác phẩm này..."
-                      className="input py-3 px-4 text-sm resize-none rounded-2xl"
-                      maxLength={1000}
-                    ></textarea>
-                  </div>
-
                   <div className="flex justify-end">
                     <button
                       type="submit"
-                      disabled={submittingComment || !commentContent.trim()}
-                      className="btn-primary py-2 px-5 text-xs rounded-xl flex items-center gap-1.5 font-bold cursor-pointer disabled:opacity-50"
+                      disabled={submittingComment}
+                      className="btn-primary py-2 px-4 sm:px-5 text-xs sm:text-sm rounded-xl"
                     >
                       <PaperAirplaneIcon className="w-4 h-4" />
                       <span>{submittingComment ? 'Đang gửi...' : 'Gửi bình luận'}</span>
@@ -414,39 +396,30 @@ const WorkDetailPage = () => {
                   </div>
                 </form>
               ) : (
-                /* Case 2: Guest Mode -> Prompt to Login */
-                <div className="p-5 bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl border border-orange-200 text-center space-y-3">
-                  <div className="w-10 h-10 rounded-full bg-orange-100 text-earth mx-auto flex items-center justify-center">
-                    <LockClosedIcon className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-sm text-gray-900">Bạn đang ở chế độ Khách</h4>
-                    <p className="text-xs text-gray-600 max-w-md mx-auto mt-1 leading-relaxed">
-                      Vui lòng <strong>Đăng nhập</strong> hoặc <strong>Đăng ký tài khoản</strong> để thả tim yêu thích và tham gia bình luận, chia sẻ cảm nhận về tác phẩm di sản này.
-                    </p>
-                  </div>
-                  <div className="flex items-center justify-center gap-3 pt-1">
-                    <Link to="/login" className="btn-primary py-2 px-5 text-xs rounded-xl font-bold">
-                      Đăng nhập ngay
-                    </Link>
-                    <Link to="/register" className="btn-outline py-2 px-5 text-xs rounded-xl font-bold">
-                      Tạo tài khoản mới
-                    </Link>
-                  </div>
+                <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/70 border border-amber-200 text-center space-y-2">
+                  <p className="text-xs sm:text-sm text-amber-900 font-medium">
+                    Bạn cần đăng nhập để tham gia thảo luận và chia sẻ cảm nghĩ về tác phẩm này.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setShowGuestModal(true)}
+                    className="btn-primary py-2 px-5 text-xs rounded-xl"
+                  >
+                    Đăng nhập để bình luận
+                  </button>
                 </div>
               )}
 
               {/* Comments List */}
-              <div className="space-y-4 pt-2">
+              <div className="space-y-3 pt-2">
                 {comments.length === 0 ? (
-                  <p className="text-center py-8 text-gray-400 text-xs italic">
-                    Chưa có bình luận nào. Hãy là người đầu tiên chia sẻ cảm nhận về tác phẩm này!
+                  <p className="text-xs sm:text-sm text-gray-400 text-center py-6">
+                    Chưa có bình luận nào. Hãy là người đầu tiên chia sẻ cảm nghĩ!
                   </p>
                 ) : (
                   comments.map((cmt) => {
                     const authorName =
                       cmt.user?.displayName ||
-                      cmt.user?.name ||
                       (cmt.user?.email ? cmt.user.email.split('@')[0] : 'Bạn đọc');
                     const authorInitial = (authorName?.[0] || 'U').toUpperCase();
 
@@ -456,19 +429,19 @@ const WorkDetailPage = () => {
                     return (
                       <div
                         key={cmt._id}
-                        className="p-4 rounded-2xl bg-gray-50/80 border border-gray-100 space-y-2 text-left"
+                        className="p-3.5 sm:p-4 rounded-2xl bg-gray-50/80 border border-gray-100 space-y-2 text-left"
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-orange-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">
+                            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-primary to-orange-600 text-white flex items-center justify-center font-bold text-[11px] sm:text-xs shadow-sm flex-shrink-0">
                               {authorInitial}
                             </div>
                             <div>
-                              <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-1.5 flex-wrap">
                                 <span className="font-bold text-xs text-gray-900">{authorName}</span>
                                 {cmt.user?.role === 'admin' && (
-                                  <span className="text-[10px] bg-purple-100 text-purple-800 font-bold px-2 py-0.5 rounded-md">
-                                    Quản trị viên
+                                  <span className="text-[9px] sm:text-[10px] bg-purple-100 text-purple-800 font-bold px-1.5 py-0.5 rounded-md">
+                                    Admin
                                   </span>
                                 )}
                               </div>
@@ -482,7 +455,7 @@ const WorkDetailPage = () => {
                             <button
                               type="button"
                               onClick={() => handleDeleteComment(cmt._id)}
-                              className="text-gray-400 hover:text-red-600 p-1 rounded-lg hover:bg-white transition-colors cursor-pointer"
+                              className="text-gray-400 hover:text-red-600 p-1.5 rounded-lg hover:bg-white transition-colors cursor-pointer"
                               title="Xóa bình luận"
                             >
                               <TrashIcon className="w-4 h-4" />
@@ -490,7 +463,7 @@ const WorkDetailPage = () => {
                           )}
                         </div>
 
-                        <p className="text-xs sm:text-sm text-gray-700 leading-relaxed whitespace-pre-line pl-10">
+                        <p className="text-xs sm:text-sm text-gray-700 leading-relaxed whitespace-pre-line pl-9 sm:pl-10">
                           {cmt.content}
                         </p>
                       </div>
@@ -502,28 +475,28 @@ const WorkDetailPage = () => {
           </div>
 
           {/* Right Sidebar Info */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Ethnic Group Card */}
             {work.ethnicGroup && (
-              <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
-                <h3 className="font-serif font-bold text-gray-800 text-base mb-4 flex items-center gap-2">
-                  <SparklesIcon className="w-5 h-5 text-secondary" />
+              <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 p-5 sm:p-6">
+                <h3 className="font-serif font-bold text-gray-800 text-sm sm:text-base mb-3 sm:mb-4 flex items-center gap-2">
+                  <SparklesIcon className="w-4 h-4 sm:w-5 sm:h-5 text-secondary" />
                   Dân Tộc Gốc
                 </h3>
-                <div className="flex items-center gap-4 mb-4">
+                <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
                   {work.ethnicGroup.thumbnail?.url ? (
                     <img
                       src={work.ethnicGroup.thumbnail.url}
                       alt={work.ethnicGroup.name}
-                      className="w-14 h-14 rounded-full object-cover border-2 border-orange-200"
+                      className="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover border-2 border-orange-200 flex-shrink-0"
                     />
                   ) : (
-                    <div className="w-14 h-14 rounded-full bg-orange-100 text-earth flex items-center justify-center font-bold text-xl">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-orange-100 text-earth flex items-center justify-center font-bold text-lg sm:text-xl flex-shrink-0">
                       {work.ethnicGroup.name[0]}
                     </div>
                   )}
                   <div>
-                    <h4 className="font-bold text-gray-900">{work.ethnicGroup.name}</h4>
+                    <h4 className="font-bold text-gray-900 text-sm sm:text-base">{work.ethnicGroup.name}</h4>
                     <p className="text-xs text-gray-500">{work.ethnicGroup.region || 'Việt Nam'}</p>
                   </div>
                 </div>
@@ -543,20 +516,20 @@ const WorkDetailPage = () => {
 
             {/* Associated Geographic Locations */}
             {work.relatedLocations && work.relatedLocations.length > 0 && (
-              <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
-                <h3 className="font-serif font-bold text-gray-800 text-base mb-4 flex items-center gap-2">
-                  <MapPinIcon className="w-5 h-5 text-earth" />
+              <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 p-5 sm:p-6">
+                <h3 className="font-serif font-bold text-gray-800 text-sm sm:text-base mb-3 sm:mb-4 flex items-center gap-2">
+                  <MapPinIcon className="w-4 h-4 sm:w-5 sm:h-5 text-earth" />
                   Địa Danh Gắn Liền
                 </h3>
-                <div className="space-y-3">
+                <div className="space-y-2.5 sm:space-y-3">
                   {work.relatedLocations.map((loc) => (
                     <Link
                       to={`/locations/${loc.slug}`}
                       key={loc._id}
                       className="p-3 rounded-2xl bg-orange-50/50 hover:bg-orange-50 border border-orange-100 flex items-start gap-3 transition-colors group block"
                     >
-                      <div className="p-2 rounded-xl bg-earth text-white mt-0.5">
-                        <MapPinIcon className="w-4 h-4" />
+                      <div className="p-2 rounded-xl bg-earth text-white mt-0.5 flex-shrink-0">
+                        <MapPinIcon className="w-3.5 h-3.5" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="font-bold text-xs text-gray-900 group-hover:text-earth transition-colors truncate">
@@ -569,7 +542,7 @@ const WorkDetailPage = () => {
                 </div>
                 <Link
                   to="/map"
-                  className="mt-4 inline-flex items-center gap-1.5 text-xs text-primary font-semibold hover:underline"
+                  className="mt-3.5 inline-flex items-center gap-1 text-xs text-primary font-semibold hover:underline"
                 >
                   Xem trên bản đồ vệ tinh →
                 </Link>
@@ -577,7 +550,7 @@ const WorkDetailPage = () => {
             )}
 
             {/* Quick Actions */}
-            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
+            <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 p-4 sm:p-6">
               <Link
                 to="/works"
                 className="w-full btn-ghost border border-gray-200 py-2.5 text-xs rounded-xl flex items-center justify-center gap-2 text-gray-700"
@@ -592,17 +565,17 @@ const WorkDetailPage = () => {
       {/* Guest Login Required Modal */}
       {showGuestModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border border-gray-100">
-            <div className="w-14 h-14 rounded-2xl bg-rose-100 text-rose-600 mx-auto flex items-center justify-center">
-              <HeartIcon className="w-8 h-8" />
+          <div className="bg-white rounded-3xl shadow-2xl max-w-xs sm:max-w-sm w-full p-6 text-center space-y-4 border border-gray-100">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-rose-100 text-rose-600 mx-auto flex items-center justify-center">
+              <HeartIcon className="w-7 h-7 sm:w-8 sm:h-8" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-gray-900">Yêu cầu đăng nhập</h3>
+              <h3 className="text-base sm:text-lg font-bold text-gray-900">Yêu cầu đăng nhập</h3>
               <p className="text-xs text-gray-500 mt-1 leading-relaxed">
                 Bạn cần đăng nhập tài khoản để thả tim yêu thích và tham gia bình luận tác phẩm này.
               </p>
             </div>
-            <div className="space-y-2 pt-2">
+            <div className="space-y-2 pt-1 sm:pt-2">
               <Link
                 to="/login"
                 className="w-full btn-primary py-2.5 text-xs rounded-xl font-bold block"

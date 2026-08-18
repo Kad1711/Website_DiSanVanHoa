@@ -56,24 +56,24 @@ const EthnicGroupDetailPage = () => {
   if (!ethnicGroup) return <ErrorState message="Dân tộc không tồn tại." />;
 
   return (
-    <div className="bg-cream min-h-screen pb-20">
+    <div className="bg-cream min-h-screen pb-20 font-sans">
       {/* Top Breadcrumb Bar */}
-      <div className="bg-white border-b border-gray-200 py-3">
-        <div className="container-lg flex items-center gap-2 text-xs sm:text-sm text-gray-500 overflow-x-auto">
-          <Link to="/" className="hover:text-primary transition-colors">Trang chủ</Link>
+      <div className="bg-white border-b border-gray-200 py-2.5 sm:py-3">
+        <div className="container-lg flex items-center gap-2 text-xs sm:text-sm text-gray-500 overflow-x-auto no-scrollbar whitespace-nowrap">
+          <Link to="/" className="hover:text-primary transition-colors flex-shrink-0">Trang chủ</Link>
           <span>/</span>
-          <Link to="/ethnic-groups" className="hover:text-primary transition-colors">Dân tộc</Link>
+          <Link to="/ethnic-groups" className="hover:text-primary transition-colors flex-shrink-0">Dân tộc</Link>
           <span>/</span>
           <span className="text-gray-800 font-medium truncate">{ethnicGroup.name}</span>
         </div>
       </div>
 
       {/* Hero Header */}
-      <div className="bg-gradient-to-br from-earth via-orange-800 to-amber-900 text-white py-14 lg:py-20 relative overflow-hidden">
+      <div className="bg-gradient-to-br from-earth via-orange-800 to-amber-900 text-white py-10 sm:py-14 lg:py-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/src/assets/hero-pattern.svg')] opacity-15"></div>
         <div className="container-lg relative z-10">
-          <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8 text-center sm:text-left">
-            <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-full overflow-hidden border-4 border-white/40 shadow-2xl bg-orange-100 flex-shrink-0">
+          <div className="flex flex-col sm:flex-row items-center gap-5 sm:gap-8 text-center sm:text-left">
+            <div className="w-24 h-24 sm:w-36 sm:h-36 rounded-full overflow-hidden border-4 border-white/40 shadow-2xl bg-orange-100 flex-shrink-0">
               {ethnicGroup.thumbnail?.url ? (
                 <img
                   src={ethnicGroup.thumbnail.url}
@@ -82,18 +82,18 @@ const EthnicGroupDetailPage = () => {
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-earth">
-                  <UsersIcon className="w-16 h-16 opacity-70" />
+                  <UsersIcon className="w-12 h-12 sm:w-16 sm:h-16 opacity-70" />
                 </div>
               )}
             </div>
 
             <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur text-xs font-semibold uppercase tracking-wider mb-3">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur text-xs font-semibold uppercase tracking-wider mb-2 sm:mb-3">
                 <GlobeAmericasIcon className="w-3.5 h-3.5" />
                 <span>{ethnicGroup.region || 'Việt Nam'}</span>
               </div>
-              <h1 className="text-3xl sm:text-5xl font-serif font-bold mb-3">{ethnicGroup.name}</h1>
-              <p className="text-orange-100 text-sm sm:text-base max-w-2xl font-light">
+              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-bold mb-2 sm:mb-3">{ethnicGroup.name}</h1>
+              <p className="text-orange-100 text-xs sm:text-base max-w-2xl font-light leading-relaxed">
                 {ethnicGroup.description || 'Không gian văn hóa và kho tàng văn học dân gian truyền thống.'}
               </p>
             </div>
@@ -102,17 +102,17 @@ const EthnicGroupDetailPage = () => {
       </div>
 
       {/* Main Container */}
-      <div className="container-lg mt-10">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="container-lg mt-6 sm:mt-10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
           {/* Main 2 Cols: Culture info + Works */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-6 sm:space-y-8">
             {/* Cultural Summary */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
-              <h2 className="font-serif font-bold text-xl text-gray-800 mb-4 flex items-center gap-2">
+            <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 p-4 sm:p-8">
+              <h2 className="font-serif font-bold text-lg sm:text-xl text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
                 <SparklesIcon className="w-5 h-5 text-secondary" />
                 Đặc Trưng Văn Hóa & Phong Tục
               </h2>
-              <div className="prose prose-stone max-w-none text-gray-700 leading-relaxed text-sm sm:text-base whitespace-pre-line">
+              <div className="prose prose-stone max-w-none text-gray-700 leading-relaxed text-xs sm:text-base whitespace-pre-line">
                 {ethnicGroup.cultureSummary ||
                   ethnicGroup.description ||
                   'Nội dung văn hóa đang tiếp tục được sưu tầm và số hóa.'}
@@ -120,53 +120,50 @@ const EthnicGroupDetailPage = () => {
             </div>
 
             {/* Works List */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="font-serif font-bold text-xl text-gray-800 flex items-center gap-2">
+            <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 p-4 sm:p-8">
+              <div className="flex items-center justify-between mb-4 sm:mb-6">
+                <h2 className="font-serif font-bold text-lg sm:text-xl text-gray-800 flex items-center gap-2">
                   <BookOpenIcon className="w-5 h-5 text-primary" />
                   Kho Tàng Tác Phẩm ({works.length})
                 </h2>
                 <Link to={`/works`} className="text-xs text-primary font-semibold hover:underline">
-                  Xem tất cả tác phẩm →
+                  Xem tất cả →
                 </Link>
               </div>
 
               {works.length === 0 ? (
-                <p className="text-gray-500 italic py-6 text-center text-sm">
+                <p className="text-gray-500 italic py-6 text-center text-xs sm:text-sm">
                   Chưa có tác phẩm nào được liên kết với dân tộc này.
                 </p>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   {works.map((work) => (
                     <Link
-                      key={work._id}
                       to={`/works/${work.slug}`}
-                      className="card-hover p-4 flex gap-3 border border-gray-100 bg-white group"
+                      key={work._id}
+                      className="card-hover p-3 sm:p-4 border border-gray-100 flex gap-3 items-center group rounded-xl sm:rounded-2xl"
                     >
-                      <div className="w-16 h-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                        {work.coverImage?.url ? (
-                          <img
-                            src={work.coverImage.url}
-                            alt={work.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center font-serif text-lg text-primary/40 font-bold bg-primary/5">
-                            {work.title[0]}
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0 flex flex-col justify-between">
-                        <div>
-                          <span className="inline-block text-[10px] uppercase font-bold text-secondary tracking-wider mb-1">
+                      {work.coverImage?.url ? (
+                        <img
+                          src={work.coverImage.url}
+                          alt={work.title}
+                          className="w-12 h-16 sm:w-14 sm:h-18 object-cover rounded-lg sm:rounded-xl flex-shrink-0"
+                        />
+                      ) : (
+                        <div className="w-12 h-16 sm:w-14 sm:h-18 rounded-lg sm:rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-lg flex-shrink-0">
+                          {work.title[0]}
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1 mb-1">
+                          <span className="text-[10px] bg-primary/10 text-primary font-bold px-2 py-0.5 rounded-full">
                             {CATEGORIES.find((c) => c.value === work.category)?.label || work.category}
                           </span>
-                          <h4 className="font-bold text-sm text-gray-800 group-hover:text-primary transition-colors line-clamp-1">
-                            {work.title}
-                          </h4>
-                          <p className="text-xs text-gray-500 line-clamp-2 mt-1">{work.summary}</p>
                         </div>
-                        <span className="text-[11px] text-gray-400 mt-2">{work.author || 'Dân gian'}</span>
+                        <h4 className="font-bold text-xs sm:text-sm text-gray-800 group-hover:text-primary transition-colors truncate">
+                          {work.title}
+                        </h4>
+                        <p className="text-[11px] text-gray-500 truncate">{work.author || 'Dân gian'}</p>
                       </div>
                     </Link>
                   ))}
@@ -175,29 +172,26 @@ const EthnicGroupDetailPage = () => {
             </div>
           </div>
 
-          {/* Right Sidebar: Geographic Locations & Quick Navigation */}
-          <div className="space-y-6">
-            {/* Locations Card */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-serif font-bold text-gray-800 text-base flex items-center gap-2">
-                  <MapPinIcon className="w-5 h-5 text-earth" />
-                  Địa Danh Phân Bố ({locations.length})
-                </h3>
-              </div>
+          {/* Right Sidebar: Geographic Locations */}
+          <div className="space-y-4 sm:space-y-6">
+            <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 p-5 sm:p-6">
+              <h3 className="font-serif font-bold text-gray-800 text-sm sm:text-base mb-3 sm:mb-4 flex items-center gap-2">
+                <MapPinIcon className="w-4 h-4 sm:w-5 sm:h-5 text-earth" />
+                Địa Danh Gắn Liền ({locations.length})
+              </h3>
 
               {locations.length === 0 ? (
                 <p className="text-gray-500 text-xs italic">Chưa có địa danh nào được ghi nhận.</p>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-2.5 sm:space-y-3">
                   {locations.map((loc) => (
                     <Link
-                      key={loc._id}
                       to={`/locations/${loc.slug}`}
-                      className="p-3 rounded-xl bg-orange-50/50 hover:bg-orange-100/60 border border-orange-100 flex items-start gap-3 transition-colors group block"
+                      key={loc._id}
+                      className="p-3 rounded-2xl bg-orange-50/50 hover:bg-orange-50 border border-orange-100 flex items-start gap-3 transition-colors group block"
                     >
-                      <div className="p-2 rounded-lg bg-earth text-white mt-0.5">
-                        <MapPinIcon className="w-4 h-4" />
+                      <div className="p-2 rounded-xl bg-earth text-white mt-0.5 flex-shrink-0">
+                        <MapPinIcon className="w-3.5 h-3.5" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="font-bold text-xs text-gray-900 group-hover:text-earth transition-colors truncate">
@@ -212,19 +206,18 @@ const EthnicGroupDetailPage = () => {
 
               <Link
                 to="/map"
-                className="mt-4 block text-center py-2 bg-orange-50 text-earth font-semibold text-xs rounded-xl hover:bg-orange-100 transition-colors"
+                className="mt-4 inline-flex items-center gap-1 text-xs text-primary font-semibold hover:underline"
               >
-                Khám phá trên bản đồ tương tác
+                Khám phá trên bản đồ vệ tinh →
               </Link>
             </div>
 
-            {/* Back Button */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 p-4 sm:p-6">
               <Link
                 to="/ethnic-groups"
                 className="w-full btn-ghost border border-gray-200 py-2.5 text-xs rounded-xl flex items-center justify-center gap-2 text-gray-700"
               >
-                <ArrowLeftIcon className="w-4 h-4" /> Danh sách các dân tộc
+                <ArrowLeftIcon className="w-4 h-4" /> Quay lại danh sách dân tộc
               </Link>
             </div>
           </div>

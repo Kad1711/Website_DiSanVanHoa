@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { locationService } from '../../../services/location.service';
 import { ethnicGroupService } from '../../../services/ethnicGroup.service';
-import { workService } from '../../../services/work.service';
 import { STATUSES } from '../../../constants';
 import Loading from '../../../components/ui/Loading';
 import ErrorState from '../../../components/ui/ErrorState';
@@ -14,7 +13,6 @@ const LocationEditPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [ethnicGroups, setEthnicGroups] = useState([]);
-  const [works, setWorks] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
@@ -28,7 +26,6 @@ const LocationEditPage = () => {
     description: '',
     status: 'published',
     videoUrl: '',
-    relatedWorks: [],
   });
   const [newImages, setNewImages] = useState([]);
   const [newImagePreviews, setNewImagePreviews] = useState([]);
@@ -41,15 +38,13 @@ const LocationEditPage = () => {
       try {
         setLoading(true);
         setError(null);
-        const [locRes, egRes, wRes] = await Promise.all([
+        const [locRes, egRes] = await Promise.all([
           locationService.getById(id),
           ethnicGroupService.getAll({ limit: 100 }),
-          workService.getAll({ limit: 100 }),
         ]);
 
         const loc = locRes.data.data.location;
         setEthnicGroups(egRes.data.data.ethnicGroups || []);
-        setWorks(wRes.data.data.works || []);
         setExistingImages(loc.images || []);
 
         setFormData({
@@ -64,7 +59,6 @@ const LocationEditPage = () => {
           description: loc.description || '',
           status: loc.status || 'published',
           videoUrl: '',
-          relatedWorks: loc.relatedWorks?.map((w) => (typeof w === 'object' ? w._id : w)) || [],
         });
       } catch (err) {
         setError('Không thể tải thông tin địa điểm.');
@@ -80,17 +74,6 @@ const LocationEditPage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleWorksToggle = (workId) => {
-    setFormData((prev) => {
-      const exists = prev.relatedWorks.includes(workId);
-      return {
-        ...prev,
-        relatedWorks: exists
-          ? prev.relatedWorks.filter((item) => item !== workId)
-          : [...prev.relatedWorks, workId],
-      };
-    });
-  };
 
   const handleNewImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -142,7 +125,7 @@ const LocationEditPage = () => {
       data.append('description', formData.description);
 
       if (formData.ethnicGroup) data.append('ethnicGroup', formData.ethnicGroup);
-      data.append('relatedWorks', JSON.stringify(formData.relatedWorks));
+      // relatedWorks is managed from the Work side, not here
 
       newImages.forEach((img) => data.append('images', img));
 
@@ -393,25 +376,6 @@ const LocationEditPage = () => {
           />
         </div>
 
-        {/* Related Works Selection */}
-        {works.length > 0 && (
-          <div>
-            <label className="label">Tác phẩm văn học gắn liền</label>
-            <div className="max-h-48 overflow-y-auto border border-gray-200 rounded-xl p-3 grid grid-cols-1 sm:grid-cols-2 gap-2 bg-gray-50/50">
-              {works.map((w) => (
-                <label key={w._id} className="flex items-center gap-2 text-xs text-gray-700 cursor-pointer p-1.5 rounded hover:bg-white">
-                  <input
-                    type="checkbox"
-                    checked={formData.relatedWorks.includes(w._id)}
-                    onChange={() => handleWorksToggle(w._id)}
-                    className="rounded text-primary focus:ring-primary h-4 w-4"
-                  />
-                  <span className="truncate">{w.title} ({w.ethnicGroup?.name || 'Dân tộc'})</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        )}
 
         <div>
           <label className="label">Trạng thái phát hành</label>

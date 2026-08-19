@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { locationService } from '../../../services/location.service';
 import { ethnicGroupService } from '../../../services/ethnicGroup.service';
-import { workService } from '../../../services/work.service';
 import { STATUSES } from '../../../constants';
 import LocationCoordinatePicker from '../../../components/ui/LocationCoordinatePicker';
 import { ArrowLeftIcon, PhotoIcon, MapPinIcon } from '@heroicons/react/24/outline';
@@ -11,7 +10,6 @@ import toast from 'react-hot-toast';
 const LocationCreatePage = () => {
   const navigate = useNavigate();
   const [ethnicGroups, setEthnicGroups] = useState([]);
-  const [works, setWorks] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
     province: '',
@@ -24,7 +22,6 @@ const LocationCreatePage = () => {
     description: '',
     status: 'published',
     videoUrl: '',
-    relatedWorks: [],
   });
   const [images, setImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
@@ -33,12 +30,8 @@ const LocationCreatePage = () => {
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const [egRes, wRes] = await Promise.all([
-          ethnicGroupService.getAll({ limit: 100 }),
-          workService.getAll({ limit: 100 }),
-        ]);
+        const egRes = await ethnicGroupService.getAll({ limit: 100 });
         setEthnicGroups(egRes.data.data.ethnicGroups || []);
-        setWorks(wRes.data.data.works || []);
       } catch (err) {
         console.error('Failed to load options', err);
       }
@@ -48,20 +41,16 @@ const LocationCreatePage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    // Handle flat keys (lat, lng) as well as dot-notation (coordinates.lat)
+    if (name === 'coordinates.lat') {
+      setFormData((prev) => ({ ...prev, lat: value }));
+    } else if (name === 'coordinates.lng') {
+      setFormData((prev) => ({ ...prev, lng: value }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
-  const handleWorksToggle = (workId) => {
-    setFormData((prev) => {
-      const exists = prev.relatedWorks.includes(workId);
-      return {
-        ...prev,
-        relatedWorks: exists
-          ? prev.relatedWorks.filter((id) => id !== workId)
-          : [...prev.relatedWorks, workId],
-      };
-    });
-  };
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -102,9 +91,7 @@ const LocationCreatePage = () => {
       data.append('description', formData.description);
 
       if (formData.ethnicGroup) data.append('ethnicGroup', formData.ethnicGroup);
-      if (formData.relatedWorks.length > 0) {
-        data.append('relatedWorks', JSON.stringify(formData.relatedWorks));
-      }
+      // relatedWorks is managed from the Work side, not here
 
       images.forEach((img) => data.append('images', img));
 
@@ -223,9 +210,9 @@ const LocationCreatePage = () => {
           </div>
 
           <LocationCoordinatePicker
-            lat={formData.coordinates.lat}
-            lng={formData.coordinates.lng}
-            onChange={(coords) => setFormData((prev) => ({ ...prev, coordinates: coords }))}
+            lat={formData.lat}
+            lng={formData.lng}
+            onChange={(coords) => setFormData((prev) => ({ ...prev, lat: coords.lat, lng: coords.lng }))}
           />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pt-1">
@@ -234,10 +221,10 @@ const LocationCreatePage = () => {
               <input
                 type="number"
                 step="any"
-                name="coordinates.lat"
-                value={formData.coordinates.lat}
+                name="lat"
+                value={formData.lat}
                 onChange={handleChange}
-                placeholder="21.8486"
+                placeholder="19.4500"
                 className="input bg-white"
                 required
               />
@@ -247,10 +234,10 @@ const LocationCreatePage = () => {
               <input
                 type="number"
                 step="any"
-                name="coordinates.lng"
-                value={formData.coordinates.lng}
+                name="lng"
+                value={formData.lng}
                 onChange={handleChange}
-                placeholder="106.9538"
+                placeholder="104.9300"
                 className="input bg-white"
                 required
               />
@@ -311,25 +298,6 @@ const LocationCreatePage = () => {
           </div>
         </div>
 
-        {/* Related Works Selection */}
-        {works.length > 0 && (
-          <div>
-            <label className="label">Tác phẩm văn học gắn liền</label>
-            <div className="max-h-48 overflow-y-auto border border-gray-200 rounded-xl p-3 grid grid-cols-1 sm:grid-cols-2 gap-2 bg-gray-50/50">
-              {works.map((w) => (
-                <label key={w._id} className="flex items-center gap-2 text-xs text-gray-700 cursor-pointer p-1.5 rounded hover:bg-white">
-                  <input
-                    type="checkbox"
-                    checked={formData.relatedWorks.includes(w._id)}
-                    onChange={() => handleWorksToggle(w._id)}
-                    className="rounded text-primary focus:ring-primary h-4 w-4"
-                  />
-                  <span className="truncate">{w.title} ({w.ethnicGroup?.name || 'Dân tộc'})</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        )}
 
         <div>
           <label className="label">Trạng thái phát hành</label>

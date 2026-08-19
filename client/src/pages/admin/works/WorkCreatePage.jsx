@@ -29,6 +29,7 @@ const WorkCreatePage = () => {
 
   const [ethnicGroups, setEthnicGroups] = useState([]);
   const [locations, setLocations] = useState([]);
+  const [locationsLoading, setLocationsLoading] = useState(true);
   const [formData, setFormData] = useState({
     title: '',
     author: 'Dân gian',
@@ -66,6 +67,8 @@ const WorkCreatePage = () => {
         setLocations(locRes.data.data.locations || []);
       } catch (err) {
         console.error('Failed to load options', err);
+      } finally {
+        setLocationsLoading(false);
       }
     };
     fetchOptions();
@@ -563,25 +566,38 @@ const WorkCreatePage = () => {
           </div>
         </div>
 
-        {/* Related Locations */}
-        {locations.length > 0 && (
+        {/* Related Locations — luôn hiển thị, quản lý từ phiên tác phẩm */}
+        <div className="p-4 sm:p-5 bg-blue-50/50 rounded-2xl border border-blue-100 space-y-3">
           <div>
-            <label className="label">Địa danh liên quan trên bản đồ</label>
-            <div className="max-h-48 overflow-y-auto border border-gray-200 rounded-xl p-3 grid grid-cols-1 sm:grid-cols-2 gap-2 bg-gray-50/50">
+            <h3 className="font-bold text-gray-800 text-sm sm:text-base">Địa danh liên quan trên bản đồ</h3>
+            <p className="text-xs text-gray-500 mt-0.5">
+              Chọn địa điểm mà tác phẩm này gắn liền. Dữ liệu sẽ hiển thị trên bản đồ di sản.
+            </p>
+          </div>
+
+          {locationsLoading ? (
+            <p className="text-xs text-gray-400 py-3 text-center">Đang tải danh sách địa điểm...</p>
+          ) : locations.length === 0 ? (
+            <p className="text-xs text-gray-400 py-3 text-center">
+              Chưa có địa điểm nào. <a href="/admin/locations/create" className="text-primary underline">Thêm địa điểm mới</a> trước.
+            </p>
+          ) : (
+            <div className="max-h-48 overflow-y-auto border border-blue-200 rounded-xl p-3 grid grid-cols-1 sm:grid-cols-2 gap-2 bg-white/70">
               {locations.map((loc) => (
-                <label key={loc._id} className="flex items-center gap-2 text-xs text-gray-700 cursor-pointer p-1.5 rounded hover:bg-white">
+                <label key={loc._id} className="flex items-center gap-2 text-xs text-gray-700 cursor-pointer p-1.5 rounded hover:bg-blue-50">
                   <input
                     type="checkbox"
                     checked={formData.relatedLocations.includes(loc._id)}
                     onChange={() => handleLocationsToggle(loc._id)}
                     className="rounded text-primary focus:ring-primary h-4 w-4"
                   />
-                  <span className="truncate">{loc.name} ({loc.province})</span>
+                  <span className="truncate font-medium">{loc.name}</span>
+                  <span className="text-gray-400 flex-shrink-0">({loc.province})</span>
                 </label>
               ))}
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         <div>
           <label className="label">Trạng thái phát hành</label>

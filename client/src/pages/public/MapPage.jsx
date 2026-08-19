@@ -196,21 +196,23 @@ const MapPage = () => {
         )}
       </div>
 
-      {/* ── FULL-SCREEN LEAFLET MAP (CỐ ĐỊNH 100% KHÔNG THỂ KÉO HAY ZOOM) ───────────────────── */}
+      {/* ── FULL-SCREEN LEAFLET MAP (CHO KÉO RÊ CHUỘT, CHỈ CHO ZOOM PHÓNG TO +, KHÔNG CHO THU NHỎ -) ───────────────────── */}
       <div className="w-full h-full">
         <MapContainer
           center={BAN_TIENG_LOCKED_CENTER}
           zoom={BAN_TIENG_LOCKED_ZOOM}
           zoomSnap={0.5}
-          minZoom={BAN_TIENG_LOCKED_ZOOM}
-          maxZoom={BAN_TIENG_LOCKED_ZOOM}
+          minZoom={19.5}
+          maxZoom={21.5}
           zoomControl={false}
-          dragging={false}
-          scrollWheelZoom={false}
-          doubleClickZoom={false}
-          touchZoom={false}
+          dragging={true}
+          scrollWheelZoom={true}
+          doubleClickZoom={true}
+          touchZoom={true}
           boxZoom={false}
           keyboard={false}
+          maxBounds={BAN_TIENG_BOUNDS}
+          maxBoundsViscosity={1.0}
           style={{ width: '100%', height: '100%' }}
         >
           {/* Google Maps Satellite Hybrid (lyrs=y) */}

@@ -13,7 +13,6 @@ import {
   BookOpenIcon,
   ArrowTopRightOnSquareIcon,
   XMarkIcon,
-  ArrowPathIcon,
   MapPinIcon,
   EyeIcon,
   ExclamationTriangleIcon,
@@ -143,18 +142,9 @@ const MapPage = () => {
     fetchWorks();
   }, [fetchWorks]);
 
-  // Handle work marker selection (synchronized with getPrimaryMappedLocation)
+  // Handle work marker selection (keep center locked)
   const handleSelectWork = useCallback((work) => {
     setActiveWork(work);
-    const loc = getPrimaryMappedLocation(work);
-    if (loc) {
-      setMapCenter([loc.lat, loc.lng]);
-    }
-  }, []);
-
-  const handleResetView = useCallback(() => {
-    setMapCenter(BAN_TIENG_LOCKED_CENTER);
-    setActiveWork(null);
   }, []);
 
   // Standardized mappedWorks with strict validation and useMemo cache
@@ -183,46 +173,6 @@ const MapPage = () => {
     <div className="relative w-full h-[calc(100vh-64px)] bg-slate-900 overflow-hidden font-sans select-none">
       {/* ── TOP CONTROL BAR ──────────────────────────────────────────── */}
       <div className="absolute top-2 sm:top-4 left-2 sm:left-4 z-[1000] flex flex-wrap items-center gap-1.5 sm:gap-2 pointer-events-auto">
-        {/* Satellite / Roadmap switcher */}
-        <div className="flex items-center bg-slate-900/85 backdrop-blur-md p-0.5 sm:p-1 rounded-xl sm:rounded-2xl border border-slate-700 shadow-xl text-[11px] sm:text-xs font-semibold text-white">
-          <button
-            type="button"
-            aria-label="Chuyển chế độ xem vệ tinh"
-            onClick={() => setMapLayer('satellite')}
-            className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg sm:rounded-xl transition-all cursor-pointer ${
-              mapLayer === 'satellite'
-                ? 'bg-emerald-600 text-white shadow font-bold'
-                : 'text-slate-300 hover:text-white hover:bg-slate-800'
-            }`}
-          >
-            🛰️ <span>Vệ tinh</span>
-          </button>
-          <button
-            type="button"
-            aria-label="Chuyển chế độ xem bản đồ đường"
-            onClick={() => setMapLayer('streets')}
-            className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg sm:rounded-xl transition-all cursor-pointer ${
-              mapLayer === 'streets'
-                ? 'bg-primary text-white shadow font-bold'
-                : 'text-slate-300 hover:text-white hover:bg-slate-800'
-            }`}
-          >
-            🗺️ <span>Bản đồ</span>
-          </button>
-        </div>
-
-        {/* Reset view button */}
-        <button
-          type="button"
-          aria-label="Khôi phục vị trí mặc định Bản Tiệng"
-          onClick={handleResetView}
-          className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl bg-slate-900/85 hover:bg-slate-900 text-white text-[11px] sm:text-xs font-semibold shadow-xl border border-slate-700 backdrop-blur transition-all cursor-pointer"
-          title="Khôi phục vị trí Bản Tiệng"
-        >
-          <ArrowPathIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400" />
-          <span>Bản Tiệng 📍</span>
-        </button>
-
         {/* Status badges */}
         {loading ? (
           <span className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-900/85 border border-slate-700 text-[11px] text-slate-300 backdrop-blur shadow-lg">
@@ -246,42 +196,31 @@ const MapPage = () => {
         )}
       </div>
 
-      {/* ── FULL-SCREEN LEAFLET MAP ───────────────────────────────────── */}
+      {/* ── FULL-SCREEN LEAFLET MAP (CỐ ĐỊNH 100% KHÔNG THỂ KÉO HAY ZOOM) ───────────────────── */}
       <div className="w-full h-full">
         <MapContainer
           center={BAN_TIENG_LOCKED_CENTER}
           zoom={BAN_TIENG_LOCKED_ZOOM}
           zoomSnap={0.5}
-          minZoom={18.5}
-          maxZoom={21}
+          minZoom={BAN_TIENG_LOCKED_ZOOM}
+          maxZoom={BAN_TIENG_LOCKED_ZOOM}
           zoomControl={false}
+          dragging={false}
           scrollWheelZoom={false}
           doubleClickZoom={false}
           touchZoom={false}
           boxZoom={false}
           keyboard={false}
-          maxBounds={BAN_TIENG_BOUNDS}
-          maxBoundsViscosity={1.0}
           style={{ width: '100%', height: '100%' }}
         >
-          {/* Google Maps tile layers */}
-          {mapLayer === 'satellite' ? (
-            <TileLayer
-              attribution='Map data &copy; <a href="https://www.google.com/maps">Google Maps</a>'
-              url="https://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"
-              subdomains="0123"
-              maxNativeZoom={20}
-              maxZoom={21}
-            />
-          ) : (
-            <TileLayer
-              attribution='Map data &copy; <a href="https://www.google.com/maps">Google Maps</a>'
-              url="https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
-              subdomains="0123"
-              maxNativeZoom={20}
-              maxZoom={21}
-            />
-          )}
+          {/* Google Maps Satellite Hybrid (lyrs=y) */}
+          <TileLayer
+            attribution='Map data &copy; <a href="https://www.google.com/maps">Google Maps</a>'
+            url="https://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"
+            subdomains="0123"
+            maxNativeZoom={20}
+            maxZoom={21}
+          />
 
           <MapController center={mapCenter} zoom={BAN_TIENG_LOCKED_ZOOM} />
 

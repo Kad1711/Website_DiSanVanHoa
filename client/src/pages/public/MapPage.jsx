@@ -555,42 +555,15 @@ const MapPage = () => {
           <MapController center={mapCenter} zoom={BAN_TIENG_LOCKED_ZOOM} />
 
           {/* Literary work markers */}
-          {mappedWorks.map(({ work, lat, lng, locationName, locationProvince }) => {
+          {mappedWorks.map(({ work, lat, lng }) => {
             const isSelected = activeWork?._id === work._id;
-            const catStyle = getCategoryStyle(work.category);
             return (
               <Marker
                 key={work._id}
                 position={[lat, lng]}
                 icon={getCachedWorkPin(work.category, isSelected)}
                 eventHandlers={{ click: () => handleSelectWork(work) }}
-              >
-                <Popup>
-                  <div className="p-1 min-w-[220px] max-w-[280px]">
-                    <div className="flex items-center justify-between gap-1 mb-1">
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${catStyle.badge}`}>
-                        {catStyle.label}
-                      </span>
-                      <span className="text-[11px] text-gray-500 font-medium">
-                        {work.ethnicGroup?.name || 'Dân tộc'}
-                      </span>
-                    </div>
-                    <h4 className="font-bold text-sm text-gray-900 mb-0.5">{work.title}</h4>
-                    <p className="text-xs text-orange-600 font-semibold mb-1">
-                      📍 {locationName} {locationProvince ? `(${locationProvince})` : ''}
-                    </p>
-                    <p className="text-xs text-gray-600 line-clamp-2 mb-2">
-                      {work.summary || 'Tác phẩm văn học di sản dân tộc thiểu số.'}
-                    </p>
-                    <Link
-                      to={`/works/${work.slug}`}
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
-                    >
-                      Đọc trọn vẹn <ArrowTopRightOnSquareIcon className="w-3.5 h-3.5" />
-                    </Link>
-                  </div>
-                </Popup>
-              </Marker>
+              />
             );
           })}
 

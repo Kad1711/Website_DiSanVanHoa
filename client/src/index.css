@@ -139,3 +139,33 @@
     @apply bg-gray-50/60;
   }
 }
+
+/* AI Chibi Sprite Animations */
+@keyframes chibiIdle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes chibiWalk {
+  0% {
+    transform: translateY(0) rotate(-3deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(0deg);
+  }
+  100% {
+    transform: translateY(0) rotate(3deg);
+  }
+}
+
+.chibi-anim-idle {
+  animation: chibiIdle 2.6s ease-in-out infinite;
+}
+
+.chibi-anim-walking {
+  animation: chibiWalk 0.35s ease-in-out infinite alternate;
+}

@@ -119,44 +119,56 @@ const getCachedWorkPin = (category = '', isActive = false) => {
 // ─── AI Character Leaflet Marker ──────────────────────────────────────────────
 const createAICharacterPin = (type = 'both', isWalking = false, facing = 'right') => {
   const flip = facing === 'left' ? -1 : 1;
-  const bobbing = isWalking ? 'transform: translateY(-6px);' : '';
+  const animClass = isWalking ? 'chibi-anim-walking' : 'chibi-anim-idle';
 
   let htmlContent = '';
-  let size = [72, 86];
-  let anchor = [36, 82];
+  let size = [70, 96];
+  let anchor = [35, 92];
 
   if (type === 'boy') {
-    size = [52, 86];
-    anchor = [26, 82];
+    size = [58, 96];
+    anchor = [29, 92];
     htmlContent = `
-      <div style="position:relative;width:52px;height:86px;display:flex;flex-direction:column;align-items:center;pointer-events:none;">
-        <div style="width:44px;height:72px;border-radius:14px;background:url('/characters/boy_concept.jpg') 8.8% 30% / 540% auto no-repeat;box-shadow:0 8px 20px rgba(0,0,0,0.5),0 0 14px rgba(245,158,11,0.6);border:2.5px solid #f59e0b;transform:scaleX(${flip});transition:transform 0.15s ease;${bobbing}"></div>
-        <div style="position:absolute;bottom:0;width:34px;height:8px;background:rgba(0,0,0,0.7);border-radius:50%;filter:blur(2px);"></div>
-        <div style="position:absolute;top:-18px;background:rgba(15,23,42,0.85);backdrop-filter:blur(4px);color:#fde68a;font-size:10px;font-weight:700;padding:1px 6px;border-radius:999px;border:1px solid rgba(245,158,11,0.6);white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,0.4);">Chàng trai Thái</div>
+      <div style="position:relative;width:58px;height:96px;display:flex;flex-direction:column;align-items:center;pointer-events:none;">
+        <div style="position:absolute;top:-18px;background:rgba(15,23,42,0.92);backdrop-filter:blur(6px);color:#fde68a;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;border:1px solid rgba(245,158,11,0.7);white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,0.5);z-index:3;">Chàng trai Thái</div>
+        <div style="transform:scaleX(${flip});transition:transform 0.15s ease;display:flex;align-items:flex-end;justify-content:center;z-index:2;">
+          <div class="${animClass}">
+            <img src="/characters/boy_chibi.png" alt="Chàng trai Thái" style="width:52px;height:82px;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,0,0,0.55)) drop-shadow(0 0 8px rgba(245,158,11,0.5));display:block;" />
+          </div>
+        </div>
+        <div style="position:absolute;bottom:0px;width:34px;height:7px;background:radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 70%);border-radius:50%;z-index:1;"></div>
       </div>
     `;
   } else if (type === 'girl') {
-    size = [52, 86];
-    anchor = [26, 82];
+    size = [58, 96];
+    anchor = [29, 92];
     htmlContent = `
-      <div style="position:relative;width:52px;height:86px;display:flex;flex-direction:column;align-items:center;pointer-events:none;">
-        <div style="width:44px;height:72px;border-radius:14px;background:url('/characters/girl_concept.jpg') 11.8% 38% / 560% auto no-repeat;box-shadow:0 8px 20px rgba(0,0,0,0.5),0 0 14px rgba(16,185,129,0.6);border:2.5px solid #10b981;transform:scaleX(${flip});transition:transform 0.15s ease;${bobbing}"></div>
-        <div style="position:absolute;bottom:0;width:34px;height:8px;background:rgba(0,0,0,0.7);border-radius:50%;filter:blur(2px);"></div>
-        <div style="position:absolute;top:-18px;background:rgba(15,23,42,0.85);backdrop-filter:blur(4px);color:#a7f3d0;font-size:10px;font-weight:700;padding:1px 6px;border-radius:999px;border:1px solid rgba(16,185,129,0.6);white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,0.4);">Cô gái Thái</div>
+      <div style="position:relative;width:58px;height:96px;display:flex;flex-direction:column;align-items:center;pointer-events:none;">
+        <div style="position:absolute;top:-18px;background:rgba(15,23,42,0.92);backdrop-filter:blur(6px);color:#a7f3d0;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;border:1px solid rgba(16,185,129,0.7);white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,0.5);z-index:3;">Cô gái Thái</div>
+        <div style="transform:scaleX(${flip});transition:transform 0.15s ease;display:flex;align-items:flex-end;justify-content:center;z-index:2;">
+          <div class="${animClass}">
+            <img src="/characters/girl_chibi.png" alt="Cô gái Thái" style="width:50px;height:82px;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,0,0,0.55)) drop-shadow(0 0 8px rgba(16,185,129,0.5));display:block;" />
+          </div>
+        </div>
+        <div style="position:absolute;bottom:0px;width:34px;height:7px;background:radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 70%);border-radius:50%;z-index:1;"></div>
       </div>
     `;
   } else {
     // Both characters
-    size = [88, 86];
-    anchor = [44, 82];
+    size = [98, 96];
+    anchor = [49, 92];
     htmlContent = `
-      <div style="position:relative;width:88px;height:86px;display:flex;flex-direction:column;align-items:center;pointer-events:none;">
-        <div style="display:flex;gap:4px;align-items:flex-end;">
-          <div style="width:40px;height:70px;border-radius:12px;background:url('/characters/boy_concept.jpg') 8.8% 30% / 540% auto no-repeat;box-shadow:0 6px 16px rgba(0,0,0,0.45);border:2px solid #f59e0b;transform:scaleX(${flip});transition:transform 0.15s ease;${bobbing}"></div>
-          <div style="width:38px;height:68px;border-radius:12px;background:url('/characters/girl_concept.jpg') 11.8% 38% / 560% auto no-repeat;box-shadow:0 6px 16px rgba(0,0,0,0.45);border:2px solid #10b981;transform:scaleX(${flip});transition:transform 0.15s ease;${bobbing}"></div>
+      <div style="position:relative;width:98px;height:96px;display:flex;flex-direction:column;align-items:center;pointer-events:none;">
+        <div style="position:absolute;top:-18px;background:rgba(15,23,42,0.92);backdrop-filter:blur(6px);color:#fde047;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;border:1px solid rgba(250,204,21,0.7);white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,0.5);z-index:3;">Đôi bạn người Thái</div>
+        <div style="transform:scaleX(${flip});transition:transform 0.15s ease;display:flex;gap:2px;align-items:flex-end;justify-content:center;z-index:2;">
+          <div class="${animClass}" style="${isWalking ? 'animation-delay:0s;' : ''}">
+            <img src="/characters/boy_chibi.png" alt="Chàng trai Thái" style="width:48px;height:80px;object-fit:contain;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.55));display:block;" />
+          </div>
+          <div class="${animClass}" style="${isWalking ? 'animation-delay:0.18s;' : ''}">
+            <img src="/characters/girl_chibi.png" alt="Cô gái Thái" style="width:46px;height:80px;object-fit:contain;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.55));display:block;" />
+          </div>
         </div>
-        <div style="position:absolute;bottom:0;width:68px;height:8px;background:rgba(0,0,0,0.7);border-radius:50%;filter:blur(2px);"></div>
-        <div style="position:absolute;top:-18px;background:rgba(15,23,42,0.85);backdrop-filter:blur(4px);color:#fde047;font-size:10px;font-weight:700;padding:1px 8px;border-radius:999px;border:1px solid rgba(250,204,21,0.6);white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,0.4);">Đôi bạn người Thái</div>
+        <div style="position:absolute;bottom:0px;width:68px;height:8px;background:radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 70%);border-radius:50%;z-index:1;"></div>
       </div>
     `;
   }
@@ -197,52 +209,46 @@ const getCharacterDialogue = (work, characterType) => {
   if (title.includes('khăn piêu') || title.includes('khan pieu')) {
     if (characterType === 'boy') {
       return {
-        speaker: 'Chàng trai Thái',
+        speaker: 'Chàng trai Thái Chibi',
         text: 'Tiếng sáo bè réo rắt khắp đỉnh núi mây ngàn gọi người thương... Chiếc khăn Piêu đánh rơi bên bờ suối là lời hẹn thề son sắt!',
-        avatar: '/characters/boy_concept.jpg',
-        crop: '72% 20% / 460% auto',
+        avatar: '/characters/boy_chibi.png',
       };
     }
     return {
-      speaker: 'Cô gái Thái',
-      text: 'Chào bạn! Chiếc khăn Piêu em dệt với chỉ ngũ sắc và hoa văn móc câu hình thoi tượng trưng cho đất trời, tình yêu và sự sống nảy nở của người Thái chúng mình.',
-      avatar: '/characters/girl_concept.jpg',
-      crop: '71% 17% / 460% auto',
+      speaker: 'Cô gái Thái Chibi',
+      text: 'Chào bạn! Chiếc khăn Piêu mình dệt với chỉ ngũ sắc và hoa văn móc câu hình thoi tượng trưng cho đất trời, tình yêu và sự sống nảy nở của người Thái chúng mình.',
+      avatar: '/characters/girl_chibi.png',
     };
   }
 
   if (title.includes('y ke') || title.includes('thần thoại')) {
     if (characterType === 'boy') {
       return {
-        speaker: 'Chàng trai Thái',
+        speaker: 'Chàng trai Thái Chibi',
         text: 'Thuở đại hồng thủy xa xưa, chàng Ơi Cặp và nàng Y Ke đã vượt ngàn sóng gió sinh ra các dân tộc anh em trên dải đất Việt Nam cùng chung một cội nguồn!',
-        avatar: '/characters/boy_concept.jpg',
-        crop: '72% 20% / 460% auto',
+        avatar: '/characters/boy_chibi.png',
       };
     }
     return {
-      speaker: 'Cô gái Thái',
+      speaker: 'Cô gái Thái Chibi',
       text: 'Những câu chuyện thần thoại sơ khai nhắc nhở người Thái luôn biết ơn đất trời, gắn bó đoàn kết keo sơn giữa các tộc người anh em.',
-      avatar: '/characters/girl_concept.jpg',
-      crop: '71% 17% / 460% auto',
+      avatar: '/characters/girl_chibi.png',
     };
   }
 
   // Mặc định
   if (characterType === 'boy') {
     return {
-      speaker: 'Chàng trai Thái',
+      speaker: 'Chàng trai Thái Chibi',
       text: `Chúng ta đã đến địa danh văn hóa của tác phẩm "${work.title}"! Hãy cùng tôi lắng nghe di sản ngàn đời của đồng bào nhé.`,
-      avatar: '/characters/boy_concept.jpg',
-      crop: '72% 20% / 460% auto',
+      avatar: '/characters/boy_chibi.png',
     };
   }
 
   return {
-    speaker: 'Cô gái Thái',
+    speaker: 'Cô gái Thái Chibi',
     text: `Chào bạn! Mình và bạn đã đến với không gian của tác phẩm "${work.title}". Nơi đây lưu giữ bao câu chuyện mộc mạc và ý nghĩa của bản mường.`,
-    avatar: '/characters/girl_concept.jpg',
-    crop: '71% 17% / 460% auto',
+    avatar: '/characters/girl_chibi.png',
   };
 };
 
@@ -409,9 +415,10 @@ const MapPage = () => {
                 : 'text-amber-200/80 hover:bg-slate-800/80 hover:text-white'
             }`}
           >
-            <span
-              className="w-5 h-5 rounded-full border border-amber-300 flex-shrink-0"
-              style={{ background: "url('/characters/boy_concept.jpg') 72% 20% / 460% auto no-repeat" }}
+            <img
+              src="/characters/boy_chibi.png"
+              alt="Chàng trai Chibi"
+              className="w-5 h-6 object-contain flex-shrink-0 drop-shadow"
             />
             <span className="hidden sm:inline">Chàng trai</span>
           </button>
@@ -430,9 +437,10 @@ const MapPage = () => {
                 : 'text-emerald-200/80 hover:bg-slate-800/80 hover:text-white'
             }`}
           >
-            <span
-              className="w-5 h-5 rounded-full border border-emerald-300 flex-shrink-0"
-              style={{ background: "url('/characters/girl_concept.jpg') 71% 17% / 460% auto no-repeat" }}
+            <img
+              src="/characters/girl_chibi.png"
+              alt="Cô gái Chibi"
+              className="w-5 h-6 object-contain flex-shrink-0 drop-shadow"
             />
             <span className="hidden sm:inline">Cô gái</span>
           </button>
@@ -451,7 +459,10 @@ const MapPage = () => {
                 : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
             }`}
           >
-            <UserGroupIcon className="w-4 h-4 text-amber-300" />
+            <div className="flex items-center -space-x-1.5 flex-shrink-0">
+              <img src="/characters/boy_chibi.png" alt="Chàng trai" className="w-4 h-5 object-contain" />
+              <img src="/characters/girl_chibi.png" alt="Cô gái" className="w-4 h-5 object-contain" />
+            </div>
             <span className="hidden sm:inline">Cả hai</span>
           </button>
         </div>
@@ -486,9 +497,10 @@ const MapPage = () => {
       {speechBubble && (
         <div className="absolute top-16 sm:top-20 left-2 sm:left-4 z-[1005] max-w-sm sm:max-w-md bg-slate-900/95 backdrop-blur-2xl border border-amber-500/40 text-white p-3.5 sm:p-4 rounded-3xl shadow-2xl animate-in fade-in slide-in-from-top-4">
           <div className="flex items-start gap-3">
-            <div
-              className="w-11 h-11 rounded-2xl border-2 border-amber-400 flex-shrink-0 shadow-md"
-              style={{ background: `url('${speechBubble.avatar}') ${speechBubble.crop} no-repeat` }}
+            <img
+              src={speechBubble.avatar}
+              alt={speechBubble.speaker}
+              className="w-12 h-14 object-contain flex-shrink-0 drop-shadow-md"
             />
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between gap-2 mb-1">

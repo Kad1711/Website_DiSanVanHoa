@@ -23,17 +23,17 @@ import {
 
 // ─── Category Color Palettes & Icons ──────────────────────────────────────────
 const CATEGORY_STYLE_MAP = {
-  'truyen-co-tich': { hex: '#0284c7', glow: 'rgba(2,132,199,0.55)',  badge: 'bg-sky-100 text-sky-800',        icon: '🧚',  label: 'Truyền cổ tích' },
-  'than-thoai':     { hex: '#6366f1', glow: 'rgba(99,102,241,0.55)',  badge: 'bg-indigo-100 text-indigo-800',  icon: '🌌',  label: 'Thần thoại' },
-  'su-thi':        { hex: '#dc2626', glow: 'rgba(220,38,38,0.55)',    badge: 'bg-red-100 text-red-800',       icon: '⚔️',  label: 'Sử thi' },
-  'truyen-thuyet': { hex: '#7c3aed', glow: 'rgba(124,58,237,0.55)',   badge: 'bg-purple-100 text-purple-800',  icon: '✨',  label: 'Truyền thuyết' },
-  'truyen-tho':     { hex: '#059669', glow: 'rgba(5,150,105,0.55)',    badge: 'bg-emerald-100 text-emerald-800', icon: '📜', label: 'Truyện thơ' },
-  'dan-ca':        { hex: '#d97706', glow: 'rgba(217,119,6,0.55)',    badge: 'bg-amber-100 text-amber-800',    icon: '🎵',  label: 'Dân ca' },
-  'ca-dao-tuc-ngu': { hex: '#10b981', glow: 'rgba(16,185,129,0.55)',  badge: 'bg-teal-100 text-teal-800',      icon: '💬',  label: 'Tục ngữ - Ca dao' },
-  'ngu-ngon-cuoi':  { hex: '#f59e0b', glow: 'rgba(245,158,11,0.55)',  badge: 'bg-yellow-100 text-yellow-800',  icon: '😄',  label: 'Ngụ ngôn - Cười' },
-  'tho':           { hex: '#059669', glow: 'rgba(5,150,105,0.55)',    badge: 'bg-emerald-100 text-emerald-800', icon: '📜', label: 'Thơ ca' },
-  'truyen-ngan':   { hex: '#0284c7', glow: 'rgba(2,132,199,0.55)',    badge: 'bg-sky-100 text-sky-800',        icon: '📖',  label: 'Truyện ngắn' },
-  'khac':          { hex: '#ea580c', glow: 'rgba(234,88,12,0.55)',    badge: 'bg-orange-100 text-orange-800',  icon: '📚',  label: 'Tác phẩm' },
+  'truyen-co-tich': { hex: '#0284c7', glow: 'rgba(2,132,199,0.55)', badge: 'bg-sky-100 text-sky-800', icon: '🧚', label: 'Truyền cổ tích' },
+  'than-thoai': { hex: '#6366f1', glow: 'rgba(99,102,241,0.55)', badge: 'bg-indigo-100 text-indigo-800', icon: '🌌', label: 'Thần thoại' },
+  'su-thi': { hex: '#dc2626', glow: 'rgba(220,38,38,0.55)', badge: 'bg-red-100 text-red-800', icon: '⚔️', label: 'Sử thi' },
+  'truyen-thuyet': { hex: '#7c3aed', glow: 'rgba(124,58,237,0.55)', badge: 'bg-purple-100 text-purple-800', icon: '✨', label: 'Truyền thuyết' },
+  'truyen-tho': { hex: '#059669', glow: 'rgba(5,150,105,0.55)', badge: 'bg-emerald-100 text-emerald-800', icon: '📜', label: 'Truyện thơ' },
+  'dan-ca': { hex: '#d97706', glow: 'rgba(217,119,6,0.55)', badge: 'bg-amber-100 text-amber-800', icon: '🎵', label: 'Dân ca' },
+  'ca-dao-tuc-ngu': { hex: '#10b981', glow: 'rgba(16,185,129,0.55)', badge: 'bg-teal-100 text-teal-800', icon: '💬', label: 'Tục ngữ - Ca dao' },
+  'ngu-ngon-cuoi': { hex: '#f59e0b', glow: 'rgba(245,158,11,0.55)', badge: 'bg-yellow-100 text-yellow-800', icon: '😄', label: 'Ngụ ngôn - Cười' },
+  'tho': { hex: '#059669', glow: 'rgba(5,150,105,0.55)', badge: 'bg-emerald-100 text-emerald-800', icon: '📜', label: 'Thơ ca' },
+  'truyen-ngan': { hex: '#0284c7', glow: 'rgba(2,132,199,0.55)', badge: 'bg-sky-100 text-sky-800', icon: '📖', label: 'Truyện ngắn' },
+  'khac': { hex: '#ea580c', glow: 'rgba(234,88,12,0.55)', badge: 'bg-orange-100 text-orange-800', icon: '📚', label: 'Tác phẩm' },
 };
 
 const getCategoryStyle = (cat = '') => {
@@ -123,7 +123,7 @@ const createAICharacterPin = (type = 'both', isWalking = false, facing = 'right'
 
   let htmlContent = '';
   // Mặc định kích thước lớn, rõ nét
-  let size = [84, 136];
+  let size = [160, 250];
   let anchor = [42, 130];
 
   if (type === 'boy') {
@@ -134,7 +134,7 @@ const createAICharacterPin = (type = 'both', isWalking = false, facing = 'right'
         <div style="position:absolute;top:-20px;background:rgba(15,23,42,0.92);backdrop-filter:blur(6px);color:#fde68a;font-size:11px;font-weight:700;padding:2px 10px;border-radius:999px;border:1.5px solid rgba(245,158,11,0.7);white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,0.5);z-index:3;">Chàng trai Thái</div>
         <div style="transform:scaleX(${flip});transition:transform 0.15s ease;display:flex;align-items:flex-end;justify-content:center;z-index:2;">
           <div class="${animClass}">
-            <img src="/characters/boy_chibi.png" alt="Chàng trai Thái" style="width:76px;height:118px;object-fit:contain;filter:drop-shadow(0 6px 12px rgba(0,0,0,0.6)) drop-shadow(0 0 10px rgba(245,158,11,0.5));display:block;" />
+            <img src="/characters/boy_chibi.png" alt="" style="width:76px;height:118px;object-fit:contain;filter:drop-shadow(0 6px 12px rgba(0,0,0,0.6)) drop-shadow(0 0 10px rgba(245,158,11,0.5));display:block;" />
           </div>
         </div>
         <div style="position:absolute;bottom:0px;width:48px;height:10px;background:radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 70%);border-radius:50%;z-index:1;"></div>
@@ -148,7 +148,7 @@ const createAICharacterPin = (type = 'both', isWalking = false, facing = 'right'
         <div style="position:absolute;top:-20px;background:rgba(15,23,42,0.92);backdrop-filter:blur(6px);color:#a7f3d0;font-size:11px;font-weight:700;padding:2px 10px;border-radius:999px;border:1.5px solid rgba(16,185,129,0.7);white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,0.5);z-index:3;">Cô gái Thái</div>
         <div style="transform:scaleX(${flip});transition:transform 0.15s ease;display:flex;align-items:flex-end;justify-content:center;z-index:2;">
           <div class="${animClass}">
-            <img src="/characters/girl_chibi.png" alt="Cô gái Thái" style="width:72px;height:118px;object-fit:contain;filter:drop-shadow(0 6px 12px rgba(0,0,0,0.6)) drop-shadow(0 0 10px rgba(16,185,129,0.5));display:block;" />
+            <img src="/characters/girl_chibi.png" alt="" style="width:72px;height:118px;object-fit:contain;filter:drop-shadow(0 6px 12px rgba(0,0,0,0.6)) drop-shadow(0 0 10px rgba(16,185,129,0.5));display:block;" />
           </div>
         </div>
         <div style="position:absolute;bottom:0px;width:48px;height:10px;background:radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 70%);border-radius:50%;z-index:1;"></div>
@@ -255,19 +255,19 @@ const getCharacterDialogue = (work, characterType) => {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 const MapPage = () => {
-  const [works, setWorks]           = useState([]);
-  const [loading, setLoading]       = useState(true);
-  const [error, setError]           = useState(null);
+  const [works, setWorks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [activeWork, setActiveWork] = useState(null);
-  const [mapCenter, setMapCenter]   = useState(BAN_TIENG_LOCKED_CENTER);
+  const [mapCenter, setMapCenter] = useState(BAN_TIENG_LOCKED_CENTER);
 
   // 🤖 AI Character System State
   const [characterType, setCharacterType] = useState('both'); // 'boy' | 'girl' | 'both'
-  const [characterPos, setCharacterPos]   = useState(BAN_TIENG_LOCKED_CENTER);
-  const [isWalking, setIsWalking]         = useState(false);
-  const [facing, setFacing]               = useState('right'); // 'left' | 'right'
-  const [speechBubble, setSpeechBubble]   = useState(null);
-  const [isAutoTour, setIsAutoTour]       = useState(false);
+  const [characterPos, setCharacterPos] = useState(BAN_TIENG_LOCKED_CENTER);
+  const [isWalking, setIsWalking] = useState(false);
+  const [facing, setFacing] = useState('right'); // 'left' | 'right'
+  const [speechBubble, setSpeechBubble] = useState(null);
+  const [isAutoTour, setIsAutoTour] = useState(false);
   const [currentTourIndex, setCurrentTourIndex] = useState(0);
 
   const animRef = useRef(null);
@@ -410,11 +410,10 @@ const MapPage = () => {
               if (activeWork) setSpeechBubble(getCharacterDialogue(activeWork, 'boy'));
             }}
             title="Đồng hành cùng Chàng trai Thái"
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-              characterType === 'boy'
-                ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30'
-                : 'text-amber-200/80 hover:bg-slate-800/80 hover:text-white'
-            }`}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${characterType === 'boy'
+              ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30'
+              : 'text-amber-200/80 hover:bg-slate-800/80 hover:text-white'
+              }`}
           >
             <img
               src="/characters/boy_chibi.png"
@@ -432,11 +431,10 @@ const MapPage = () => {
               if (activeWork) setSpeechBubble(getCharacterDialogue(activeWork, 'girl'));
             }}
             title="Đồng hành cùng Cô gái Thái"
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-              characterType === 'girl'
-                ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30'
-                : 'text-emerald-200/80 hover:bg-slate-800/80 hover:text-white'
-            }`}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${characterType === 'girl'
+              ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30'
+              : 'text-emerald-200/80 hover:bg-slate-800/80 hover:text-white'
+              }`}
           >
             <img
               src="/characters/girl_chibi.png"
@@ -454,11 +452,10 @@ const MapPage = () => {
               if (activeWork) setSpeechBubble(getCharacterDialogue(activeWork, 'both'));
             }}
             title="Đồng hành cùng cả hai"
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-              characterType === 'both'
-                ? 'bg-gradient-to-r from-amber-400 to-emerald-400 text-slate-950 shadow-md'
-                : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
-            }`}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${characterType === 'both'
+              ? 'bg-gradient-to-r from-amber-400 to-emerald-400 text-slate-950 shadow-md'
+              : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+              }`}
           >
             <div className="flex items-center -space-x-1.5 flex-shrink-0">
               <img src="/characters/boy_chibi.png" alt="Chàng trai" className="w-4 h-5 object-contain" />
@@ -473,11 +470,10 @@ const MapPage = () => {
           <button
             type="button"
             onClick={() => setIsAutoTour(!isAutoTour)}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-bold transition-all shadow-xl backdrop-blur-xl border cursor-pointer ${
-              isAutoTour
-                ? 'bg-red-500/90 hover:bg-red-600 text-white border-red-400/50 animate-pulse'
-                : 'bg-slate-900/90 hover:bg-slate-800 text-amber-300 border-amber-500/40'
-            }`}
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-bold transition-all shadow-xl backdrop-blur-xl border cursor-pointer ${isAutoTour
+              ? 'bg-red-500/90 hover:bg-red-600 text-white border-red-400/50 animate-pulse'
+              : 'bg-slate-900/90 hover:bg-slate-800 text-amber-300 border-amber-500/40'
+              }`}
           >
             {isAutoTour ? (
               <>

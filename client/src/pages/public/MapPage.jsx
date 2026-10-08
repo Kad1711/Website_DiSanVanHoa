@@ -122,53 +122,54 @@ const createAICharacterPin = (type = 'both', isWalking = false, facing = 'right'
   const animClass = isWalking ? 'chibi-anim-walking' : 'chibi-anim-idle';
 
   let htmlContent = '';
-  let size = [70, 96];
-  let anchor = [35, 92];
+  // Mặc định kích thước lớn, rõ nét
+  let size = [84, 136];
+  let anchor = [42, 130];
 
   if (type === 'boy') {
-    size = [58, 96];
-    anchor = [29, 92];
+    size = [84, 136];
+    anchor = [42, 130];
     htmlContent = `
-      <div style="position:relative;width:58px;height:96px;display:flex;flex-direction:column;align-items:center;pointer-events:none;">
-        <div style="position:absolute;top:-18px;background:rgba(15,23,42,0.92);backdrop-filter:blur(6px);color:#fde68a;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;border:1px solid rgba(245,158,11,0.7);white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,0.5);z-index:3;">Chàng trai Thái</div>
+      <div style="position:relative;width:84px;height:136px;display:flex;flex-direction:column;align-items:center;pointer-events:none;">
+        <div style="position:absolute;top:-20px;background:rgba(15,23,42,0.92);backdrop-filter:blur(6px);color:#fde68a;font-size:11px;font-weight:700;padding:2px 10px;border-radius:999px;border:1.5px solid rgba(245,158,11,0.7);white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,0.5);z-index:3;">Chàng trai Thái</div>
         <div style="transform:scaleX(${flip});transition:transform 0.15s ease;display:flex;align-items:flex-end;justify-content:center;z-index:2;">
           <div class="${animClass}">
-            <img src="/characters/boy_chibi.png" alt="Chàng trai Thái" style="width:52px;height:82px;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,0,0,0.55)) drop-shadow(0 0 8px rgba(245,158,11,0.5));display:block;" />
+            <img src="/characters/boy_chibi.png" alt="Chàng trai Thái" style="width:76px;height:118px;object-fit:contain;filter:drop-shadow(0 6px 12px rgba(0,0,0,0.6)) drop-shadow(0 0 10px rgba(245,158,11,0.5));display:block;" />
           </div>
         </div>
-        <div style="position:absolute;bottom:0px;width:34px;height:7px;background:radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 70%);border-radius:50%;z-index:1;"></div>
+        <div style="position:absolute;bottom:0px;width:48px;height:10px;background:radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 70%);border-radius:50%;z-index:1;"></div>
       </div>
     `;
   } else if (type === 'girl') {
-    size = [58, 96];
-    anchor = [29, 92];
+    size = [84, 136];
+    anchor = [42, 130];
     htmlContent = `
-      <div style="position:relative;width:58px;height:96px;display:flex;flex-direction:column;align-items:center;pointer-events:none;">
-        <div style="position:absolute;top:-18px;background:rgba(15,23,42,0.92);backdrop-filter:blur(6px);color:#a7f3d0;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;border:1px solid rgba(16,185,129,0.7);white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,0.5);z-index:3;">Cô gái Thái</div>
+      <div style="position:relative;width:84px;height:136px;display:flex;flex-direction:column;align-items:center;pointer-events:none;">
+        <div style="position:absolute;top:-20px;background:rgba(15,23,42,0.92);backdrop-filter:blur(6px);color:#a7f3d0;font-size:11px;font-weight:700;padding:2px 10px;border-radius:999px;border:1.5px solid rgba(16,185,129,0.7);white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,0.5);z-index:3;">Cô gái Thái</div>
         <div style="transform:scaleX(${flip});transition:transform 0.15s ease;display:flex;align-items:flex-end;justify-content:center;z-index:2;">
           <div class="${animClass}">
-            <img src="/characters/girl_chibi.png" alt="Cô gái Thái" style="width:50px;height:82px;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,0,0,0.55)) drop-shadow(0 0 8px rgba(16,185,129,0.5));display:block;" />
+            <img src="/characters/girl_chibi.png" alt="Cô gái Thái" style="width:72px;height:118px;object-fit:contain;filter:drop-shadow(0 6px 12px rgba(0,0,0,0.6)) drop-shadow(0 0 10px rgba(16,185,129,0.5));display:block;" />
           </div>
         </div>
-        <div style="position:absolute;bottom:0px;width:34px;height:7px;background:radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 70%);border-radius:50%;z-index:1;"></div>
+        <div style="position:absolute;bottom:0px;width:48px;height:10px;background:radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 70%);border-radius:50%;z-index:1;"></div>
       </div>
     `;
   } else {
     // Both characters
-    size = [98, 96];
-    anchor = [49, 92];
+    size = [142, 136];
+    anchor = [71, 130];
     htmlContent = `
-      <div style="position:relative;width:98px;height:96px;display:flex;flex-direction:column;align-items:center;pointer-events:none;">
-        <div style="position:absolute;top:-18px;background:rgba(15,23,42,0.92);backdrop-filter:blur(6px);color:#fde047;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;border:1px solid rgba(250,204,21,0.7);white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,0.5);z-index:3;">Đôi bạn người Thái</div>
-        <div style="transform:scaleX(${flip});transition:transform 0.15s ease;display:flex;gap:2px;align-items:flex-end;justify-content:center;z-index:2;">
+      <div style="position:relative;width:142px;height:136px;display:flex;flex-direction:column;align-items:center;pointer-events:none;">
+        <div style="position:absolute;top:-20px;background:rgba(15,23,42,0.92);backdrop-filter:blur(6px);color:#fde047;font-size:11px;font-weight:700;padding:2px 10px;border-radius:999px;border:1.5px solid rgba(250,204,21,0.7);white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,0.5);z-index:3;">Đôi bạn người Thái</div>
+        <div style="transform:scaleX(${flip});transition:transform 0.15s ease;display:flex;gap:4px;align-items:flex-end;justify-content:center;z-index:2;">
           <div class="${animClass}" style="${isWalking ? 'animation-delay:0s;' : ''}">
-            <img src="/characters/boy_chibi.png" alt="Chàng trai Thái" style="width:48px;height:80px;object-fit:contain;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.55));display:block;" />
+            <img src="/characters/boy_chibi.png" alt="Chàng trai Thái" style="width:68px;height:116px;object-fit:contain;filter:drop-shadow(0 6px 12px rgba(0,0,0,0.6));display:block;" />
           </div>
           <div class="${animClass}" style="${isWalking ? 'animation-delay:0.18s;' : ''}">
-            <img src="/characters/girl_chibi.png" alt="Cô gái Thái" style="width:46px;height:80px;object-fit:contain;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.55));display:block;" />
+            <img src="/characters/girl_chibi.png" alt="Cô gái Thái" style="width:65px;height:116px;object-fit:contain;filter:drop-shadow(0 6px 12px rgba(0,0,0,0.6));display:block;" />
           </div>
         </div>
-        <div style="position:absolute;bottom:0px;width:68px;height:8px;background:radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 70%);border-radius:50%;z-index:1;"></div>
+        <div style="position:absolute;bottom:0px;width:96px;height:10px;background:radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 70%);border-radius:50%;z-index:1;"></div>
       </div>
     `;
   }

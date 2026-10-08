@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import {
   MapContainer,
@@ -15,12 +15,15 @@ import {
   XMarkIcon,
   MapPinIcon,
   EyeIcon,
-  ExclamationTriangleIcon,
+  SparklesIcon,
+  PlayIcon,
+  PauseIcon,
+  UserGroupIcon,
 } from '@heroicons/react/24/solid';
 
 // ─── Category Color Palettes & Icons ──────────────────────────────────────────
 const CATEGORY_STYLE_MAP = {
-  'truyen-co-tich': { hex: '#0284c7', glow: 'rgba(2,132,199,0.55)',  badge: 'bg-sky-100 text-sky-800',        icon: '🧚',  label: 'Truyện cổ tích' },
+  'truyen-co-tich': { hex: '#0284c7', glow: 'rgba(2,132,199,0.55)',  badge: 'bg-sky-100 text-sky-800',        icon: '🧚',  label: 'Truyền cổ tích' },
   'than-thoai':     { hex: '#6366f1', glow: 'rgba(99,102,241,0.55)',  badge: 'bg-indigo-100 text-indigo-800',  icon: '🌌',  label: 'Thần thoại' },
   'su-thi':        { hex: '#dc2626', glow: 'rgba(220,38,38,0.55)',    badge: 'bg-red-100 text-red-800',       icon: '⚔️',  label: 'Sử thi' },
   'truyen-thuyet': { hex: '#7c3aed', glow: 'rgba(124,58,237,0.55)',   badge: 'bg-purple-100 text-purple-800',  icon: '✨',  label: 'Truyền thuyết' },
@@ -113,6 +116,59 @@ const getCachedWorkPin = (category = '', isActive = false) => {
   return iconCache.get(key);
 };
 
+// ─── AI Character Leaflet Marker ──────────────────────────────────────────────
+const createAICharacterPin = (type = 'both', isWalking = false, facing = 'right') => {
+  const flip = facing === 'left' ? -1 : 1;
+  const bobbing = isWalking ? 'transform: translateY(-6px);' : '';
+
+  let htmlContent = '';
+  let size = [72, 86];
+  let anchor = [36, 82];
+
+  if (type === 'boy') {
+    size = [52, 86];
+    anchor = [26, 82];
+    htmlContent = `
+      <div style="position:relative;width:52px;height:86px;display:flex;flex-direction:column;align-items:center;pointer-events:none;">
+        <div style="width:44px;height:72px;border-radius:14px;background:url('/characters/boy_concept.jpg') 8.8% 30% / 540% auto no-repeat;box-shadow:0 8px 20px rgba(0,0,0,0.5),0 0 14px rgba(245,158,11,0.6);border:2.5px solid #f59e0b;transform:scaleX(${flip});transition:transform 0.15s ease;${bobbing}"></div>
+        <div style="position:absolute;bottom:0;width:34px;height:8px;background:rgba(0,0,0,0.7);border-radius:50%;filter:blur(2px);"></div>
+        <div style="position:absolute;top:-18px;background:rgba(15,23,42,0.85);backdrop-filter:blur(4px);color:#fde68a;font-size:10px;font-weight:700;padding:1px 6px;border-radius:999px;border:1px solid rgba(245,158,11,0.6);white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,0.4);">Chàng trai Thái</div>
+      </div>
+    `;
+  } else if (type === 'girl') {
+    size = [52, 86];
+    anchor = [26, 82];
+    htmlContent = `
+      <div style="position:relative;width:52px;height:86px;display:flex;flex-direction:column;align-items:center;pointer-events:none;">
+        <div style="width:44px;height:72px;border-radius:14px;background:url('/characters/girl_concept.jpg') 11.8% 38% / 560% auto no-repeat;box-shadow:0 8px 20px rgba(0,0,0,0.5),0 0 14px rgba(16,185,129,0.6);border:2.5px solid #10b981;transform:scaleX(${flip});transition:transform 0.15s ease;${bobbing}"></div>
+        <div style="position:absolute;bottom:0;width:34px;height:8px;background:rgba(0,0,0,0.7);border-radius:50%;filter:blur(2px);"></div>
+        <div style="position:absolute;top:-18px;background:rgba(15,23,42,0.85);backdrop-filter:blur(4px);color:#a7f3d0;font-size:10px;font-weight:700;padding:1px 6px;border-radius:999px;border:1px solid rgba(16,185,129,0.6);white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,0.4);">Cô gái Thái</div>
+      </div>
+    `;
+  } else {
+    // Both characters
+    size = [88, 86];
+    anchor = [44, 82];
+    htmlContent = `
+      <div style="position:relative;width:88px;height:86px;display:flex;flex-direction:column;align-items:center;pointer-events:none;">
+        <div style="display:flex;gap:4px;align-items:flex-end;">
+          <div style="width:40px;height:70px;border-radius:12px;background:url('/characters/boy_concept.jpg') 8.8% 30% / 540% auto no-repeat;box-shadow:0 6px 16px rgba(0,0,0,0.45);border:2px solid #f59e0b;transform:scaleX(${flip});transition:transform 0.15s ease;${bobbing}"></div>
+          <div style="width:38px;height:68px;border-radius:12px;background:url('/characters/girl_concept.jpg') 11.8% 38% / 560% auto no-repeat;box-shadow:0 6px 16px rgba(0,0,0,0.45);border:2px solid #10b981;transform:scaleX(${flip});transition:transform 0.15s ease;${bobbing}"></div>
+        </div>
+        <div style="position:absolute;bottom:0;width:68px;height:8px;background:rgba(0,0,0,0.7);border-radius:50%;filter:blur(2px);"></div>
+        <div style="position:absolute;top:-18px;background:rgba(15,23,42,0.85);backdrop-filter:blur(4px);color:#fde047;font-size:10px;font-weight:700;padding:1px 8px;border-radius:999px;border:1px solid rgba(250,204,21,0.6);white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,0.4);">Đôi bạn người Thái</div>
+      </div>
+    `;
+  }
+
+  return L.divIcon({
+    className: 'custom-ai-character-pin',
+    html: htmlContent,
+    iconSize: size,
+    iconAnchor: anchor,
+  });
+};
+
 // ─── Smooth FlyTo Controller ──────────────────────────────────────────────────
 const MapController = ({ center, zoom }) => {
   const map = useMap();
@@ -133,14 +189,82 @@ const BAN_TIENG_BOUNDS = [
   [19.3030, 105.1530], // Góc Đông Bắc
 ];
 
+// ─── Lời thoại thông minh theo tác phẩm ────────────────────────────────────────
+const getCharacterDialogue = (work, characterType) => {
+  if (!work) return null;
+  const title = (work.title || '').toLowerCase();
+
+  if (title.includes('khăn piêu') || title.includes('khan pieu')) {
+    if (characterType === 'boy') {
+      return {
+        speaker: 'Chàng trai Thái',
+        text: 'Tiếng sáo bè réo rắt khắp đỉnh núi mây ngàn gọi người thương... Chiếc khăn Piêu đánh rơi bên bờ suối là lời hẹn thề son sắt!',
+        avatar: '/characters/boy_concept.jpg',
+        crop: '72% 20% / 460% auto',
+      };
+    }
+    return {
+      speaker: 'Cô gái Thái',
+      text: 'Chào bạn! Chiếc khăn Piêu em dệt với chỉ ngũ sắc và hoa văn móc câu hình thoi tượng trưng cho đất trời, tình yêu và sự sống nảy nở của người Thái chúng mình.',
+      avatar: '/characters/girl_concept.jpg',
+      crop: '71% 17% / 460% auto',
+    };
+  }
+
+  if (title.includes('y ke') || title.includes('thần thoại')) {
+    if (characterType === 'boy') {
+      return {
+        speaker: 'Chàng trai Thái',
+        text: 'Thuở đại hồng thủy xa xưa, chàng Ơi Cặp và nàng Y Ke đã vượt ngàn sóng gió sinh ra các dân tộc anh em trên dải đất Việt Nam cùng chung một cội nguồn!',
+        avatar: '/characters/boy_concept.jpg',
+        crop: '72% 20% / 460% auto',
+      };
+    }
+    return {
+      speaker: 'Cô gái Thái',
+      text: 'Những câu chuyện thần thoại sơ khai nhắc nhở người Thái luôn biết ơn đất trời, gắn bó đoàn kết keo sơn giữa các tộc người anh em.',
+      avatar: '/characters/girl_concept.jpg',
+      crop: '71% 17% / 460% auto',
+    };
+  }
+
+  // Mặc định
+  if (characterType === 'boy') {
+    return {
+      speaker: 'Chàng trai Thái',
+      text: `Chúng ta đã đến địa danh văn hóa của tác phẩm "${work.title}"! Hãy cùng tôi lắng nghe di sản ngàn đời của đồng bào nhé.`,
+      avatar: '/characters/boy_concept.jpg',
+      crop: '72% 20% / 460% auto',
+    };
+  }
+
+  return {
+    speaker: 'Cô gái Thái',
+    text: `Chào bạn! Mình và bạn đã đến với không gian của tác phẩm "${work.title}". Nơi đây lưu giữ bao câu chuyện mộc mạc và ý nghĩa của bản mường.`,
+    avatar: '/characters/girl_concept.jpg',
+    crop: '71% 17% / 460% auto',
+  };
+};
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 const MapPage = () => {
   const [works, setWorks]           = useState([]);
   const [loading, setLoading]       = useState(true);
   const [error, setError]           = useState(null);
   const [activeWork, setActiveWork] = useState(null);
-  const [mapLayer, setMapLayer]     = useState('satellite'); // satellite | streets
   const [mapCenter, setMapCenter]   = useState(BAN_TIENG_LOCKED_CENTER);
+
+  // 🤖 AI Character System State
+  const [characterType, setCharacterType] = useState('both'); // 'boy' | 'girl' | 'both'
+  const [characterPos, setCharacterPos]   = useState(BAN_TIENG_LOCKED_CENTER);
+  const [isWalking, setIsWalking]         = useState(false);
+  const [facing, setFacing]               = useState('right'); // 'left' | 'right'
+  const [speechBubble, setSpeechBubble]   = useState(null);
+  const [isAutoTour, setIsAutoTour]       = useState(false);
+  const [currentTourIndex, setCurrentTourIndex] = useState(0);
+
+  const animRef = useRef(null);
+  const tourTimerRef = useRef(null);
 
   // Fetch published works with retry capability
   const fetchWorks = useCallback(async () => {
@@ -161,12 +285,7 @@ const MapPage = () => {
     fetchWorks();
   }, [fetchWorks]);
 
-  // Handle work marker selection (keep center locked)
-  const handleSelectWork = useCallback((work) => {
-    setActiveWork(work);
-  }, []);
-
-  // Standardized mappedWorks with strict validation and useMemo cache
+  // Standardized mappedWorks with strict validation
   const mappedWorks = useMemo(() => {
     return works
       .map((w) => {
@@ -183,6 +302,88 @@ const MapPage = () => {
       .filter(Boolean);
   }, [works]);
 
+  // Đặt vị trí ban đầu của nhân vật tại điểm tác phẩm đầu tiên nếu có
+  useEffect(() => {
+    if (mappedWorks.length > 0 && characterPos === BAN_TIENG_LOCKED_CENTER) {
+      setCharacterPos([mappedWorks[0].lat, mappedWorks[0].lng]);
+      const initialSpeech = getCharacterDialogue(mappedWorks[0].work, characterType);
+      setSpeechBubble(initialSpeech);
+    }
+  }, [mappedWorks, characterType]);
+
+  // 🚶 Smooth Walk Animation (Lerp)
+  const walkCharacterTo = useCallback((targetLat, targetLng, targetWork) => {
+    if (animRef.current) cancelAnimationFrame(animRef.current);
+    setSpeechBubble(null);
+
+    const startLat = characterPos[0];
+    const startLng = characterPos[1];
+
+    setFacing(targetLng < startLng ? 'left' : 'right');
+    setIsWalking(true);
+
+    const startTime = performance.now();
+    const duration = 1600; // 1.6 giây bước đi mượt mà
+
+    const animateWalk = (now) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // Easing cubic out
+      const ease = 1 - Math.pow(1 - progress, 3);
+
+      const currentLat = startLat + (targetLat - startLat) * ease;
+      const currentLng = startLng + (targetLng - startLng) * ease;
+
+      setCharacterPos([currentLat, currentLng]);
+
+      if (progress < 1) {
+        animRef.current = requestAnimationFrame(animateWalk);
+      } else {
+        setIsWalking(false);
+        setCharacterPos([targetLat, targetLng]);
+        setMapCenter([targetLat, targetLng]);
+        setActiveWork(targetWork);
+
+        // Hiển thị lời thoại tương tác AI
+        const dialogue = getCharacterDialogue(targetWork, characterType);
+        setSpeechBubble(dialogue);
+      }
+    };
+
+    animRef.current = requestAnimationFrame(animateWalk);
+  }, [characterPos, characterType]);
+
+  // Click vào tác phẩm trên bản đồ
+  const handleSelectWork = useCallback((work) => {
+    setIsAutoTour(false);
+    clearTimeout(tourTimerRef.current);
+    const loc = getPrimaryMappedLocation(work);
+    if (loc) {
+      walkCharacterTo(loc.lat, loc.lng, work);
+    } else {
+      setActiveWork(work);
+    }
+  }, [walkCharacterTo]);
+
+  // 🚌 Auto Tour Controller
+  useEffect(() => {
+    if (!isAutoTour || mappedWorks.length === 0) {
+      clearTimeout(tourTimerRef.current);
+      return;
+    }
+
+    const currentItem = mappedWorks[currentTourIndex];
+    if (currentItem) {
+      walkCharacterTo(currentItem.lat, currentItem.lng, currentItem.work);
+    }
+
+    tourTimerRef.current = setTimeout(() => {
+      setCurrentTourIndex((prev) => (prev + 1) % mappedWorks.length);
+    }, 8500); // Dừng lại 8.5s cho mỗi tác phẩm rồi đi tiếp
+
+    return () => clearTimeout(tourTimerRef.current);
+  }, [isAutoTour, currentTourIndex, mappedWorks, walkCharacterTo]);
+
   // Primary location for active work detail card
   const activeWorkLocation = useMemo(() => {
     return activeWork ? getPrimaryMappedLocation(activeWork) : null;
@@ -190,32 +391,128 @@ const MapPage = () => {
 
   return (
     <div className="relative w-full h-[calc(100vh-64px)] bg-slate-900 overflow-hidden font-sans select-none">
-      {/* ── TOP CONTROL BAR ──────────────────────────────────────────── */}
-      <div className="absolute top-2 sm:top-4 left-2 sm:left-4 z-[1000] flex flex-wrap items-center gap-1.5 sm:gap-2 pointer-events-auto">
-        {/* Status badges */}
-        {loading ? (
-          <span className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-900/85 border border-slate-700 text-[11px] text-slate-300 backdrop-blur shadow-lg">
-            <span className="animate-spin text-amber-400">⟳</span>
-            <span>Đang tải dữ liệu...</span>
-          </span>
-        ) : error ? (
+      {/* ── TOP CONTROL BAR: AI COMPANION SWITCHER & AUTO TOUR ───────────────── */}
+      <div className="absolute top-2 sm:top-4 left-2 sm:left-4 z-[1000] flex flex-wrap items-center gap-2 pointer-events-auto">
+        {/* AI Character Switcher Badge */}
+        <div className="flex items-center gap-1.5 p-1 bg-slate-900/90 backdrop-blur-xl border border-amber-500/40 rounded-2xl shadow-2xl">
+          {/* Boy Option */}
           <button
             type="button"
-            onClick={fetchWorks}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-red-950/90 border border-red-700 text-[11px] text-red-300 backdrop-blur shadow-lg hover:bg-red-900 cursor-pointer"
+            onClick={() => {
+              setCharacterType('boy');
+              if (activeWork) setSpeechBubble(getCharacterDialogue(activeWork, 'boy'));
+            }}
+            title="Đồng hành cùng Chàng trai Thái"
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              characterType === 'boy'
+                ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30'
+                : 'text-amber-200/80 hover:bg-slate-800/80 hover:text-white'
+            }`}
           >
-            <ExclamationTriangleIcon className="w-3.5 h-3.5 text-red-400" />
-            <span>Lỗi tải dữ liệu. Thử lại ⟳</span>
+            <span
+              className="w-5 h-5 rounded-full border border-amber-300 flex-shrink-0"
+              style={{ background: "url('/characters/boy_concept.jpg') 72% 20% / 460% auto no-repeat" }}
+            />
+            <span className="hidden sm:inline">Chàng trai</span>
           </button>
-        ) : (
-          <span className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-900/85 border border-emerald-500/60 text-[11px] text-emerald-300 backdrop-blur font-semibold shadow-lg">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
-            <span>Góc nhìn làng Bản Tiệng ({mappedWorks.length} tác phẩm)</span>
-          </span>
+
+          {/* Girl Option */}
+          <button
+            type="button"
+            onClick={() => {
+              setCharacterType('girl');
+              if (activeWork) setSpeechBubble(getCharacterDialogue(activeWork, 'girl'));
+            }}
+            title="Đồng hành cùng Cô gái Thái"
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              characterType === 'girl'
+                ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30'
+                : 'text-emerald-200/80 hover:bg-slate-800/80 hover:text-white'
+            }`}
+          >
+            <span
+              className="w-5 h-5 rounded-full border border-emerald-300 flex-shrink-0"
+              style={{ background: "url('/characters/girl_concept.jpg') 71% 17% / 460% auto no-repeat" }}
+            />
+            <span className="hidden sm:inline">Cô gái</span>
+          </button>
+
+          {/* Both Option */}
+          <button
+            type="button"
+            onClick={() => {
+              setCharacterType('both');
+              if (activeWork) setSpeechBubble(getCharacterDialogue(activeWork, 'both'));
+            }}
+            title="Đồng hành cùng cả hai"
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              characterType === 'both'
+                ? 'bg-gradient-to-r from-amber-400 to-emerald-400 text-slate-950 shadow-md'
+                : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+            }`}
+          >
+            <UserGroupIcon className="w-4 h-4 text-amber-300" />
+            <span className="hidden sm:inline">Cả hai</span>
+          </button>
+        </div>
+
+        {/* Auto Tour Button */}
+        {mappedWorks.length > 0 && (
+          <button
+            type="button"
+            onClick={() => setIsAutoTour(!isAutoTour)}
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-bold transition-all shadow-xl backdrop-blur-xl border cursor-pointer ${
+              isAutoTour
+                ? 'bg-red-500/90 hover:bg-red-600 text-white border-red-400/50 animate-pulse'
+                : 'bg-slate-900/90 hover:bg-slate-800 text-amber-300 border-amber-500/40'
+            }`}
+          >
+            {isAutoTour ? (
+              <>
+                <PauseIcon className="w-4 h-4" />
+                <span>Dừng tham quan</span>
+              </>
+            ) : (
+              <>
+                <PlayIcon className="w-4 h-4" />
+                <span>Du hành AI tự động</span>
+              </>
+            )}
+          </button>
         )}
       </div>
 
-      {/* ── FULL-SCREEN LEAFLET MAP (CHO KÉO RÊ CHUỘT, CHỈ CHO ZOOM PHÓNG TO +, KHÔNG CHO THU NHỎ -) ───────────────────── */}
+      {/* ── INTERACTIVE AI SPEECH BUBBLE OVERLAY ─────────────────────────── */}
+      {speechBubble && (
+        <div className="absolute top-16 sm:top-20 left-2 sm:left-4 z-[1005] max-w-sm sm:max-w-md bg-slate-900/95 backdrop-blur-2xl border border-amber-500/40 text-white p-3.5 sm:p-4 rounded-3xl shadow-2xl animate-in fade-in slide-in-from-top-4">
+          <div className="flex items-start gap-3">
+            <div
+              className="w-11 h-11 rounded-2xl border-2 border-amber-400 flex-shrink-0 shadow-md"
+              style={{ background: `url('${speechBubble.avatar}') ${speechBubble.crop} no-repeat` }}
+            />
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between gap-2 mb-1">
+                <span className="text-xs font-bold text-amber-300 flex items-center gap-1">
+                  <SparklesIcon className="w-3.5 h-3.5 text-amber-400" />
+                  {speechBubble.speaker}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setSpeechBubble(null)}
+                  className="text-slate-400 hover:text-white p-0.5 rounded-lg"
+                >
+                  <XMarkIcon className="w-4 h-4" />
+                </button>
+              </div>
+              <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans">
+                {speechBubble.text}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── FULL-SCREEN LEAFLET MAP ─────────────────────────────────────── */}
       <div className="w-full h-full">
         <MapContainer
           center={BAN_TIENG_LOCKED_CENTER}
@@ -258,13 +555,6 @@ const MapPage = () => {
               >
                 <Popup>
                   <div className="p-1 min-w-[220px] max-w-[280px]">
-                    {work.coverImage?.url && (
-                      <img
-                        src={work.coverImage.url}
-                        alt={work.title}
-                        className="w-full h-28 object-cover rounded-xl mb-2 shadow"
-                      />
-                    )}
                     <div className="flex items-center justify-between gap-1 mb-1">
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${catStyle.badge}`}>
                         {catStyle.label}
@@ -291,6 +581,15 @@ const MapPage = () => {
               </Marker>
             );
           })}
+
+          {/* 🏃‍♂️ AI Character Marker walking on the map */}
+          {isValidCoordinate(characterPos[0], characterPos[1]) && (
+            <Marker
+              position={characterPos}
+              icon={createAICharacterPin(characterType, isWalking, facing)}
+              zIndexOffset={1000}
+            />
+          )}
         </MapContainer>
       </div>
 

@@ -3,7 +3,7 @@ import { NavLink, Link, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import {
   HomeIcon, MapPinIcon, BookOpenIcon, UsersIcon,
-  PhotoIcon, Bars3Icon, XMarkIcon, ArrowRightOnRectangleIcon,
+  PhotoIcon, Bars3Icon, XMarkIcon, ArrowRightOnRectangleIcon, TagIcon,
 } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 
@@ -11,6 +11,7 @@ const adminNav = [
   { to: '/admin',               label: 'Dashboard',    icon: HomeIcon,      exact: true },
   { to: '/admin/ethnic-groups', label: 'Dân tộc',      icon: UsersIcon },
   { to: '/admin/locations',     label: 'Địa điểm',     icon: MapPinIcon },
+  { to: '/admin/categories',    label: 'Thể loại',     icon: TagIcon },
   { to: '/admin/works',         label: 'Tác phẩm',     icon: BookOpenIcon },
   { to: '/admin/users',         label: 'Người dùng',   icon: UsersIcon },
 ];

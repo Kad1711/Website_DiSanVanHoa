@@ -13,14 +13,19 @@ const errorHandler = (err, req, res, next) => {
     const field = Object.keys(err.keyValue)[0];
     message = `${field} đã tồn tại.`;
   }
+  // Multer limit file size
+  if (err.code === 'LIMIT_FILE_SIZE') {
+    statusCode = 400;
+    message = 'Dung lượng tệp quá lớn, vượt quá giới hạn tối đa cho phép.';
+  }
   // Bad ObjectId
   if (err.name === 'CastError') {
     statusCode = 400;
-    message = `ID không hợp lệ.`;
+    message = `Dữ liệu ID "${err.value}" không hợp lệ cho trường ${err.path || ''}.`.trim();
   }
   // JWT
-  if (err.name === 'JsonWebTokenError') { statusCode = 401; message = 'Token không hợp lệ.'; }
-  if (err.name === 'TokenExpiredError') { statusCode = 401; message = 'Token đã hết hạn.'; }
+  if (err.name === 'JsonWebTokenError') { statusCode = 401; message = 'Phiên đăng nhập không hợp lệ, vui lòng đăng nhập lại.'; }
+  if (err.name === 'TokenExpiredError') { statusCode = 401; message = 'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.'; }
 
   res.status(statusCode).json({
     success: false,

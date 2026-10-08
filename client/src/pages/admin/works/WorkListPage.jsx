@@ -49,7 +49,11 @@ const WorkListPage = () => {
     }
   };
 
-  const getCategoryLabel = (val) => CATEGORIES.find(c => c.value === val)?.label || val;
+  const getCategoryLabel = (val) => {
+    if (!val) return '—';
+    if (typeof val === 'object') return val.name || '—';
+    return CATEGORIES.find(c => c.value === val)?.label || val;
+  };
 
   return (
     <div className="space-y-4 sm:space-y-6 font-sans">

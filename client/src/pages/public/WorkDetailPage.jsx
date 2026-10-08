@@ -140,8 +140,11 @@ const WorkDetailPage = () => {
   if (error) return <ErrorState message={error} onRetry={fetchWork} />;
   if (!work) return <ErrorState message="Tác phẩm không tồn tại." />;
 
-  const categoryObj = CATEGORIES.find((c) => c.value === work.category);
-  const categoryLabel = categoryObj?.label || work.category || 'Văn học dân gian';
+  const categoryLabel = work.category?.name
+    || (typeof work.category === 'string' && CATEGORIES.find((c) => c.value === work.category)?.label)
+    || work.category
+    || 'Văn học dân gian';
+  const categoryIcon = work.category?.icon || '';
 
   return (
     <div className="bg-cream min-h-screen pb-20 font-sans">
@@ -180,8 +183,9 @@ const WorkDetailPage = () => {
             {/* Details */}
             <div className="flex-1 text-center lg:text-left">
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 mb-3 sm:mb-4">
-                <span className="badge bg-amber-400/20 text-amber-300 border border-amber-300/30 text-[11px] sm:text-xs px-2.5 sm:px-3 py-1 font-semibold">
-                  {categoryLabel}
+                <span className="badge bg-amber-400/20 text-amber-300 border border-amber-300/30 text-[11px] sm:text-xs px-2.5 sm:px-3 py-1 font-semibold flex items-center gap-1">
+                  {categoryIcon && <span>{categoryIcon}</span>}
+                  <span>{categoryLabel}</span>
                 </span>
                 {work.ethnicGroup && (
                   <Link

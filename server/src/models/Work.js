@@ -43,11 +43,7 @@ const workSchema = new mongoose.Schema(
     title:   { type: String, required: [true, 'Tiêu đề tác phẩm là bắt buộc.'], trim: true },
     slug:    { type: String, unique: true, lowercase: true },
     author:  { type: String, trim: true, default: 'Dân gian' },
-    category: {
-      type: String,
-      enum: ['tho', 'truyen-ngan', 'su-thi', 'dan-ca', 'truyen-thuyet', 'khac'],
-      default: 'khac',
-    },
+    category:        { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
     ethnicGroup:     { type: mongoose.Schema.Types.ObjectId, ref: 'EthnicGroup' },
     summary:         { type: String, trim: true, maxlength: 1000, default: '' },
     content:         { type: String, default: '' },

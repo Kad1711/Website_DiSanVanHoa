@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { workService } from '../../services/work.service';
+import { categoryService } from '../../services/category.service';
 import Loading from '../../components/ui/Loading';
 import ErrorState from '../../components/ui/ErrorState';
 import Pagination from '../../components/ui/Pagination';
@@ -9,9 +10,24 @@ import { CATEGORIES } from '../../constants';
 
 const WorksPage = () => {
   const [data, setData] = useState({ works: [], pagination: null });
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [params, setParams] = useState({ page: 1, limit: 12, search: '', category: '' });
+
+  useEffect(() => {
+    const fetchCats = async () => {
+      try {
+        const res = await categoryService.getAll({ limit: 100 });
+        if (res.data.data?.categories?.length) {
+          setCategories(res.data.data.categories);
+        }
+      } catch (err) {
+        // Fallback silently to static constants
+      }
+    };
+    fetchCats();
+  }, []);
 
   const fetchData = async () => {
     try {
@@ -63,19 +79,23 @@ const WorksPage = () => {
             >
               Tất cả thể loại
             </button>
-            {CATEGORIES.map(cat => (
-              <button 
-                key={cat.value}
-                className={`px-3.5 sm:px-4 py-2 rounded-xl sm:rounded-full text-xs sm:text-sm whitespace-nowrap transition-all flex-shrink-0 ${
-                  params.category === cat.value
-                    ? 'bg-secondary text-white font-bold shadow-sm shadow-secondary/30'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-                onClick={() => setParams({ ...params, category: cat.value, page: 1 })}
-              >
-                {cat.label}
-              </button>
-            ))}
+            {(categories.length > 0 ? categories : CATEGORIES).map(cat => {
+              const catKey = cat._id || cat.value;
+              const isSelected = params.category === catKey || params.category === cat.slug;
+              return (
+                <button 
+                  key={catKey}
+                  className={`px-3.5 sm:px-4 py-2 rounded-xl sm:rounded-full text-xs sm:text-sm whitespace-nowrap transition-all flex-shrink-0 ${
+                    isSelected
+                      ? 'bg-secondary text-white font-bold shadow-sm shadow-secondary/30'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                  onClick={() => setParams({ ...params, category: cat._id || cat.value, page: 1 })}
+                >
+                  {cat.icon ? `${cat.icon} ` : ''}{cat.name || cat.label}
+                </button>
+              );
+            })}
           </div>
 
           {/* Search bar */}
@@ -114,8 +134,9 @@ const WorksPage = () => {
                         <span className="font-serif text-4xl opacity-50">{work.title[0]}</span>
                       </div>
                     )}
-                    <div className="absolute top-2.5 right-2.5 bg-white/90 backdrop-blur text-[11px] font-bold px-2 py-0.5 rounded-lg text-primary shadow-sm">
-                      {CATEGORIES.find(c => c.value === work.category)?.label || work.category}
+                    <div className="absolute top-2.5 right-2.5 bg-white/90 backdrop-blur text-[11px] font-bold px-2 py-0.5 rounded-lg text-primary shadow-sm flex items-center gap-1">
+                      {work.category?.icon ? <span>{work.category.icon}</span> : null}
+                      <span>{work.category?.name || (typeof work.category === 'string' && (CATEGORIES.find(c => c.value === work.category)?.label || work.category)) || 'Dân gian'}</span>
                     </div>
                   </div>
                   <div className="p-4 sm:p-5 flex-1 flex flex-col">

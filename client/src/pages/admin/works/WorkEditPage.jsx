@@ -3,6 +3,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import { workService } from '../../../services/work.service';
 import { ethnicGroupService } from '../../../services/ethnicGroup.service';
 import { locationService } from '../../../services/location.service';
+import { categoryService } from '../../../services/category.service';
 import { CATEGORIES, STATUSES, VIDEO_TYPES } from '../../../constants';
 import Loading from '../../../components/ui/Loading';
 import ErrorState from '../../../components/ui/ErrorState';
@@ -32,6 +33,7 @@ const WorkEditPage = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
+  const [categories, setCategories] = useState([]);
   const [ethnicGroups, setEthnicGroups] = useState([]);
   const [locations, setLocations] = useState([]);
   const [locationsLoading, setLocationsLoading] = useState(true);
@@ -71,13 +73,16 @@ const WorkEditPage = () => {
       try {
         setLoading(true);
         setError(null);
-        const [wRes, egRes, locRes] = await Promise.all([
+        const [wRes, catRes, egRes, locRes] = await Promise.all([
           workService.getById(id),
+          categoryService.getAll({ limit: 100 }),
           ethnicGroupService.getAll({ limit: 100 }),
           locationService.getAll({ limit: 100 }),
         ]);
 
         const work = wRes.data.data.work;
+        const fetchedCats = catRes.data.data.categories || [];
+        setCategories(fetchedCats);
         setEthnicGroups(egRes.data.data.ethnicGroups || []);
         setLocations(locRes.data.data.locations || []);
         setExistingGallery(work.gallery || []);
@@ -86,7 +91,7 @@ const WorkEditPage = () => {
         setFormData({
           title: work.title || '',
           author: work.author || 'Dân gian',
-          category: work.category || 'khac',
+          category: work.category?._id || work.category || '',
           ethnicGroup: work.ethnicGroup?._id || work.ethnicGroup || '',
           summary: work.summary || '',
           content: work.content || '',
@@ -172,9 +177,13 @@ const WorkEditPage = () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // 1. Check size limit (< 300MB)
-    if (file.size > 300 * 1024 * 1024) {
-      toast.error('Dung lượng video vượt quá 300MB. Vui lòng nén video trước khi tải lên.');
+    // 1. Check size limit (< 100MB for Cloudinary Free Tier)
+    if (file.size > 100 * 1024 * 1024) {
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+      toast.error(
+        `Video nặng ${sizeMB} MB (vượt quá giới hạn 100MB của bộ nhớ đám mây Cloudinary). Vui lòng nén video dưới 100MB hoặc chuyển sang tab "Nhúng link URL" (YouTube) để không giới hạn dung lượng!`,
+        { duration: 7000 }
+      );
       if (fileInputRef.current) fileInputRef.current.value = '';
       return;
     }
@@ -294,7 +303,10 @@ const WorkEditPage = () => {
       toast.success('Cập nhật tác phẩm thành công!');
       navigate('/admin/works');
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Có lỗi xảy ra khi cập nhật tác phẩm.');
+      const errorDetails = err.response?.data?.errors?.length
+        ? err.response.data.errors.join(' | ')
+        : (err.response?.data?.message || 'Có lỗi xảy ra khi cập nhật tác phẩm.');
+      toast.error(errorDetails);
     } finally {
       setSaving(false);
     }
@@ -345,16 +357,32 @@ const WorkEditPage = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="label">Thể loại văn học</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="label mb-0">Thể loại văn học</label>
+              <Link to="/admin/categories" target="_blank" className="text-xs text-primary hover:underline font-medium">
+                + Quản lý thể loại
+              </Link>
+            </div>
             <select
               name="category"
               value={formData.category}
               onChange={handleChange}
               className="input"
             >
-              {CATEGORIES.map((c) => (
-                <option key={c.value} value={c.value}>{c.label}</option>
-              ))}
+              <option value="">-- Chọn thể loại --</option>
+              {categories.length > 0 ? (
+                categories.map((c) => (
+                  <option key={c._id} value={c._id}>
+                    {c.icon || '📚'} {c.name}
+                  </option>
+                ))
+              ) : (
+                CATEGORIES.map((c) => (
+                  <option key={c.value} value={c.value}>
+                    {c.icon || '📚'} {c.label}
+                  </option>
+                ))
+              )}
             </select>
           </div>
 

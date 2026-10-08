@@ -157,7 +157,7 @@ const EthnicGroupDetailPage = () => {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1 mb-1">
                           <span className="text-[10px] bg-primary/10 text-primary font-bold px-2 py-0.5 rounded-full">
-                            {CATEGORIES.find((c) => c.value === work.category)?.label || work.category}
+                            {work.category?.name || (typeof work.category === 'string' && (CATEGORIES.find((c) => c.value === work.category)?.label || work.category)) || 'Dân gian'}
                           </span>
                         </div>
                         <h4 className="font-bold text-xs sm:text-sm text-gray-800 group-hover:text-primary transition-colors truncate">

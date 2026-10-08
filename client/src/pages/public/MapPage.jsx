@@ -20,15 +20,34 @@ import {
 
 // ─── Category Color Palettes & Icons ──────────────────────────────────────────
 const CATEGORY_STYLE_MAP = {
+  'truyen-co-tich': { hex: '#0284c7', glow: 'rgba(2,132,199,0.55)',  badge: 'bg-sky-100 text-sky-800',        icon: '🧚',  label: 'Truyện cổ tích' },
+  'than-thoai':     { hex: '#6366f1', glow: 'rgba(99,102,241,0.55)',  badge: 'bg-indigo-100 text-indigo-800',  icon: '🌌',  label: 'Thần thoại' },
   'su-thi':        { hex: '#dc2626', glow: 'rgba(220,38,38,0.55)',    badge: 'bg-red-100 text-red-800',       icon: '⚔️',  label: 'Sử thi' },
-  'tho':           { hex: '#059669', glow: 'rgba(5,150,105,0.55)',    badge: 'bg-emerald-100 text-emerald-800', icon: '📜', label: 'Thơ ca' },
-  'dan-ca':        { hex: '#d97706', glow: 'rgba(217,119,6,0.55)',    badge: 'bg-amber-100 text-amber-800',    icon: '🎵',  label: 'Dân ca' },
   'truyen-thuyet': { hex: '#7c3aed', glow: 'rgba(124,58,237,0.55)',   badge: 'bg-purple-100 text-purple-800',  icon: '✨',  label: 'Truyền thuyết' },
+  'truyen-tho':     { hex: '#059669', glow: 'rgba(5,150,105,0.55)',    badge: 'bg-emerald-100 text-emerald-800', icon: '📜', label: 'Truyện thơ' },
+  'dan-ca':        { hex: '#d97706', glow: 'rgba(217,119,6,0.55)',    badge: 'bg-amber-100 text-amber-800',    icon: '🎵',  label: 'Dân ca' },
+  'ca-dao-tuc-ngu': { hex: '#10b981', glow: 'rgba(16,185,129,0.55)',  badge: 'bg-teal-100 text-teal-800',      icon: '💬',  label: 'Tục ngữ - Ca dao' },
+  'ngu-ngon-cuoi':  { hex: '#f59e0b', glow: 'rgba(245,158,11,0.55)',  badge: 'bg-yellow-100 text-yellow-800',  icon: '😄',  label: 'Ngụ ngôn - Cười' },
+  'tho':           { hex: '#059669', glow: 'rgba(5,150,105,0.55)',    badge: 'bg-emerald-100 text-emerald-800', icon: '📜', label: 'Thơ ca' },
   'truyen-ngan':   { hex: '#0284c7', glow: 'rgba(2,132,199,0.55)',    badge: 'bg-sky-100 text-sky-800',        icon: '📖',  label: 'Truyện ngắn' },
   'khac':          { hex: '#ea580c', glow: 'rgba(234,88,12,0.55)',    badge: 'bg-orange-100 text-orange-800',  icon: '📚',  label: 'Tác phẩm' },
 };
 
-const getCategoryStyle = (cat = '') => CATEGORY_STYLE_MAP[cat] || CATEGORY_STYLE_MAP['khac'];
+const getCategoryStyle = (cat = '') => {
+  if (cat && typeof cat === 'object') {
+    const slug = cat.slug || '';
+    const preset = CATEGORY_STYLE_MAP[slug];
+    const hex = cat.color || preset?.hex || '#ea580c';
+    return {
+      hex,
+      glow: `${hex}88`,
+      badge: preset?.badge || 'bg-orange-100 text-orange-800',
+      icon: cat.icon || preset?.icon || '📚',
+      label: cat.name || preset?.label || 'Tác phẩm',
+    };
+  }
+  return CATEGORY_STYLE_MAP[cat] || CATEGORY_STYLE_MAP['khac'];
+};
 
 // ─── Coordinate Validator & Primary Location Extractor ────────────────────────
 export const isValidCoordinate = (lat, lng) => {

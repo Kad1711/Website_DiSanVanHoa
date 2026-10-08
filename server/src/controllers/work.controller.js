@@ -1,10 +1,13 @@
+const mongoose = require('mongoose');
 const Work = require('../models/Work');
+const Category = require('../models/Category');
 const asyncHandler = require('../utils/asyncHandler');
 const { paginate, parseQueryParams } = require('../utils/pagination');
 const { uploadFile, deleteFile } = require('../utils/cloudinary.util');
 const { generateSlug } = require('../utils/slug.util');
 
 const populateOptions = [
+  { path: 'category', select: 'name slug icon color description' },
   { path: 'ethnicGroup', select: 'name slug thumbnail region' },
   { path: 'relatedLocations', select: 'name slug province coordinates images shortDescription' },
   { path: 'comments.user', select: 'displayName name email role avatar' },
@@ -21,7 +24,15 @@ const getAll = asyncHandler(async (req, res) => {
     { author: { $regex: search, $options: 'i' } },
   ];
   if (req.query.ethnicGroup) filter.ethnicGroup = req.query.ethnicGroup;
-  if (req.query.category) filter.category = req.query.category;
+  if (req.query.category) {
+    if (mongoose.Types.ObjectId.isValid(req.query.category)) {
+      filter.category = req.query.category;
+    } else {
+      const cat = await Category.findOne({ slug: req.query.category });
+      if (cat) filter.category = cat._id;
+      else filter.category = null;
+    }
+  }
   if (req.query.status && isAdmin) filter.status = req.query.status;
 
   const [works, total] = await Promise.all([
@@ -56,6 +67,9 @@ const getById = asyncHandler(async (req, res) => {
 const create = asyncHandler(async (req, res) => {
   const data = { ...req.body, createdBy: req.user._id, slug: generateSlug(req.body.title) };
 
+  if (!data.category || data.category === 'null' || data.category === 'undefined') delete data.category;
+  if (!data.ethnicGroup || data.ethnicGroup === 'null' || data.ethnicGroup === 'undefined') delete data.ethnicGroup;
+
   if (typeof data.relatedLocations === 'string') {
     try { data.relatedLocations = JSON.parse(data.relatedLocations); } catch { data.relatedLocations = []; }
   }
@@ -80,6 +94,12 @@ const update = asyncHandler(async (req, res) => {
   if (!work) return res.status(404).json({ success: false, message: 'Tác phẩm không tồn tại.' });
 
   const data = { ...req.body };
+  if (!data.category || data.category === 'null' || data.category === 'undefined') {
+    data.category = null;
+  }
+  if (!data.ethnicGroup || data.ethnicGroup === 'null' || data.ethnicGroup === 'undefined') {
+    data.ethnicGroup = null;
+  }
   if (data.title && data.title !== work.title) data.slug = generateSlug(data.title);
   if (typeof data.relatedLocations === 'string') {
     try { data.relatedLocations = JSON.parse(data.relatedLocations); } catch { data.relatedLocations = []; }

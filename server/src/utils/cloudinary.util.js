@@ -5,10 +5,19 @@ const fs = require('fs');
  * Upload file to Cloudinary then delete local temp file
  */
 const uploadFile = async (filePath, folder, resourceType = 'image') => {
-  const result = await cloudinary.uploader.upload(filePath, {
-    folder,
-    resource_type: resourceType,
-  });
+  let result;
+  if (resourceType === 'video') {
+    result = await cloudinary.uploader.upload_large(filePath, {
+      folder,
+      resource_type: 'video',
+      chunk_size: 6000000, // 6MB chunk
+    });
+  } else {
+    result = await cloudinary.uploader.upload(filePath, {
+      folder,
+      resource_type: resourceType,
+    });
+  }
 
   // Clean up local temp file
   if (fs.existsSync(filePath)) fs.unlinkSync(filePath);

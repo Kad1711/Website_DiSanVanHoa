@@ -7,6 +7,7 @@ const authRoutes      = require('./src/routes/auth.routes');
 const userRoutes      = require('./src/routes/user.routes');
 const ethnicGroupRoutes = require('./src/routes/ethnicGroup.routes');
 const locationRoutes  = require('./src/routes/location.routes');
+const categoryRoutes  = require('./src/routes/category.routes');
 const workRoutes      = require('./src/routes/work.routes');
 const dashboardRoutes = require('./src/routes/dashboard.routes');
 const errorHandler    = require('./src/middleware/error.middleware');
@@ -41,6 +42,7 @@ app.use('/api/auth',          authRoutes);
 app.use('/api/users',         userRoutes);
 app.use('/api/ethnic-groups', ethnicGroupRoutes);
 app.use('/api/locations',     locationRoutes);
+app.use('/api/categories',    categoryRoutes);
 app.use('/api/works',         workRoutes);
 app.use('/api/dashboard',     dashboardRoutes);
 

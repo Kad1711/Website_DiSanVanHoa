@@ -24,6 +24,7 @@ import EthnicGroupEditPage      from '../pages/admin/ethnic-groups/EthnicGroupEd
 import LocationListPage         from '../pages/admin/locations/LocationListPage';
 import LocationCreatePage       from '../pages/admin/locations/LocationCreatePage';
 import LocationEditPage         from '../pages/admin/locations/LocationEditPage';
+import CategoryListPage         from '../pages/admin/categories/CategoryListPage';
 import WorkListPage             from '../pages/admin/works/WorkListPage';
 import WorkCreatePage           from '../pages/admin/works/WorkCreatePage';
 import WorkEditPage             from '../pages/admin/works/WorkEditPage';
@@ -55,6 +56,7 @@ const AppRouter = () => (
         <Route path="/admin/locations"                   element={<LocationListPage />} />
         <Route path="/admin/locations/create"            element={<LocationCreatePage />} />
         <Route path="/admin/locations/:id/edit"          element={<LocationEditPage />} />
+        <Route path="/admin/categories"                  element={<CategoryListPage />} />
         <Route path="/admin/works"                       element={<WorkListPage />} />
         <Route path="/admin/works/create"                element={<WorkCreatePage />} />
         <Route path="/admin/works/:id/edit"              element={<WorkEditPage />} />

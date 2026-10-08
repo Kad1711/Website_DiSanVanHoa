@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { workService } from '../../../services/work.service';
 import { ethnicGroupService } from '../../../services/ethnicGroup.service';
 import { locationService } from '../../../services/location.service';
+import { categoryService } from '../../../services/category.service';
 import { CATEGORIES, STATUSES, VIDEO_TYPES } from '../../../constants';
 import {
   ArrowLeftIcon,
@@ -27,13 +28,14 @@ const WorkCreatePage = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
+  const [categories, setCategories] = useState([]);
   const [ethnicGroups, setEthnicGroups] = useState([]);
   const [locations, setLocations] = useState([]);
   const [locationsLoading, setLocationsLoading] = useState(true);
   const [formData, setFormData] = useState({
     title: '',
     author: 'Dân gian',
-    category: 'truyen-thuyet',
+    category: '',
     ethnicGroup: '',
     summary: '',
     content: '',
@@ -59,10 +61,16 @@ const WorkCreatePage = () => {
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const [egRes, locRes] = await Promise.all([
+        const [catRes, egRes, locRes] = await Promise.all([
+          categoryService.getAll({ limit: 100 }),
           ethnicGroupService.getAll({ limit: 100 }),
           locationService.getAll({ limit: 100 }),
         ]);
+        const fetchedCats = catRes.data.data.categories || [];
+        setCategories(fetchedCats);
+        if (fetchedCats.length > 0) {
+          setFormData((prev) => ({ ...prev, category: prev.category || fetchedCats[0]._id }));
+        }
         setEthnicGroups(egRes.data.data.ethnicGroups || []);
         setLocations(locRes.data.data.locations || []);
       } catch (err) {
@@ -118,9 +126,13 @@ const WorkCreatePage = () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // 1. Check size limit (< 300MB)
-    if (file.size > 300 * 1024 * 1024) {
-      toast.error('Dung lượng video vượt quá 300MB. Vui lòng nén video trước khi tải lên.');
+    // 1. Check size limit (< 100MB for Cloudinary Free Tier)
+    if (file.size > 100 * 1024 * 1024) {
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+      toast.error(
+        `Video nặng ${sizeMB} MB (vượt quá giới hạn 100MB của bộ nhớ đám mây Cloudinary). Vui lòng nén video dưới 100MB hoặc chuyển sang tab "Nhúng link URL" (YouTube) để không giới hạn dung lượng!`,
+        { duration: 7000 }
+      );
       if (fileInputRef.current) fileInputRef.current.value = '';
       return;
     }
@@ -242,7 +254,10 @@ const WorkCreatePage = () => {
       toast.success('Tạo tác phẩm thành công!');
       navigate('/admin/works');
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Có lỗi xảy ra khi tạo tác phẩm.');
+      const errorDetails = err.response?.data?.errors?.length
+        ? err.response.data.errors.join(' | ')
+        : (err.response?.data?.message || 'Có lỗi xảy ra khi tạo tác phẩm.');
+      toast.error(errorDetails);
     } finally {
       setLoading(false);
     }
@@ -290,16 +305,32 @@ const WorkCreatePage = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="label">Thể loại văn học</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="label mb-0">Thể loại văn học</label>
+              <Link to="/admin/categories" target="_blank" className="text-xs text-primary hover:underline font-medium">
+                + Quản lý thể loại
+              </Link>
+            </div>
             <select
               name="category"
               value={formData.category}
               onChange={handleChange}
               className="input"
             >
-              {CATEGORIES.map((c) => (
-                <option key={c.value} value={c.value}>{c.label}</option>
-              ))}
+              <option value="">-- Chọn thể loại --</option>
+              {categories.length > 0 ? (
+                categories.map((c) => (
+                  <option key={c._id} value={c._id}>
+                    {c.icon || '📚'} {c.name}
+                  </option>
+                ))
+              ) : (
+                CATEGORIES.map((c) => (
+                  <option key={c.value} value={c.value}>
+                    {c.icon || '📚'} {c.label}
+                  </option>
+                ))
+              )}
             </select>
           </div>
 

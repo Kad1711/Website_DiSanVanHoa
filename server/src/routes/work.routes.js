@@ -13,8 +13,7 @@ const router = express.Router();
 
 const workValidation = [
   body('title').trim().notEmpty().withMessage('Tiêu đề tác phẩm là bắt buộc.'),
-  body('category').optional().isIn(['tho','truyen-ngan','su-thi','dan-ca','truyen-thuyet','khac'])
-    .withMessage('Thể loại không hợp lệ.'),
+  body('category').optional().isString().withMessage('Thể loại không hợp lệ.'),
 ];
 
 // Public / Auth-Aware

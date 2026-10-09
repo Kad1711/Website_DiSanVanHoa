@@ -21,6 +21,7 @@ import {
   PlusIcon,
 } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
+import RichContentEditor from '../../../components/admin/RichContentEditor';
 
 const JOURNEY_ROLES = [
   { value: 'START', label: 'Khởi đầu' },
@@ -415,15 +416,17 @@ const WorkCreatePage = () => {
         </div>
 
         <div>
-          <label className="label">Nội dung chi tiết / Lời kể văn bản</label>
-          <textarea
-            name="content"
-            rows="8"
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="label mb-0">Nội dung chi tiết / Lời kể văn bản</label>
+            <span className="text-xs text-gray-500 font-normal">Hỗ trợ dán trực tiếp từ Word hoặc tải lên file .docx</span>
+          </div>
+          <RichContentEditor
             value={formData.content}
-            onChange={handleChange}
-            placeholder="Trình bày toàn văn tác phẩm, câu thơ, trích đoạn hoặc lời thoại dân gian..."
-            className="input font-serif"
-          ></textarea>
+            onChange={(val) => {
+              setFormData((prev) => ({ ...prev, content: val }));
+              markDirty();
+            }}
+          />
         </div>
 
         {/* ── ẢNH BÌA & THƯ VIỆN ── */}

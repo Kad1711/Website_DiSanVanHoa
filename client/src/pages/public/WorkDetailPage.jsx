@@ -195,7 +195,9 @@ const WorkDetailPage = () => {
                     to={`/ethnic-groups/${work.ethnicGroup.slug}`}
                     className="badge bg-white/10 hover:bg-white/20 text-white border border-white/20 text-[11px] sm:text-xs px-2.5 sm:px-3 py-1 font-medium transition-colors"
                   >
-                    Dân tộc {work.ethnicGroup.name}
+                    {work.ethnicGroup.name.startsWith('Dân tộc ')
+                      ? work.ethnicGroup.name
+                      : `Dân tộc ${work.ethnicGroup.name}`}
                   </Link>
                 )}
               </div>
@@ -284,9 +286,16 @@ const WorkDetailPage = () => {
               </div>
 
               {work.content ? (
-                <div className="prose prose-stone max-w-none text-gray-800 leading-relaxed font-serif text-base sm:text-lg whitespace-pre-line">
-                  {work.content}
-                </div>
+                /<[a-z][\s\S]*>/i.test(work.content) ? (
+                  <div
+                    className="prose prose-stone max-w-none text-gray-800 leading-relaxed font-serif text-base sm:text-lg"
+                    dangerouslySetInnerHTML={{ __html: work.content }}
+                  />
+                ) : (
+                  <div className="prose prose-stone max-w-none text-gray-800 leading-relaxed font-serif text-base sm:text-lg whitespace-pre-line">
+                    {work.content}
+                  </div>
+                )
               ) : (
                 <p className="text-gray-500 italic py-8 text-center">Nội dung chi tiết của tác phẩm đang được cập nhật và biên tập thêm.</p>
               )}
@@ -516,7 +525,7 @@ const WorkDetailPage = () => {
                   to={`/ethnic-groups/${work.ethnicGroup.slug}`}
                   className="w-full btn-outline py-2 text-xs rounded-xl flex justify-center"
                 >
-                  Tìm hiểu văn hóa dân tộc {work.ethnicGroup.name}
+                  Tìm hiểu văn hóa {work.ethnicGroup.name.startsWith('Dân tộc ') ? work.ethnicGroup.name : `dân tộc ${work.ethnicGroup.name}`}
                 </Link>
               </div>
             )}
@@ -562,36 +571,46 @@ const WorkDetailPage = () => {
                     };
 
                     return (
-                      <Link
-                        to={`/locations/${loc.slug}`}
+                      <div
                         key={item._id || loc._id}
-                        className="p-3 rounded-2xl bg-orange-50/50 hover:bg-orange-50 border border-orange-100 flex items-start gap-3 transition-colors group block"
+                        className="p-3.5 rounded-2xl bg-orange-50/60 hover:bg-orange-50 border border-orange-200/80 transition-all shadow-sm group"
                       >
-                        <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 text-white font-bold text-xs flex items-center justify-center flex-shrink-0 shadow-sm mt-0.5">
-                          {item.order || 1}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1.5 mb-1">
-                            <span className={`text-[10px] px-2 py-0.5 rounded-md font-semibold border ${roleColors[item.role] || roleColors.DEVELOPMENT}`}>
-                              {roleLabels[item.role] || 'Chặng'}
-                            </span>
-                            <span className="text-[11px] text-gray-500 truncate">{loc.province}</span>
+                        <div className="flex items-start gap-3">
+                          <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 text-white font-bold text-xs flex items-center justify-center flex-shrink-0 shadow-sm mt-0.5">
+                            {item.order || 1}
                           </div>
-                          <h4 className="font-bold text-xs sm:text-sm text-gray-900 group-hover:text-earth transition-colors truncate">
-                            {loc.name}
-                          </h4>
-                          {item.journeyTitle && (
-                            <p className="text-xs font-medium text-amber-800 mt-0.5 line-clamp-1">
-                              {item.journeyTitle}
-                            </p>
-                          )}
-                          {item.journeyDescription && (
-                            <p className="text-[11px] text-gray-500 mt-1 line-clamp-2">
-                              {item.journeyDescription}
-                            </p>
-                          )}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1.5 mb-1">
+                              <span className={`text-[10px] px-2 py-0.5 rounded-md font-semibold border ${roleColors[item.role] || roleColors.DEVELOPMENT}`}>
+                                {roleLabels[item.role] || 'Chặng'}
+                              </span>
+                              <span className="text-[11px] text-gray-500 truncate">{loc.province}</span>
+                            </div>
+                            <h4 className="font-bold text-sm text-gray-900 truncate">
+                              {loc.name}
+                            </h4>
+                            {item.journeyTitle && (
+                              <p className="text-xs font-medium text-amber-800 mt-0.5 line-clamp-1">
+                                {item.journeyTitle}
+                              </p>
+                            )}
+                            {item.journeyDescription && (
+                              <p className="text-[11px] text-gray-500 mt-1 line-clamp-2">
+                                {item.journeyDescription}
+                              </p>
+                            )}
+                          </div>
                         </div>
-                      </Link>
+
+                        {/* Nút bấm rõ ràng nổi bật chuẩn như Ảnh 2 */}
+                        <Link
+                          to={`/locations/${loc.slug}`}
+                          className="mt-3 w-full bg-gradient-to-r from-orange-950 via-amber-950 to-orange-900 hover:from-orange-900 hover:to-amber-900 text-white font-bold text-xs py-2 px-3.5 rounded-full shadow flex items-center justify-center gap-1.5 transition-all group-hover:shadow-md cursor-pointer border border-amber-900/50"
+                        >
+                          <MapPinIcon className="w-3.5 h-3.5 text-amber-300 flex-shrink-0" />
+                          <span>Xem trang chi tiết địa danh</span>
+                        </Link>
+                      </div>
                     );
                   })}
                 </div>

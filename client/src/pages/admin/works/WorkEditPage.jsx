@@ -7,6 +7,7 @@ import { categoryService } from '../../../services/category.service';
 import { CATEGORIES, STATUSES, VIDEO_TYPES } from '../../../constants';
 import Loading from '../../../components/ui/Loading';
 import ErrorState from '../../../components/ui/ErrorState';
+import RichContentEditor from '../../../components/admin/RichContentEditor';
 import {
   ArrowLeftIcon,
   PhotoIcon,
@@ -491,14 +492,17 @@ const WorkEditPage = () => {
         </div>
 
         <div>
-          <label className="label">Nội dung chi tiết / Lời kể văn bản</label>
-          <textarea
-            name="content"
-            rows="8"
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="label mb-0">Nội dung chi tiết / Lời kể văn bản</label>
+            <span className="text-xs text-gray-500 font-normal">Hỗ trợ dán trực tiếp từ Word hoặc tải lên file .docx</span>
+          </div>
+          <RichContentEditor
             value={formData.content}
-            onChange={handleChange}
-            className="input font-serif"
-          ></textarea>
+            onChange={(val) => {
+              setFormData((prev) => ({ ...prev, content: val }));
+              markDirty();
+            }}
+          />
         </div>
 
         {/* ── ẢNH BÌA & THƯ VIỆN ── */}

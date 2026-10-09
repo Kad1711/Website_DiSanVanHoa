@@ -238,8 +238,8 @@ const MapPage = () => {
   // Đang theo dấu hành trình của một tác phẩm cụ thể
   const [focusedWork, setFocusedWork] = useState(null);
 
-  // 🤖 AI Character System State
-  const [characterType, setCharacterType] = useState('both');
+  // 🤖 AI Character System State (Cô gái Thái đồng hành)
+  const [characterType] = useState('girl');
   const [characterPos, setCharacterPos] = useState(BAN_TIENG_CENTER);
   const [isWalking, setIsWalking] = useState(false);
   const [facing, setFacing] = useState('right');
@@ -443,55 +443,8 @@ const MapPage = () => {
         </div>
       )}
 
-      {/* ── TOP CONTROL BAR: BẠN ĐỒNG HÀNH, NÚT TRẢI NGHIỆM & CHẾ ĐỘ MỞ RỘNG ── */}
+      {/* ── TOP CONTROL BAR: NÚT TRẢI NGHIỆM & HÀNH TRÌNH ── */}
       <div className="absolute top-2 sm:top-4 left-2 sm:left-4 z-[1000] flex flex-wrap items-center gap-2 pointer-events-auto">
-        {/* Nhân vật Chibi đồng hành */}
-        <div className="flex items-center gap-1.5 p-1 bg-slate-900/90 backdrop-blur-xl border border-amber-500/40 rounded-2xl shadow-2xl">
-          <button
-            type="button"
-            onClick={() => setCharacterType('boy')}
-            title="Đồng hành cùng Chàng trai Thái"
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-              characterType === 'boy'
-                ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30'
-                : 'text-amber-200/80 hover:bg-slate-800/80 hover:text-white'
-            }`}
-          >
-            <img src="/characters/boy_chibi.png" alt="Chàng trai" className="w-5 h-6 object-contain drop-shadow" />
-            <span className="hidden sm:inline">Chàng trai</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setCharacterType('girl')}
-            title="Đồng hành cùng Cô gái Thái"
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-              characterType === 'girl'
-                ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30'
-                : 'text-emerald-200/80 hover:bg-slate-800/80 hover:text-white'
-            }`}
-          >
-            <img src="/characters/girl_chibi.png" alt="Cô gái" className="w-5 h-6 object-contain drop-shadow" />
-            <span className="hidden sm:inline">Cô gái</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setCharacterType('both')}
-            title="Đồng hành cùng cả hai"
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-              characterType === 'both'
-                ? 'bg-gradient-to-r from-amber-400 to-emerald-400 text-slate-950 shadow-md'
-                : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
-            }`}
-          >
-            <div className="flex items-center -space-x-1.5 flex-shrink-0">
-              <img src="/characters/boy_chibi.png" alt="Chàng trai" className="w-4 h-5 object-contain" />
-              <img src="/characters/girl_chibi.png" alt="Cô gái" className="w-4 h-5 object-contain" />
-            </div>
-            <span className="hidden sm:inline">Cả hai</span>
-          </button>
-        </div>
 
         {/* Nút "Trải nghiệm" */}
         {displayedLocations.length > 0 && (
@@ -639,7 +592,9 @@ const MapPage = () => {
               </span>
               {activeLocation.ethnicGroup?.name && (
                 <span className="text-xs text-amber-400 font-bold">
-                  Dân tộc {activeLocation.ethnicGroup.name}
+                  {activeLocation.ethnicGroup.name.startsWith('Dân tộc ')
+                    ? activeLocation.ethnicGroup.name
+                    : `Dân tộc ${activeLocation.ethnicGroup.name}`}
                 </span>
               )}
             </div>
@@ -754,17 +709,6 @@ const MapPage = () => {
                 </div>
               )}
             </div>
-
-            {/* Nút xem trang chi tiết địa danh */}
-            {activeLocation.slug ? (
-              <Link
-                to={`/locations/${activeLocation.slug}`}
-                className="btn-primary py-2 text-xs rounded-xl flex items-center justify-center gap-1.5 font-bold w-full"
-              >
-                <MapPinIcon className="w-4 h-4" />
-                Xem trang chi tiết địa danh
-              </Link>
-            ) : null}
           </div>
         </div>
       )}

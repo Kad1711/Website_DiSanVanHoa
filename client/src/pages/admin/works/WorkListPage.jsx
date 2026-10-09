@@ -6,6 +6,7 @@ import Loading from '../../../components/ui/Loading';
 import ErrorState from '../../../components/ui/ErrorState';
 import ConfirmDialog from '../../../components/ui/ConfirmDialog';
 import Pagination from '../../../components/ui/Pagination';
+import SmartImage from '../../../components/ui/SmartImage';
 import toast from 'react-hot-toast';
 import { CATEGORIES } from '../../../constants';
 
@@ -105,7 +106,7 @@ const WorkListPage = () => {
                     <td>
                       <div className="flex items-center gap-3">
                         {item.coverImage?.url ? (
-                          <img src={item.coverImage.url} alt={item.title} className="w-10 h-12 rounded-lg object-cover bg-gray-100 flex-shrink-0" />
+                          <SmartImage src={item.coverImage.url} alt={item.title} className="w-10 h-12 rounded-lg object-cover bg-gray-100 flex-shrink-0" />
                         ) : (
                           <div className="w-10 h-12 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center font-bold text-base flex-shrink-0">
                             {item.title[0]}
@@ -130,7 +131,16 @@ const WorkListPage = () => {
                           <PencilSquareIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                         </Link>
                         <button
-                          onClick={() => setDeleteModal({ isOpen: true, id: item._id, title: item.title })}
+                          onClick={async () => {
+                            let count = 0;
+                            try {
+                              const res = await workService.getJourney(item.slug);
+                              count = res.data.data.journey?.length || 0;
+                            } catch {
+                              count = 0;
+                            }
+                            setDeleteModal({ isOpen: true, id: item._id, title: item.title, locationCount: count });
+                          }}
                           className="p-1.5 text-gray-400 hover:text-red-600 transition-colors rounded-lg hover:bg-gray-100 cursor-pointer"
                         >
                           <TrashIcon className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -164,9 +174,13 @@ const WorkListPage = () => {
       <ConfirmDialog
         isOpen={deleteModal.isOpen}
         title="Xóa tác phẩm"
-        message={`Bạn có chắc chắn muốn xóa "${deleteModal.title}"? Hành động này không thể hoàn tác.`}
+        message={
+          deleteModal.locationCount > 0
+            ? `Bạn có chắc chắn muốn xóa "${deleteModal.title}"? Tác phẩm này đang gắn liền với ${deleteModal.locationCount} địa danh trong hành trình không gian di sản. Việc xóa sẽ tự động giải phóng các liên kết này.`
+            : `Bạn có chắc chắn muốn xóa "${deleteModal.title}"? Hành động này không thể hoàn tác.`
+        }
         onConfirm={handleDelete}
-        onCancel={() => setDeleteModal({ isOpen: false, id: null, title: '' })}
+        onCancel={() => setDeleteModal({ isOpen: false, id: null, title: '', locationCount: 0 })}
       />
     </div>
   );

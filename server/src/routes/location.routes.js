@@ -1,7 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
 const {
-  getAll, getBySlug, getById, create, update, remove,
+  getAll, getMapLocations, getBySlug, getById, create, update, remove,
   removeImage, addVideo, removeVideo,
 } = require('../controllers/location.controller');
 const { protect, authorize, optionalAuth } = require('../middleware/auth.middleware');
@@ -19,6 +19,7 @@ const locationValidation = [
 
 // Public / Auth-Aware
 router.get('/', optionalAuth, getAll);
+router.get('/map', optionalAuth, getMapLocations);
 router.get('/slug/:slug', optionalAuth, getBySlug);
 
 // Admin

@@ -127,7 +127,7 @@ const LocationListPage = () => {
                           <PencilSquareIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                         </Link>
                         <button
-                          onClick={() => setDeleteModal({ isOpen: true, id: item._id, name: item.name })}
+                          onClick={() => setDeleteModal({ isOpen: true, id: item._id, name: item.name, workCount: item.relatedWorks?.length || 0 })}
                           className="p-1.5 text-gray-400 hover:text-red-600 transition-colors rounded-lg hover:bg-gray-100 cursor-pointer"
                         >
                           <TrashIcon className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -161,9 +161,13 @@ const LocationListPage = () => {
       <ConfirmDialog
         isOpen={deleteModal.isOpen}
         title="Xóa địa điểm"
-        message={`Bạn có chắc chắn muốn xóa "${deleteModal.name}"? Hành động này không thể hoàn tác.`}
+        message={
+          deleteModal.workCount > 0
+            ? `Bạn có chắc chắn muốn xóa "${deleteModal.name}"? Địa danh này đang được gắn với ${deleteModal.workCount} tác phẩm văn học di sản. Việc xóa sẽ tự động gỡ bỏ địa danh khỏi các tác phẩm này.`
+            : `Bạn có chắc chắn muốn xóa "${deleteModal.name}"? Hành động này không thể hoàn tác.`
+        }
         onConfirm={handleDelete}
-        onCancel={() => setDeleteModal({ isOpen: false, id: null, name: '' })}
+        onCancel={() => setDeleteModal({ isOpen: false, id: null, name: '', workCount: 0 })}
       />
     </div>
   );

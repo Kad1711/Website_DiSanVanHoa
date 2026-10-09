@@ -1,8 +1,13 @@
 const Location = require('../models/Location');
+const WorkLocation = require('../models/WorkLocation');
 const asyncHandler = require('../utils/asyncHandler');
 const { paginate, parseQueryParams } = require('../utils/pagination');
 const { uploadFile, deleteFile } = require('../utils/cloudinary.util');
 const { generateSlug } = require('../utils/slug.util');
+const {
+  syncWorkLocationsForLocation,
+  cleanupWorkLocationsForLocation,
+} = require('../utils/workLocation.util');
 
 const populateOptions = [
   { path: 'ethnicGroup', select: 'name slug thumbnail region' },
@@ -30,6 +35,94 @@ const getAll = asyncHandler(async (req, res) => {
   res.json({ success: true, data: { locations, pagination: paginate(total, page, limit) } });
 });
 
+// GET /api/locations/map
+// Trả về danh sách địa điểm phục vụ Bản đồ Di sản Văn học (1 Location = 1 Marker)
+const getMapLocations = asyncHandler(async (req, res) => {
+  const includeAll = req.query.includeAll === 'true';
+  const filter = { status: 'published' };
+  if (req.query.province) filter.province = { $regex: req.query.province, $options: 'i' };
+  if (req.query.ethnicGroup) filter.ethnicGroup = req.query.ethnicGroup;
+
+  const locations = await Location.find(filter)
+    .select('name slug province district address coordinates images videos shortDescription description ethnicGroup')
+    .populate({ path: 'ethnicGroup', select: 'name slug thumbnail' })
+    .lean();
+
+  const locationIds = locations.map((loc) => loc._id);
+
+  // Lấy các liên kết WorkLocation của các địa điểm này (chỉ lấy tác phẩm published)
+  const relations = await WorkLocation.find({ location: { $in: locationIds } })
+    .populate({
+      path: 'work',
+      match: { status: 'published' },
+      select: 'title slug coverImage summary author category ethnicGroup',
+      populate: { path: 'category', select: 'name slug icon color' },
+    })
+    .sort({ order: 1 })
+    .lean();
+
+  // Nhóm các tác phẩm theo từng địa điểm
+  const worksByLocationMap = new Map();
+  for (const rel of relations) {
+    if (!rel.work) continue; // Bỏ qua nếu tác phẩm không tồn tại hoặc chưa publish
+    const locKey = rel.location.toString();
+    if (!worksByLocationMap.has(locKey)) {
+      worksByLocationMap.set(locKey, []);
+    }
+    worksByLocationMap.get(locKey).push({
+      _id: rel.work._id,
+      title: rel.work.title,
+      slug: rel.work.slug,
+      author: rel.work.author,
+      summary: rel.work.summary,
+      coverImage: rel.work.coverImage,
+      category: rel.work.category,
+      order: rel.order,
+      role: rel.role,
+      journeyTitle: rel.journeyTitle,
+      journeyDescription: rel.journeyDescription,
+      media: rel.media,
+    });
+  }
+
+  const result = [];
+  for (const loc of locations) {
+    const locWorks = worksByLocationMap.get(loc._id.toString()) || [];
+    const hasWorks = locWorks.length > 0;
+
+    // Theo nghiệp vụ cốt lõi: mặc định chỉ hiển thị Location có >= 1 Work
+    if (!includeAll && !hasWorks) {
+      continue;
+    }
+
+    result.push({
+      _id: loc._id,
+      name: loc.name,
+      slug: loc.slug,
+      province: loc.province,
+      district: loc.district,
+      address: loc.address,
+      coordinates: loc.coordinates,
+      images: loc.images,
+      videos: loc.videos,
+      shortDescription: loc.shortDescription,
+      description: loc.description,
+      ethnicGroup: loc.ethnicGroup,
+      relatedWorks: locWorks,
+      workCount: locWorks.length,
+      hasWorks,
+    });
+  }
+
+  res.json({
+    success: true,
+    data: {
+      total: result.length,
+      locations: result,
+    },
+  });
+});
+
 // GET /api/locations/:slug
 const getBySlug = asyncHandler(async (req, res) => {
   const isAdmin = req.user?.role === 'admin';
@@ -37,14 +130,41 @@ const getBySlug = asyncHandler(async (req, res) => {
   if (!isAdmin) filter.status = 'published';
   const location = await Location.findOne(filter).populate(populateOptions);
   if (!location) return res.status(404).json({ success: false, message: 'Địa điểm không tồn tại.' });
-  res.json({ success: true, data: { location } });
+
+  const locationObj = location.toObject();
+  const relations = await WorkLocation.find({ location: location._id })
+    .populate({
+      path: 'work',
+      match: isAdmin ? {} : { status: 'published' },
+      select: 'title slug coverImage summary author category ethnicGroup status',
+      populate: { path: 'category', select: 'name slug icon color' },
+    })
+    .sort({ order: 1 })
+    .lean();
+
+  locationObj.relatedWorks = relations.map((r) => r.work).filter(Boolean);
+
+  res.json({ success: true, data: { location: locationObj } });
 });
 
 // GET /api/locations/id/:id  (admin)
 const getById = asyncHandler(async (req, res) => {
   const location = await Location.findById(req.params.id).populate(populateOptions);
   if (!location) return res.status(404).json({ success: false, message: 'Địa điểm không tồn tại.' });
-  res.json({ success: true, data: { location } });
+
+  const locationObj = location.toObject();
+  const relations = await WorkLocation.find({ location: location._id })
+    .populate({
+      path: 'work',
+      select: 'title slug coverImage summary author category ethnicGroup status',
+      populate: { path: 'category', select: 'name slug icon color' },
+    })
+    .sort({ order: 1 })
+    .lean();
+
+  locationObj.relatedWorks = relations.map((r) => r.work).filter(Boolean);
+
+  res.json({ success: true, data: { location: locationObj } });
 });
 
 // POST /api/locations  (admin)
@@ -57,10 +177,14 @@ const create = asyncHandler(async (req, res) => {
     delete data.lat; delete data.lng;
   }
 
-  // Parse relatedWorks JSON string
-  if (typeof data.relatedWorks === 'string') {
-    try { data.relatedWorks = JSON.parse(data.relatedWorks); } catch { data.relatedWorks = []; }
+  // Parse relatedWorks
+  let rawWorks = null;
+  if (data.relatedWorks) {
+    rawWorks = typeof data.relatedWorks === 'string'
+      ? (() => { try { return JSON.parse(data.relatedWorks); } catch { return []; } })()
+      : data.relatedWorks;
   }
+  delete data.relatedWorks;
 
   // Upload images
   if (req.files?.images?.length) {
@@ -72,6 +196,12 @@ const create = asyncHandler(async (req, res) => {
   }
 
   const location = await Location.create(data);
+
+  // Synchronize WorkLocation relations if relatedWorks provided
+  if (rawWorks && Array.isArray(rawWorks)) {
+    await syncWorkLocationsForLocation(location._id, rawWorks);
+  }
+
   res.status(201).json({ success: true, message: 'Tạo địa điểm thành công.', data: { location } });
 });
 
@@ -86,8 +216,13 @@ const update = asyncHandler(async (req, res) => {
     data.coordinates = { lat: parseFloat(data.lat), lng: parseFloat(data.lng) };
     delete data.lat; delete data.lng;
   }
-  if (typeof data.relatedWorks === 'string') {
-    try { data.relatedWorks = JSON.parse(data.relatedWorks); } catch { data.relatedWorks = []; }
+
+  let rawWorks = undefined;
+  if (data.relatedWorks !== undefined) {
+    rawWorks = typeof data.relatedWorks === 'string'
+      ? (() => { try { return JSON.parse(data.relatedWorks); } catch { return []; } })()
+      : data.relatedWorks;
+    delete data.relatedWorks;
   }
 
   // Append new images (keep existing)
@@ -101,21 +236,22 @@ const update = asyncHandler(async (req, res) => {
 
   const updated = await Location.findByIdAndUpdate(req.params.id, data, { new: true, runValidators: true })
     .populate(populateOptions);
+
+  // Synchronize WorkLocation relations
+  if (rawWorks !== undefined) {
+    await syncWorkLocationsForLocation(location._id, rawWorks);
+  }
+
   res.json({ success: true, message: 'Cập nhật thành công.', data: { location: updated } });
 });
-
-const Work = require('../models/Work');
 
 // DELETE /api/locations/:id  (admin)
 const remove = asyncHandler(async (req, res) => {
   const location = await Location.findById(req.params.id);
   if (!location) return res.status(404).json({ success: false, message: 'Địa điểm không tồn tại.' });
 
-  // Clean up references in all related Works
-  await Work.updateMany(
-    { relatedLocations: location._id },
-    { $pull: { relatedLocations: location._id } }
-  );
+  // Clean up all WorkLocation relations and references
+  await cleanupWorkLocationsForLocation(location._id);
 
   for (const img of location.images || []) await deleteFile(img.publicId, 'image');
   for (const vid of location.videos || []) {
@@ -168,4 +304,15 @@ const removeVideo = asyncHandler(async (req, res) => {
   res.json({ success: true, message: 'Đã xóa video.', data: { location } });
 });
 
-module.exports = { getAll, getBySlug, getById, create, update, remove, removeImage, addVideo, removeVideo };
+module.exports = {
+  getAll,
+  getMapLocations,
+  getBySlug,
+  getById,
+  create,
+  update,
+  remove,
+  removeImage,
+  addVideo,
+  removeVideo,
+};

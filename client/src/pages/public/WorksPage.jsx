@@ -5,6 +5,7 @@ import { categoryService } from '../../services/category.service';
 import Loading from '../../components/ui/Loading';
 import ErrorState from '../../components/ui/ErrorState';
 import Pagination from '../../components/ui/Pagination';
+import SmartImage from '../../components/ui/SmartImage';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { CATEGORIES } from '../../constants';
 
@@ -123,7 +124,7 @@ const WorksPage = () => {
                 <Link to={`/works/${work.slug}`} key={work._id} className="card-hover group flex flex-col h-full bg-white rounded-2xl">
                   <div className="aspect-[4/3] w-full overflow-hidden bg-gray-100 relative">
                     {work.coverImage?.url ? (
-                      <img 
+                      <SmartImage 
                         src={work.coverImage.url} 
                         alt={work.title} 
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

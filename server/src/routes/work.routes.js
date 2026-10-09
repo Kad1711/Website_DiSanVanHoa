@@ -1,7 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
 const {
-  getAll, getBySlug, getById, create, update, remove,
+  getAll, getBySlug, getWorkJourney, getById, create, update, remove,
   addVideo, removeVideo, removeGalleryImage,
   toggleLike, addComment, deleteComment,
 } = require('../controllers/work.controller');
@@ -18,7 +18,9 @@ const workValidation = [
 
 // Public / Auth-Aware
 router.get('/', optionalAuth, getAll);
+router.get('/slug/:slug/journey', optionalAuth, getWorkJourney);
 router.get('/slug/:slug', optionalAuth, getBySlug);
+router.get('/:slug/journey', optionalAuth, getWorkJourney);
 
 // User/Admin Interaction: Like & Comment
 router.post('/:id/like', protect, toggleLike);

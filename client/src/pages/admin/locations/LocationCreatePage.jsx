@@ -2,14 +2,17 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { locationService } from '../../../services/location.service';
 import { ethnicGroupService } from '../../../services/ethnicGroup.service';
+import { workService } from '../../../services/work.service';
 import { STATUSES } from '../../../constants';
 import LocationCoordinatePicker from '../../../components/ui/LocationCoordinatePicker';
-import { ArrowLeftIcon, PhotoIcon, MapPinIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, PhotoIcon, MapPinIcon, BookOpenIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 
 const LocationCreatePage = () => {
   const navigate = useNavigate();
   const [ethnicGroups, setEthnicGroups] = useState([]);
+  const [availableWorks, setAvailableWorks] = useState([]);
+  const [selectedWorks, setSelectedWorks] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
     province: '',
@@ -26,12 +29,36 @@ const LocationCreatePage = () => {
   const [images, setImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = 'Bạn có thay đổi chưa lưu.';
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isDirty]);
+
+  const markDirty = () => {
+    if (!isDirty) setIsDirty(true);
+  };
 
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const egRes = await ethnicGroupService.getAll({ limit: 100 });
-        setEthnicGroups(egRes.data.data.ethnicGroups || []);
+        const [egRes, workRes] = await Promise.allSettled([
+          ethnicGroupService.getAll({ limit: 100 }),
+          workService.getAll({ limit: 200 }),
+        ]);
+        if (egRes.status === 'fulfilled') {
+          setEthnicGroups(egRes.value.data.data.ethnicGroups || []);
+        }
+        if (workRes.status === 'fulfilled') {
+          setAvailableWorks(workRes.value.data.data.works || []);
+        }
       } catch (err) {
         console.error('Failed to load options', err);
       }
@@ -41,7 +68,6 @@ const LocationCreatePage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // Handle flat keys (lat, lng) as well as dot-notation (coordinates.lat)
     if (name === 'coordinates.lat') {
       setFormData((prev) => ({ ...prev, lat: value }));
     } else if (name === 'coordinates.lng') {
@@ -49,8 +75,15 @@ const LocationCreatePage = () => {
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
+    markDirty();
   };
 
+  const handleWorkToggle = (workId) => {
+    setSelectedWorks((prev) =>
+      prev.includes(workId) ? prev.filter((id) => id !== workId) : [...prev, workId]
+    );
+    markDirty();
+  };
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -91,7 +124,9 @@ const LocationCreatePage = () => {
       data.append('description', formData.description);
 
       if (formData.ethnicGroup) data.append('ethnicGroup', formData.ethnicGroup);
-      // relatedWorks is managed from the Work side, not here
+      if (selectedWorks.length > 0) {
+        data.append('relatedWorks', JSON.stringify(selectedWorks));
+      }
 
       images.forEach((img) => data.append('images', img));
 
@@ -110,6 +145,7 @@ const LocationCreatePage = () => {
         }
       }
 
+      setIsDirty(false);
       toast.success('Tạo địa điểm thành công!');
       navigate('/admin/locations');
     } catch (err) {
@@ -119,10 +155,16 @@ const LocationCreatePage = () => {
     }
   };
 
+  const handleCancel = (e) => {
+    if (isDirty && !window.confirm('Bạn có thay đổi chưa lưu. Bạn có chắc chắn muốn rời đi?')) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <div className="space-y-4 sm:space-y-6 max-w-4xl font-sans">
       <div className="flex items-center gap-3 sm:gap-4">
-        <Link to="/admin/locations" className="p-2 bg-white rounded-xl border border-gray-200 hover:bg-gray-50 flex-shrink-0">
+        <Link to="/admin/locations" onClick={handleCancel} className="p-2 bg-white rounded-xl border border-gray-200 hover:bg-gray-50 flex-shrink-0">
           <ArrowLeftIcon className="w-5 h-5 text-gray-600" />
         </Link>
         <div>
@@ -140,29 +182,27 @@ const LocationCreatePage = () => {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              placeholder="Ví dụ: Đỉnh Mẫu Sơn, Hồ Ba Bể..."
+              placeholder="Ví dụ: Bản Lác, Sông Lam, Đỉnh Pu Si Lung..."
               className="input"
               required
             />
           </div>
 
           <div>
-            <label className="label">Dân tộc liên quan</label>
+            <label className="label">Dân tộc gắn liền</label>
             <select
               name="ethnicGroup"
               value={formData.ethnicGroup}
               onChange={handleChange}
               className="input"
             >
-              <option value="">-- Không chọn --</option>
+              <option value="">-- Chọn dân tộc (không bắt buộc) --</option>
               {ethnicGroups.map((g) => (
                 <option key={g._id} value={g._id}>{g.name}</option>
               ))}
             </select>
           </div>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           <div>
             <label className="label">Tỉnh / Thành phố <span className="text-red-500">*</span></label>
             <input
@@ -170,7 +210,7 @@ const LocationCreatePage = () => {
               name="province"
               value={formData.province}
               onChange={handleChange}
-              placeholder="Ví dụ: Lạng Sơn, Bắc Kạn..."
+              placeholder="Ví dụ: Nghệ An, Hòa Bình, Đắk Lắk..."
               className="input"
               required
             />
@@ -183,7 +223,7 @@ const LocationCreatePage = () => {
               name="district"
               value={formData.district}
               onChange={handleChange}
-              placeholder="Ví dụ: Huyện Lộc Bình..."
+              placeholder="Ví dụ: Quỳ Châu, Mai Châu..."
               className="input"
             />
           </div>
@@ -196,26 +236,28 @@ const LocationCreatePage = () => {
             name="address"
             value={formData.address}
             onChange={handleChange}
-            placeholder="Ví dụ: Xã Mẫu Sơn, huyện Lộc Bình..."
+            placeholder="Địa chỉ cụ thể (thôn, bản, xã...)"
             className="input"
           />
         </div>
 
-        <div className="p-4 sm:p-5 bg-orange-50/50 rounded-2xl border border-orange-100 space-y-3 sm:space-y-4">
-          <div>
-            <h3 className="font-bold text-gray-800 text-sm sm:text-base">Tọa độ địa lý (GIS)</h3>
-            <p className="text-xs text-gray-500 mt-0.5">
-              Click trực tiếp trên bản đồ hoặc chọn tỉnh/thành mẫu để tự động điền tọa độ chính xác.
-            </p>
+        {/* ── BẢN ĐỒ CHỌN TỌA ĐỘ VỊ TRÍ ── */}
+        <div className="space-y-2 p-4 bg-gray-50/80 rounded-2xl border border-gray-200/80">
+          <div className="flex items-center gap-2 mb-1">
+            <MapPinIcon className="w-5 h-5 text-primary" />
+            <h3 className="text-sm font-bold text-gray-800">Định vị Tọa độ trên Bản đồ</h3>
+            <span className="text-xs text-gray-500">(Bấm trực tiếp lên bản đồ hoặc kéo ghim để lấy tọa độ)</span>
           </div>
 
           <LocationCoordinatePicker
             lat={formData.lat}
             lng={formData.lng}
-            onChange={(coords) => setFormData((prev) => ({ ...prev, lat: coords.lat, lng: coords.lng }))}
+            onChange={({ lat, lng }) => {
+              setFormData((prev) => ({ ...prev, lat: String(lat), lng: String(lng) }));
+            }}
           />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pt-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
             <div>
               <label className="label text-xs">Vĩ độ (Latitude) <span className="text-red-500">*</span></label>
               <input
@@ -224,7 +266,7 @@ const LocationCreatePage = () => {
                 name="lat"
                 value={formData.lat}
                 onChange={handleChange}
-                placeholder="19.4500"
+                placeholder="20.6500"
                 className="input bg-white"
                 required
               />
@@ -243,6 +285,51 @@ const LocationCreatePage = () => {
               />
             </div>
           </div>
+        </div>
+
+        {/* ── TÁC PHẨM LIÊN QUAN (LIÊN KẾT 2 CHIỀU) ── */}
+        <div className="p-4 bg-amber-50/60 rounded-2xl border border-amber-200/70 space-y-3">
+          <div className="flex items-center gap-2">
+            <BookOpenIcon className="w-5 h-5 text-amber-700" />
+            <div>
+              <h3 className="text-sm font-bold text-amber-950">Tác phẩm Di sản gắn liền</h3>
+              <p className="text-xs text-amber-700">
+                Gắn địa điểm này vào các tác phẩm để hiển thị ngay trên Bản đồ Di sản Văn học.
+              </p>
+            </div>
+          </div>
+
+          {availableWorks.length === 0 ? (
+            <p className="text-xs text-gray-500 italic">Chưa có tác phẩm nào trong hệ thống.</p>
+          ) : (
+            <div className="max-h-48 overflow-y-auto border border-amber-200 rounded-xl p-3 grid grid-cols-1 sm:grid-cols-2 gap-2 bg-white/80">
+              {availableWorks.map((work) => {
+                const isChecked = selectedWorks.includes(work._id);
+                return (
+                  <label
+                    key={work._id}
+                    className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer text-xs transition-colors ${
+                      isChecked ? 'bg-amber-100 text-amber-950 font-semibold' : 'hover:bg-amber-50 text-gray-700'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={() => handleWorkToggle(work._id)}
+                      className="rounded text-amber-600 focus:ring-amber-500 h-4 w-4"
+                    />
+                    <span className="truncate flex-1">{work.title}</span>
+                    {work.author && <span className="text-gray-400 text-[11px] truncate">({work.author})</span>}
+                  </label>
+                );
+              })}
+            </div>
+          )}
+          {selectedWorks.length > 0 && (
+            <div className="text-xs text-amber-800 font-medium">
+              Đã chọn: <span className="font-bold">{selectedWorks.length}</span> tác phẩm liên quan.
+            </div>
+          )}
         </div>
 
         <div>
@@ -298,7 +385,6 @@ const LocationCreatePage = () => {
           </div>
         </div>
 
-
         <div>
           <label className="label">Trạng thái phát hành</label>
           <select
@@ -314,7 +400,7 @@ const LocationCreatePage = () => {
         </div>
 
         <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
-          <Link to="/admin/locations" className="btn-ghost">Hủy</Link>
+          <Link to="/admin/locations" onClick={handleCancel} className="btn-ghost">Hủy</Link>
           <button type="submit" disabled={loading} className="btn-primary">
             {loading ? 'Đang lưu...' : 'Lưu địa điểm'}
           </button>

@@ -3,6 +3,7 @@ import api from './api';
 export const workService = {
   getAll:             (params)        => api.get('/works', { params }),
   getBySlug:          (slug)          => api.get(`/works/slug/${slug}`),
+  getJourney:         (slug)          => api.get(`/works/slug/${slug}/journey`),
   getById:            (id)            => api.get(`/works/id/${id}`),
   create:             (data)          => api.post('/works', data),
   update:             (id, data)      => api.put(`/works/${id}`, data),

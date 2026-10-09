@@ -2,17 +2,20 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { locationService } from '../../../services/location.service';
 import { ethnicGroupService } from '../../../services/ethnicGroup.service';
+import { workService } from '../../../services/work.service';
 import { STATUSES } from '../../../constants';
 import Loading from '../../../components/ui/Loading';
 import ErrorState from '../../../components/ui/ErrorState';
 import LocationCoordinatePicker from '../../../components/ui/LocationCoordinatePicker';
-import { ArrowLeftIcon, MapPinIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, MapPinIcon, TrashIcon, BookOpenIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 
 const LocationEditPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [ethnicGroups, setEthnicGroups] = useState([]);
+  const [availableWorks, setAvailableWorks] = useState([]);
+  const [selectedWorks, setSelectedWorks] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
@@ -32,20 +35,50 @@ const LocationEditPage = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+  const [isDirty, setIsDirty] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = 'Bạn có thay đổi chưa lưu.';
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isDirty]);
+
+  const markDirty = () => {
+    if (!isDirty) setIsDirty(true);
+  };
 
   useEffect(() => {
     const fetchDetail = async () => {
       try {
         setLoading(true);
         setError(null);
-        const [locRes, egRes] = await Promise.all([
+        const [locRes, egRes, workRes] = await Promise.allSettled([
           locationService.getById(id),
           ethnicGroupService.getAll({ limit: 100 }),
+          workService.getAll({ limit: 200 }),
         ]);
 
-        const loc = locRes.data.data.location;
-        setEthnicGroups(egRes.data.data.ethnicGroups || []);
+        if (locRes.status !== 'fulfilled') throw new Error('Không thể tải thông tin địa điểm.');
+        const loc = locRes.value.data.data.location;
+
+        if (egRes.status === 'fulfilled') {
+          setEthnicGroups(egRes.value.data.data.ethnicGroups || []);
+        }
+        if (workRes.status === 'fulfilled') {
+          setAvailableWorks(workRes.value.data.data.works || []);
+        }
+
         setExistingImages(loc.images || []);
+
+        const initialWorks = (loc.relatedWorks || []).map((w) =>
+          typeof w === 'object' && w !== null ? w._id : w
+        );
+        setSelectedWorks(initialWorks);
 
         setFormData({
           name: loc.name || '',
@@ -72,8 +105,15 @@ const LocationEditPage = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    markDirty();
   };
 
+  const handleWorkToggle = (workId) => {
+    setSelectedWorks((prev) =>
+      prev.includes(workId) ? prev.filter((wid) => wid !== workId) : [...prev, workId]
+    );
+    markDirty();
+  };
 
   const handleNewImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -125,7 +165,7 @@ const LocationEditPage = () => {
       data.append('description', formData.description);
 
       if (formData.ethnicGroup) data.append('ethnicGroup', formData.ethnicGroup);
-      // relatedWorks is managed from the Work side, not here
+      data.append('relatedWorks', JSON.stringify(selectedWorks));
 
       newImages.forEach((img) => data.append('images', img));
 
@@ -143,6 +183,7 @@ const LocationEditPage = () => {
         }
       }
 
+      setIsDirty(false);
       toast.success('Cập nhật địa điểm thành công!');
       navigate('/admin/locations');
     } catch (err) {
@@ -152,18 +193,24 @@ const LocationEditPage = () => {
     }
   };
 
+  const handleCancel = (e) => {
+    if (isDirty && !window.confirm('Bạn có thay đổi chưa lưu. Bạn có chắc chắn muốn rời đi?')) {
+      e.preventDefault();
+    }
+  };
+
   if (loading) return <Loading />;
   if (error) return <ErrorState message={error} onRetry={() => window.location.reload()} />;
 
   return (
     <div className="space-y-4 sm:space-y-6 max-w-4xl font-sans">
       <div className="flex items-center gap-3 sm:gap-4">
-        <Link to="/admin/locations" className="p-2 bg-white rounded-xl border border-gray-200 hover:bg-gray-50 flex-shrink-0">
+        <Link to="/admin/locations" onClick={handleCancel} className="p-2 bg-white rounded-xl border border-gray-200 hover:bg-gray-50 flex-shrink-0">
           <ArrowLeftIcon className="w-5 h-5 text-gray-600" />
         </Link>
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Chỉnh Sửa Địa Điểm</h1>
-          <p className="text-gray-500 text-xs sm:text-sm">Cập nhật thông tin di sản: {formData.name}</p>
+          <p className="text-gray-500 text-xs sm:text-sm">Cập nhật thông tin, tọa độ và tác phẩm gắn liền</p>
         </div>
       </div>
 
@@ -176,7 +223,6 @@ const LocationEditPage = () => {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              placeholder="Ví dụ: Bản Lác - Mai Châu, Hồ Ba Bể..."
               className="input"
               required
             />
@@ -190,15 +236,13 @@ const LocationEditPage = () => {
               onChange={handleChange}
               className="input"
             >
-              <option value="">-- Chọn dân tộc --</option>
+              <option value="">-- Chọn dân tộc (không bắt buộc) --</option>
               {ethnicGroups.map((eg) => (
-                <option key={eg._id} value={eg._id}>{eg.name} ({eg.region || 'VN'})</option>
+                <option key={eg._id} value={eg._id}>{eg.name}</option>
               ))}
             </select>
           </div>
-        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
             <label className="label">Tỉnh / Thành phố <span className="text-red-500">*</span></label>
             <input
@@ -206,50 +250,52 @@ const LocationEditPage = () => {
               name="province"
               value={formData.province}
               onChange={handleChange}
-              placeholder="Ví dụ: Hòa Bình, Hà Giang..."
               className="input"
               required
             />
           </div>
 
           <div>
-            <label className="label">Quận / Huyện / Thị xã</label>
+            <label className="label">Quận / Huyện</label>
             <input
               type="text"
               name="district"
               value={formData.district}
               onChange={handleChange}
-              placeholder="Ví dụ: Mai Châu, Đồng Văn..."
-              className="input"
-            />
-          </div>
-
-          <div>
-            <label className="label">Địa chỉ chi tiết</label>
-            <input
-              type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              placeholder="Ví dụ: Xã Chiềng Châu..."
               className="input"
             />
           </div>
         </div>
 
-        {/* Coordinates Section with Interactive Mini Map */}
-        <div className="p-5 bg-gradient-to-br from-orange-50/70 via-amber-50/40 to-orange-50/20 rounded-2xl border border-orange-200 space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm font-bold text-earth">
-              <MapPinIcon className="w-5 h-5 text-primary" />
-              <span>Tọa độ GPS & Bản đồ chọn vị trí trực quan</span>
-            </div>
-            <span className="text-xs text-gray-500 font-normal">
-              Hỗ trợ xem ảnh Vệ tinh sắc nét
-            </span>
+        <div>
+          <label className="label">Địa chỉ chi tiết</label>
+          <input
+            type="text"
+            name="address"
+            value={formData.address}
+            onChange={handleChange}
+            placeholder="Địa chỉ cụ thể (thôn, bản, xã...)"
+            className="input"
+          />
+        </div>
+
+        {/* ── BẢN ĐỒ CHỌN TỌA ĐỘ VỊ TRÍ ── */}
+        <div className="space-y-2 p-4 bg-gray-50/80 rounded-2xl border border-gray-200/80">
+          <div className="flex items-center gap-2 mb-1">
+            <MapPinIcon className="w-5 h-5 text-primary" />
+            <h3 className="text-sm font-bold text-gray-800">Định vị Tọa độ trên Bản đồ</h3>
+            <span className="text-xs text-gray-500">(Bấm trực tiếp lên bản đồ hoặc kéo ghim để lấy tọa độ)</span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <LocationCoordinatePicker
+            lat={formData.lat}
+            lng={formData.lng}
+            onChange={({ lat, lng }) => {
+              setFormData((prev) => ({ ...prev, lat: String(lat), lng: String(lng) }));
+            }}
+          />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
             <div>
               <label className="label text-xs">Vĩ độ (Latitude) <span className="text-red-500">*</span></label>
               <input
@@ -258,8 +304,8 @@ const LocationEditPage = () => {
                 name="lat"
                 value={formData.lat}
                 onChange={handleChange}
-                placeholder="20.6593"
-                className="input text-sm font-mono font-semibold"
+                placeholder="19.2998"
+                className="input bg-white"
                 required
               />
             </div>
@@ -271,33 +317,69 @@ const LocationEditPage = () => {
                 name="lng"
                 value={formData.lng}
                 onChange={handleChange}
-                placeholder="104.9866"
-                className="input text-sm font-mono font-semibold"
+                placeholder="105.1490"
+                className="input bg-white"
                 required
               />
             </div>
           </div>
+        </div>
 
-          {/* Mini Interactive Map Picker */}
-          <LocationCoordinatePicker
-            lat={formData.lat}
-            lng={formData.lng}
-            onChange={({ lat, lng }) => {
-              setFormData((prev) => ({ ...prev, lat, lng }));
-            }}
-          />
+        {/* ── TÁC PHẨM LIÊN QUAN (LIÊN KẾT 2 CHIỀU) ── */}
+        <div className="p-4 bg-amber-50/60 rounded-2xl border border-amber-200/70 space-y-3">
+          <div className="flex items-center gap-2">
+            <BookOpenIcon className="w-5 h-5 text-amber-700" />
+            <div>
+              <h3 className="text-sm font-bold text-amber-950">Tác phẩm Di sản gắn liền</h3>
+              <p className="text-xs text-amber-700">
+                Gắn địa điểm này vào các tác phẩm để hiển thị ngay trên Bản đồ Di sản Văn học.
+              </p>
+            </div>
+          </div>
+
+          {availableWorks.length === 0 ? (
+            <p className="text-xs text-gray-500 italic">Chưa có tác phẩm nào trong hệ thống.</p>
+          ) : (
+            <div className="max-h-48 overflow-y-auto border border-amber-200 rounded-xl p-3 grid grid-cols-1 sm:grid-cols-2 gap-2 bg-white/80">
+              {availableWorks.map((work) => {
+                const isChecked = selectedWorks.includes(work._id);
+                return (
+                  <label
+                    key={work._id}
+                    className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer text-xs transition-colors ${
+                      isChecked ? 'bg-amber-100 text-amber-950 font-semibold' : 'hover:bg-amber-50 text-gray-700'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={() => handleWorkToggle(work._id)}
+                      className="rounded text-amber-600 focus:ring-amber-500 h-4 w-4"
+                    />
+                    <span className="truncate flex-1">{work.title}</span>
+                    {work.author && <span className="text-gray-400 text-[11px] truncate">({work.author})</span>}
+                  </label>
+                );
+              })}
+            </div>
+          )}
+          {selectedWorks.length > 0 && (
+            <div className="text-xs text-amber-800 font-medium">
+              Đã chọn: <span className="font-bold">{selectedWorks.length}</span> tác phẩm liên quan.
+            </div>
+          )}
         </div>
 
         <div>
           <label className="label">Mô tả ngắn</label>
-          <input
-            type="text"
+          <textarea
             name="shortDescription"
+            rows="2"
             value={formData.shortDescription}
             onChange={handleChange}
-            placeholder="Tóm tắt ngắn gọn vị trí hoặc ý nghĩa địa danh..."
+            placeholder="Tóm tắt về địa danh trong 1-2 câu..."
             className="input"
-          />
+          ></textarea>
         </div>
 
         <div>
@@ -376,7 +458,6 @@ const LocationEditPage = () => {
           />
         </div>
 
-
         <div>
           <label className="label">Trạng thái phát hành</label>
           <select
@@ -392,7 +473,7 @@ const LocationEditPage = () => {
         </div>
 
         <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 pt-4 border-t border-gray-100">
-          <Link to="/admin/locations" className="btn-ghost text-center text-xs sm:text-sm py-2.5">Hủy</Link>
+          <Link to="/admin/locations" onClick={handleCancel} className="btn-ghost text-center text-xs sm:text-sm py-2.5">Hủy</Link>
           <button type="submit" disabled={saving} className="btn-primary text-xs sm:text-sm py-2.5">
             {saving ? 'Đang cập nhật...' : 'Cập nhật thay đổi'}
           </button>

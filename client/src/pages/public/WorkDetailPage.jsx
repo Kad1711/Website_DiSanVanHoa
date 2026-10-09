@@ -4,6 +4,8 @@ import { workService } from '../../services/work.service';
 import { useAuth } from '../../context/AuthContext';
 import Loading from '../../components/ui/Loading';
 import ErrorState from '../../components/ui/ErrorState';
+import SmartImage from '../../components/ui/SmartImage';
+import HeritageDust3D from '../../components/three/HeritageDust3D';
 import {
   BookOpenIcon,
   MapPinIcon,
@@ -162,12 +164,13 @@ const WorkDetailPage = () => {
       {/* Hero Header */}
       <div className="bg-gradient-to-r from-gray-900 via-primary-950 to-gray-900 text-white py-8 sm:py-12 lg:py-16 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/src/assets/hero-pattern.svg')] opacity-15"></div>
+        <HeritageDust3D count={45} color="#f59e0b" />
         <div className="container-lg relative z-10">
           <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 items-center">
             {/* Cover image */}
             <div className="w-48 sm:w-64 lg:w-72 aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl bg-gray-800 flex-shrink-0 border-2 border-white/20 relative group">
               {work.coverImage?.url ? (
-                <img
+                <SmartImage
                   src={work.coverImage.url}
                   alt={work.title}
                   className="w-full h-full object-cover"
@@ -518,31 +521,79 @@ const WorkDetailPage = () => {
               </div>
             )}
 
-            {/* Associated Geographic Locations */}
-            {work.relatedLocations && work.relatedLocations.length > 0 && (
+            {/* Associated Geographic Locations & Journey Timeline */}
+            {((work.journey && work.journey.length > 0) || (work.relatedLocations && work.relatedLocations.length > 0)) && (
               <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 p-5 sm:p-6">
-                <h3 className="font-serif font-bold text-gray-800 text-sm sm:text-base mb-3 sm:mb-4 flex items-center gap-2">
-                  <MapPinIcon className="w-4 h-4 sm:w-5 sm:h-5 text-earth" />
-                  Địa Danh Gắn Liền
-                </h3>
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <h3 className="font-serif font-bold text-gray-800 text-sm sm:text-base flex items-center gap-2">
+                    <MapPinIcon className="w-4 h-4 sm:w-5 sm:h-5 text-earth" />
+                    Hành Trình Di Sản
+                  </h3>
+                  <span className="text-[11px] bg-amber-50 text-amber-800 px-2.5 py-0.5 rounded-full font-semibold border border-amber-200">
+                    {work.journey?.length || work.relatedLocations?.length} chặng
+                  </span>
+                </div>
                 <div className="space-y-2.5 sm:space-y-3">
-                  {work.relatedLocations.map((loc) => (
-                    <Link
-                      to={`/locations/${loc.slug}`}
-                      key={loc._id}
-                      className="p-3 rounded-2xl bg-orange-50/50 hover:bg-orange-50 border border-orange-100 flex items-start gap-3 transition-colors group block"
-                    >
-                      <div className="p-2 rounded-xl bg-earth text-white mt-0.5 flex-shrink-0">
-                        <MapPinIcon className="w-3.5 h-3.5" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-xs text-gray-900 group-hover:text-earth transition-colors truncate">
-                          {loc.name}
-                        </h4>
-                        <p className="text-[11px] text-gray-500">{loc.province}</p>
-                      </div>
-                    </Link>
-                  ))}
+                  {(work.journey && work.journey.length > 0
+                    ? work.journey
+                    : (work.relatedLocations || []).map((loc, i) => ({
+                        order: i + 1,
+                        role: i === 0 ? 'START' : 'DEVELOPMENT',
+                        location: loc,
+                        journeyTitle: '',
+                        journeyDescription: '',
+                      }))
+                  ).map((item) => {
+                    const loc = item.location;
+                    if (!loc) return null;
+                    const roleLabels = {
+                      START: 'Khởi đầu',
+                      DEVELOPMENT: 'Phát triển',
+                      CLIMAX: 'Cao trào',
+                      END: 'Kết thúc',
+                      OTHER: 'Địa danh',
+                    };
+                    const roleColors = {
+                      START: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+                      DEVELOPMENT: 'bg-blue-100 text-blue-800 border-blue-200',
+                      CLIMAX: 'bg-red-100 text-red-800 border-red-200',
+                      END: 'bg-purple-100 text-purple-800 border-purple-200',
+                      OTHER: 'bg-gray-100 text-gray-700 border-gray-200',
+                    };
+
+                    return (
+                      <Link
+                        to={`/locations/${loc.slug}`}
+                        key={item._id || loc._id}
+                        className="p-3 rounded-2xl bg-orange-50/50 hover:bg-orange-50 border border-orange-100 flex items-start gap-3 transition-colors group block"
+                      >
+                        <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 text-white font-bold text-xs flex items-center justify-center flex-shrink-0 shadow-sm mt-0.5">
+                          {item.order || 1}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5 mb-1">
+                            <span className={`text-[10px] px-2 py-0.5 rounded-md font-semibold border ${roleColors[item.role] || roleColors.DEVELOPMENT}`}>
+                              {roleLabels[item.role] || 'Chặng'}
+                            </span>
+                            <span className="text-[11px] text-gray-500 truncate">{loc.province}</span>
+                          </div>
+                          <h4 className="font-bold text-xs sm:text-sm text-gray-900 group-hover:text-earth transition-colors truncate">
+                            {loc.name}
+                          </h4>
+                          {item.journeyTitle && (
+                            <p className="text-xs font-medium text-amber-800 mt-0.5 line-clamp-1">
+                              {item.journeyTitle}
+                            </p>
+                          )}
+                          {item.journeyDescription && (
+                            <p className="text-[11px] text-gray-500 mt-1 line-clamp-2">
+                              {item.journeyDescription}
+                            </p>
+                          )}
+                        </div>
+                      </Link>
+                    );
+                  })}
                 </div>
                 <Link
                   to="/map"

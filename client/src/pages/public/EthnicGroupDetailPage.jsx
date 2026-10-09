@@ -5,6 +5,7 @@ import { workService } from '../../services/work.service';
 import { locationService } from '../../services/location.service';
 import Loading from '../../components/ui/Loading';
 import ErrorState from '../../components/ui/ErrorState';
+import SmartImage from '../../components/ui/SmartImage';
 import {
   UsersIcon,
   BookOpenIcon,
@@ -144,7 +145,7 @@ const EthnicGroupDetailPage = () => {
                       className="card-hover p-3 sm:p-4 border border-gray-100 flex gap-3 items-center group rounded-xl sm:rounded-2xl"
                     >
                       {work.coverImage?.url ? (
-                        <img
+                        <SmartImage
                           src={work.coverImage.url}
                           alt={work.title}
                           className="w-12 h-16 sm:w-14 sm:h-18 object-cover rounded-lg sm:rounded-xl flex-shrink-0"

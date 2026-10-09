@@ -1,35 +1,40 @@
 import { Link } from 'react-router-dom';
 import { ArrowRightIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { PlayIcon, MapIcon, SparklesIcon } from '@heroicons/react/24/solid';
+import { PlayIcon, MapIcon, SparklesIcon, CubeTransparentIcon } from '@heroicons/react/24/solid';
+import HeritageHero3D from '../../components/three/HeritageHero3D';
+import HeritageArtifact3D from '../../components/three/HeritageArtifact3D';
 
 const HomePage = () => {
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Hero Section */}
-      <section className="relative min-h-[600px] sm:min-h-[700px] flex items-center justify-center bg-gray-900 overflow-hidden">
+      {/* Hero Section với Hiệu ứng 3D Sông Núi & Đom Đóm Di Sản */}
+      <section className="relative min-h-[600px] sm:min-h-[720px] flex items-center justify-center bg-gray-950 overflow-hidden">
         {/* Background Image & Overlay */}
         <div 
           className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1596700684711-53e34b1767de?q=80&w=2000&auto=format&fit=crop')] 
-                     bg-cover bg-center bg-no-repeat opacity-40 mix-blend-overlay"
+                     bg-cover bg-center bg-no-repeat opacity-30 mix-blend-overlay"
         ></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/60 via-gray-900/40 to-gray-900/90"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-950/80 via-gray-950/60 to-gray-950/95"></div>
 
-        <div className="container-lg relative z-10 pt-16 sm:pt-20 pb-12 sm:pb-16 px-4">
+        {/* 3D WebGL Canvas Layer (Three.js: Dải Sóng Núi, Đom Đóm Bay & Vòng Ngân Hà) */}
+        <HeritageHero3D />
+
+        <div className="container-lg relative z-20 pt-16 sm:pt-20 pb-12 sm:pb-16 px-4">
           <div className="max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
               <SparklesIcon className="w-4 h-4 text-secondary-300" />
-              <span className="text-xs sm:text-sm font-medium text-white tracking-wide uppercase">Không Gian Văn Học Số</span>
+              <span className="text-xs sm:text-sm font-medium text-white tracking-wide uppercase">Không Gian Văn Học Số 3D</span>
             </div>
             
             <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold font-serif text-white mb-5 sm:mb-6 leading-tight animate-in fade-in slide-in-from-bottom-6 duration-700 delay-150">
               Hồn Cốt <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-secondary-300 to-secondary-500">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-secondary-300 via-amber-200 to-secondary-500">
                 Đại Ngàn
               </span>
             </h1>
             
             <p className="text-sm sm:text-lg md:text-xl text-gray-200 mb-8 sm:mb-10 max-w-2xl mx-auto font-light leading-relaxed animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
-              Khám phá và lưu giữ kho tàng văn học phong phú của các dân tộc thiểu số Việt Nam qua lăng kính công nghệ số.
+              Khám phá và lưu giữ kho tàng văn học phong phú của các dân tộc thiểu số Việt Nam qua lăng kính công nghệ số và không gian ba chiều sống động.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 animate-in fade-in slide-in-from-bottom-10 duration-700 delay-500">
@@ -50,13 +55,13 @@ const HomePage = () => {
         </div>
 
         {/* Decorative elements */}
-        <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-cream to-transparent z-10"></div>
+        <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-cream to-transparent z-20 pointer-events-none"></div>
       </section>
 
       {/* Features Section */}
-      <section className="py-14 sm:py-24 bg-cream relative z-20">
+      <section className="py-14 sm:py-20 bg-cream relative z-20">
         <div className="container-lg">
-          <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-16">
+          <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-3 sm:mb-4">Trải Nghiệm Đa Chiều</h2>
             <p className="text-xs sm:text-sm text-gray-600">Chúng tôi ứng dụng công nghệ để làm sống lại các tác phẩm văn học dân gian, đưa bạn vào một không gian trải nghiệm hoàn toàn mới.</p>
           </div>
@@ -65,7 +70,7 @@ const HomePage = () => {
             {[
               {
                 title: 'Bản đồ tương tác',
-                desc: 'Khám phá sự phân bố không gian và nguồn gốc địa lý của từng tác phẩm, từng dân tộc qua bản đồ 3D sống động.',
+                desc: 'Khám phá sự phân bố không gian và nguồn gốc địa lý của từng tác phẩm, từng dân tộc qua bản đồ tương tác.',
                 icon: MapIcon,
                 color: 'text-primary',
                 bg: 'bg-primary-50',
@@ -85,7 +90,7 @@ const HomePage = () => {
                 bg: 'bg-orange-50',
               }
             ].map((feature, i) => (
-              <div key={i} className="card-hover p-6 sm:p-8 text-center group cursor-pointer border-none bg-white/60 backdrop-blur-sm rounded-2xl">
+              <div key={i} className="card-hover p-6 sm:p-8 text-center group cursor-pointer border-none bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm">
                 <div className={`w-14 h-14 sm:w-16 sm:h-16 mx-auto rounded-2xl ${feature.bg} flex items-center justify-center mb-5 sm:mb-6 group-hover:scale-110 transition-transform duration-300`}>
                   <feature.icon className={`w-7 h-7 sm:w-8 sm:h-8 ${feature.color}`} />
                 </div>
@@ -93,6 +98,70 @@ const HomePage = () => {
                 <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">{feature.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 3D Showcase Section: Cổ Thư Di Sản Tương Tác 3D */}
+      <section className="py-14 sm:py-20 bg-gradient-to-b from-cream via-amber-50/40 to-stone-100 relative">
+        <div className="container-lg">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 items-center">
+            {/* Cột giới thiệu */}
+            <div className="lg:col-span-6 space-y-5">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-700 text-xs font-semibold">
+                <CubeTransparentIcon className="w-4 h-4 text-amber-600" />
+                <span>Công Nghệ Three.js WebGL</span>
+              </div>
+
+              <h2 className="text-2xl sm:text-4xl font-serif font-bold text-gray-900 leading-tight">
+                Chạm Vào Hiện Vật & <br />
+                <span className="text-primary">Không Gian Văn Học Ba Chiều</span>
+              </h2>
+
+              <p className="text-sm sm:text-base text-gray-600 leading-relaxed font-light">
+                Di sản không chỉ nằm trên những trang giấy tĩnh. Chúng tôi ứng dụng đồ họa không gian ba chiều thời gian thực (Real-time 3D) để đưa người xem đến gần hơn với từng hiện vật, thư tịch cổ và bối cảnh sử thi hào hùng của đồng bào các dân tộc.
+              </p>
+
+              <div className="space-y-3 pt-2">
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center flex-shrink-0 mt-0.5 font-bold text-xs">
+                    ✓
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-800 text-sm">Tương tác trực quan 360°</h4>
+                    <p className="text-xs text-gray-500">Người dùng có thể tự do dùng chuột hoặc cảm ứng để ngắm nhìn chi tiết từng góc cạnh.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-secondary/10 text-secondary-600 flex items-center justify-center flex-shrink-0 mt-0.5 font-bold text-xs">
+                    ✓
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-800 text-sm">Ánh sáng & Hạt tinh hoa mềm mại</h4>
+                    <p className="text-xs text-gray-500">Mô phỏng đốm lửa bập bùng và tinh hoa văn hóa truyền đời trong không gian mộng ảo.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <Link
+                  to="/works"
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary-700 transition"
+                >
+                  <span>Khám phá các kho tàng tác phẩm</span>
+                  <ArrowRightIcon className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
+
+            {/* Cột Mô hình Three.js 3D */}
+            <div className="lg:col-span-6">
+              <HeritageArtifact3D 
+                title="Cổ Thư Di Sản Dân Tộc" 
+                subtitle="Cuốn sách huyền tích được tái hiện trong không gian 3D" 
+              />
+            </div>
           </div>
         </div>
       </section>

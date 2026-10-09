@@ -105,7 +105,14 @@ const LocationListPage = () => {
                           </div>
                         )}
                         <div className="min-w-0">
-                          <div className="font-medium text-gray-800 line-clamp-1">{item.name}</div>
+                          <div className="font-medium text-gray-800 line-clamp-1 flex items-center gap-1.5">
+                            <span>{item.name}</span>
+                            {item.mapOrder > 0 && (
+                              <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300/60" title={`Số thứ tự trên bản đồ: ${item.mapOrder}`}>
+                                #{item.mapOrder}
+                              </span>
+                            )}
+                          </div>
                           <div className="text-[11px] text-gray-400 truncate max-w-[180px]">{item.slug}</div>
                         </div>
                       </div>

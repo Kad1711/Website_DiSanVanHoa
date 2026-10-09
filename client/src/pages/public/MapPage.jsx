@@ -5,6 +5,7 @@ import {
   TileLayer,
   Marker,
   Polyline,
+  ZoomControl,
   useMap,
 } from 'react-leaflet';
 import L from 'leaflet';
@@ -18,7 +19,6 @@ import {
   PlayIcon,
   PauseIcon,
   SparklesIcon,
-  ArrowPathIcon,
 } from '@heroicons/react/24/solid';
 
 // ─── Coordinate Validator ─────────────────────────────────────────────────────
@@ -235,9 +235,6 @@ const MapPage = () => {
   const [activeLocation, setActiveLocation] = useState(null);
   const [mapCenter, setMapCenter] = useState(BAN_TIENG_CENTER);
 
-  // Chế độ mở rộng: Không gian văn hóa mở rộng (xem cả địa danh chưa có tác phẩm)
-  const [showExtendedLayer, setShowExtendedLayer] = useState(false);
-
   // Đang theo dấu hành trình của một tác phẩm cụ thể
   const [focusedWork, setFocusedWork] = useState(null);
 
@@ -249,6 +246,15 @@ const MapPage = () => {
   const [isAutoTour, setIsAutoTour] = useState(false);
   const [currentTourIndex, setCurrentTourIndex] = useState(0);
 
+  const characterPosRef = useRef(BAN_TIENG_CENTER);
+  characterPosRef.current = characterPos;
+
+  const isAutoTourRef = useRef(false);
+  isAutoTourRef.current = isAutoTour;
+
+  const currentTourIndexRef = useRef(0);
+  currentTourIndexRef.current = currentTourIndex;
+
   const animRef = useRef(null);
   const tourTimerRef = useRef(null);
 
@@ -257,9 +263,7 @@ const MapPage = () => {
     try {
       setLoading(true);
       setError(null);
-      const res = await locationService.getMapLocations({
-        includeAll: showExtendedLayer,
-      });
+      const res = await locationService.getMapLocations();
       setLocations(res.data.data.locations || []);
     } catch (e) {
       console.error('Map fetch error:', e);
@@ -267,7 +271,7 @@ const MapPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [showExtendedLayer]);
+  }, []);
 
   useEffect(() => {
     fetchMapLocations();
@@ -279,10 +283,12 @@ const MapPage = () => {
       .filter((loc) => loc.coordinates && isValidCoordinate(loc.coordinates.lat, loc.coordinates.lng))
       .map((loc, idx) => ({
         ...loc,
-        order: idx + 1,
+        // Nếu admin cài đặt mapOrder > 0 thì ưu tiên mapOrder, ngược lại lấy idx + 1
+        order: loc.mapOrder && loc.mapOrder > 0 ? loc.mapOrder : idx + 1,
         lat: Number(loc.coordinates.lat),
         lng: Number(loc.coordinates.lng),
-      }));
+      }))
+      .sort((a, b) => a.order - b.order);
 
     if (focusedWork) {
       return valid.filter((loc) =>
@@ -293,6 +299,9 @@ const MapPage = () => {
     return valid;
   }, [locations, focusedWork]);
 
+  const displayedLocationsRef = useRef(displayedLocations);
+  displayedLocationsRef.current = displayedLocations;
+
   // Tuyến đường nối hành trình (Polyline) 1 -> 2 -> 3...
   const routePositions = useMemo(() => {
     return displayedLocations
@@ -300,7 +309,7 @@ const MapPage = () => {
       .map((item) => [item.lat, item.lng]);
   }, [displayedLocations]);
 
-  // Khởi tạo vị trí nhân vật Chibi
+  // Khởi tạo vị trí ban đầu của nhân vật Chibi
   useEffect(() => {
     if (displayedLocations.length > 0 && characterPos === BAN_TIENG_CENTER) {
       const firstLoc = displayedLocations[0];
@@ -311,17 +320,20 @@ const MapPage = () => {
   }, [displayedLocations]);
 
   // 🚶 Smooth Walk Animation (Lerp)
-  const walkCharacterTo = useCallback((targetLat, targetLng, targetLoc) => {
+  const walkCharacterTo = useCallback((targetLat, targetLng, targetLoc, onArrival) => {
     if (animRef.current) cancelAnimationFrame(animRef.current);
 
-    const startLat = characterPos[0];
-    const startLng = characterPos[1];
+    const startLat = characterPosRef.current[0];
+    const startLng = characterPosRef.current[1];
 
     setFacing(targetLng < startLng ? 'left' : 'right');
     setIsWalking(true);
 
+    // Bắt đầu di chuyển camera mượt theo nhân vật
+    setMapCenter([targetLat, targetLng]);
+
     const startTime = performance.now();
-    const duration = 1600;
+    const duration = 1800;
 
     const animateWalk = (now) => {
       const elapsed = now - startTime;
@@ -340,37 +352,78 @@ const MapPage = () => {
         setCharacterPos([targetLat, targetLng]);
         setMapCenter([targetLat, targetLng]);
         setActiveLocation(targetLoc);
+        if (typeof onArrival === 'function') {
+          onArrival();
+        }
       }
     };
 
     animRef.current = requestAnimationFrame(animateWalk);
-  }, [characterPos]);
+  }, []);
 
-  // Click vào điểm đến trên bản đồ
-  const handleSelectLocation = useCallback((loc) => {
+  // 🚌 Dừng trải nghiệm
+  const stopAutoTour = useCallback(() => {
     setIsAutoTour(false);
-    clearTimeout(tourTimerRef.current);
-    walkCharacterTo(loc.lat, loc.lng, loc);
+    isAutoTourRef.current = false;
+    if (tourTimerRef.current) {
+      clearTimeout(tourTimerRef.current);
+      tourTimerRef.current = null;
+    }
+  }, []);
+
+  // 🚌 Di chuyển đến chặng trải nghiệm thứ index
+  const goToTourStop = useCallback((index) => {
+    const list = displayedLocationsRef.current;
+    if (!list || list.length === 0) return;
+    const safeIndex = index % list.length;
+    setCurrentTourIndex(safeIndex);
+    currentTourIndexRef.current = safeIndex;
+
+    const stop = list[safeIndex];
+    if (!stop) return;
+
+    walkCharacterTo(stop.lat, stop.lng, stop, () => {
+      // Khi đã tới nơi an toàn:
+      if (!isAutoTourRef.current) return;
+      // Dừng 6.5 giây cho người xem đọc thông tin rồi tiếp tục sang điểm kế tiếp
+      tourTimerRef.current = setTimeout(() => {
+        if (!isAutoTourRef.current) return;
+        goToTourStop(currentTourIndexRef.current + 1);
+      }, 6500);
+    });
   }, [walkCharacterTo]);
 
-  // 🚌 Bộ điều khiển "Trải nghiệm" tự động di chuyển theo thứ tự 1 -> 2 -> 3...
+  // Bật / Tắt nút "Trải nghiệm"
+  const handleToggleAutoTour = useCallback(() => {
+    if (displayedLocations.length === 0) return;
+    if (isAutoTour) {
+      stopAutoTour();
+    } else {
+      setIsAutoTour(true);
+      isAutoTourRef.current = true;
+      const nextIdx = currentTourIndex >= displayedLocations.length ? 0 : currentTourIndex;
+      goToTourStop(nextIdx);
+    }
+  }, [displayedLocations.length, isAutoTour, currentTourIndex, stopAutoTour, goToTourStop]);
+
+  // Click chọn thủ công điểm đến trên bản đồ
+  const handleSelectLocation = useCallback((loc) => {
+    stopAutoTour();
+    const idx = displayedLocationsRef.current.findIndex((l) => l._id === loc._id);
+    if (idx !== -1) {
+      setCurrentTourIndex(idx);
+      currentTourIndexRef.current = idx;
+    }
+    walkCharacterTo(loc.lat, loc.lng, loc);
+  }, [stopAutoTour, walkCharacterTo]);
+
+  // Dọn dẹp animation & timer khi unmount
   useEffect(() => {
-    if (!isAutoTour || displayedLocations.length === 0) {
-      clearTimeout(tourTimerRef.current);
-      return;
-    }
-
-    const currentItem = displayedLocations[currentTourIndex];
-    if (currentItem) {
-      walkCharacterTo(currentItem.lat, currentItem.lng, currentItem);
-    }
-
-    tourTimerRef.current = setTimeout(() => {
-      setCurrentTourIndex((prev) => (prev + 1) % displayedLocations.length);
-    }, 7000);
-
-    return () => clearTimeout(tourTimerRef.current);
-  }, [isAutoTour, currentTourIndex, displayedLocations, walkCharacterTo]);
+    return () => {
+      if (animRef.current) cancelAnimationFrame(animRef.current);
+      if (tourTimerRef.current) clearTimeout(tourTimerRef.current);
+    };
+  }, []);
 
   return (
     <div className="relative w-full h-[calc(100vh-64px)] bg-slate-900 overflow-hidden font-sans select-none">
@@ -444,7 +497,7 @@ const MapPage = () => {
         {displayedLocations.length > 0 && (
           <button
             type="button"
-            onClick={() => setIsAutoTour(!isAutoTour)}
+            onClick={handleToggleAutoTour}
             className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-bold transition-all shadow-xl backdrop-blur-xl border cursor-pointer ${
               isAutoTour
                 ? 'bg-red-500/90 hover:bg-red-600 text-white border-red-400/50 animate-pulse'
@@ -464,34 +517,6 @@ const MapPage = () => {
             )}
           </button>
         )}
-
-        {/* Nút Về toàn cảnh làng Bản Tiệng */}
-        <button
-          type="button"
-          onClick={() => {
-            setMapCenter([...BAN_TIENG_CENTER]);
-          }}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-2xl text-xs font-semibold bg-slate-900/90 text-amber-300 hover:bg-slate-800 border border-amber-500/30 transition-all backdrop-blur-xl shadow-xl cursor-pointer"
-          title="Xem toàn cảnh Bản Tiệng"
-        >
-          <ArrowPathIcon className="w-3.5 h-3.5 text-amber-400" />
-          <span>Toàn cảnh</span>
-        </button>
-
-        {/* Chế độ bản đồ mở rộng (Layer Toggle) */}
-        <button
-          type="button"
-          onClick={() => setShowExtendedLayer(!showExtendedLayer)}
-          className={`flex items-center gap-1.5 px-3 py-2 rounded-2xl text-xs font-semibold transition-all backdrop-blur-xl border cursor-pointer shadow-xl ${
-            showExtendedLayer
-              ? 'bg-sky-500 text-slate-950 border-sky-300 font-bold'
-              : 'bg-slate-900/90 text-slate-300 border-slate-700 hover:text-white hover:bg-slate-800'
-          }`}
-          title="Xem cả địa danh đang sưu tầm tác phẩm"
-        >
-          <span className="text-sm">{showExtendedLayer ? '✓' : '＋'}</span>
-          <span>Không gian mở rộng</span>
-        </button>
 
         {/* Nút hủy bộ lọc tác phẩm cụ thể nếu đang theo dấu */}
         {focusedWork && (
@@ -516,7 +541,7 @@ const MapPage = () => {
           maxZoom={BAN_TIENG_MAX_ZOOM}
           maxBounds={BAN_TIENG_BOUNDS}
           maxBoundsViscosity={1.0}
-          zoomControl={true}
+          zoomControl={false}
           dragging={true}
           scrollWheelZoom={true}
           doubleClickZoom={true}
@@ -525,6 +550,9 @@ const MapPage = () => {
           keyboard={true}
           style={{ width: '100%', height: '100%' }}
         >
+          {/* Phím phóng to / thu nhỏ ở góc dưới bên trái */}
+          <ZoomControl position="bottomleft" />
+
           {/* Vệ tinh Google Maps Hybrid (lyrs=y) */}
           <TileLayer
             attribution='Map data &copy; <a href="https://www.google.com/maps">Google Maps</a>'

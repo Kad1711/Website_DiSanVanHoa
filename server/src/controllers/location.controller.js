@@ -44,8 +44,9 @@ const getMapLocations = asyncHandler(async (req, res) => {
   if (req.query.ethnicGroup) filter.ethnicGroup = req.query.ethnicGroup;
 
   const locations = await Location.find(filter)
-    .select('name slug province district address coordinates images videos shortDescription description ethnicGroup')
+    .select('name slug province district address coordinates images videos shortDescription description ethnicGroup mapOrder')
     .populate({ path: 'ethnicGroup', select: 'name slug thumbnail' })
+    .sort({ mapOrder: 1, createdAt: 1 })
     .lean();
 
   const locationIds = locations.map((loc) => loc._id);
@@ -99,6 +100,7 @@ const getMapLocations = asyncHandler(async (req, res) => {
       _id: loc._id,
       name: loc.name,
       slug: loc.slug,
+      mapOrder: loc.mapOrder || 0,
       province: loc.province,
       district: loc.district,
       address: loc.address,
@@ -176,6 +178,9 @@ const create = asyncHandler(async (req, res) => {
     data.coordinates = { lat: parseFloat(req.body.lat), lng: parseFloat(req.body.lng) };
     delete data.lat; delete data.lng;
   }
+  if (req.body.mapOrder !== undefined) {
+    data.mapOrder = parseInt(req.body.mapOrder, 10) || 0;
+  }
 
   // Parse relatedWorks
   let rawWorks = null;
@@ -215,6 +220,9 @@ const update = asyncHandler(async (req, res) => {
   if (data.lat && data.lng) {
     data.coordinates = { lat: parseFloat(data.lat), lng: parseFloat(data.lng) };
     delete data.lat; delete data.lng;
+  }
+  if (data.mapOrder !== undefined) {
+    data.mapOrder = parseInt(data.mapOrder, 10) || 0;
   }
 
   let rawWorks = undefined;

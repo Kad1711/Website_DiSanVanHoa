@@ -28,6 +28,7 @@ const LocationEditPage = () => {
     shortDescription: '',
     description: '',
     status: 'published',
+    mapOrder: 0,
     videoUrl: '',
   });
   const [newImages, setNewImages] = useState([]);
@@ -91,6 +92,7 @@ const LocationEditPage = () => {
           shortDescription: loc.shortDescription || '',
           description: loc.description || '',
           status: loc.status || 'published',
+          mapOrder: loc.mapOrder !== undefined ? loc.mapOrder : 0,
           videoUrl: '',
         });
       } catch (err) {
@@ -161,6 +163,7 @@ const LocationEditPage = () => {
       data.append('lat', formData.lat);
       data.append('lng', formData.lng);
       data.append('status', formData.status);
+      data.append('mapOrder', formData.mapOrder || 0);
       data.append('shortDescription', formData.shortDescription);
       data.append('description', formData.description);
 
@@ -458,18 +461,38 @@ const LocationEditPage = () => {
           />
         </div>
 
-        <div>
-          <label className="label">Trạng thái phát hành</label>
-          <select
-            name="status"
-            value={formData.status}
-            onChange={handleChange}
-            className="input max-w-xs"
-          >
-            {STATUSES.map((s) => (
-              <option key={s.value} value={s.value}>{s.label}</option>
-            ))}
-          </select>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="label">
+              Thứ tự hiển thị trên Bản đồ (Marker 1, 2, 3...)
+            </label>
+            <input
+              type="number"
+              min="0"
+              name="mapOrder"
+              value={formData.mapOrder}
+              onChange={handleChange}
+              placeholder="Ví dụ: 1, 2, 3... (để 0 nếu sắp xếp mặc định)"
+              className="input"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Số thứ tự hiển thị trực tiếp trên ghim tròn bản đồ (/map).
+            </p>
+          </div>
+
+          <div>
+            <label className="label">Trạng thái phát hành</label>
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              className="input"
+            >
+              {STATUSES.map((s) => (
+                <option key={s.value} value={s.value}>{s.label}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 pt-4 border-t border-gray-100">

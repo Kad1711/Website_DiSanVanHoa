@@ -41,6 +41,7 @@ const locationSchema = new mongoose.Schema(
       lat: { type: Number, required: [true, 'Vĩ độ là bắt buộc.'], min: -90, max: 90 },
       lng: { type: Number, required: [true, 'Kinh độ là bắt buộc.'], min: -180, max: 180 },
     },
+    mapOrder:       { type: Number, default: 0 },
     ethnicGroup:    { type: mongoose.Schema.Types.ObjectId, ref: 'EthnicGroup' },
     shortDescription: { type: String, trim: true, maxlength: 500, default: '' },
     description:    { type: String, default: '' },

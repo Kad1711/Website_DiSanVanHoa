@@ -45,7 +45,7 @@ const workSchema = new mongoose.Schema(
     author:  { type: String, trim: true, default: 'Dân gian' },
     category:        { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
     ethnicGroup:     { type: mongoose.Schema.Types.ObjectId, ref: 'EthnicGroup' },
-    summary:         { type: String, trim: true, maxlength: 1000, default: '' },
+    summary:         { type: String, trim: true, maxlength: [4000, 'Tóm tắt nội dung không được vượt quá 4.000 ký tự.'], default: '' },
     content:         { type: String, default: '' },
     coverImage:      imageSchema,
     gallery:         [imageSchema],

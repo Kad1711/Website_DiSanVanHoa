@@ -1,8 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowRightIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { PlayIcon, MapIcon, SparklesIcon, CubeTransparentIcon } from '@heroicons/react/24/solid';
+import { PlayIcon, MapIcon, SparklesIcon } from '@heroicons/react/24/solid';
 import HeritageHero3D from '../../components/three/HeritageHero3D';
-import HeritageArtifact3D from '../../components/three/HeritageArtifact3D';
 
 const HomePage = () => {
   return (
@@ -102,69 +101,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* 3D Showcase Section: Cổ Thư Di Sản Tương Tác 3D */}
-      <section className="py-14 sm:py-20 bg-gradient-to-b from-cream via-amber-50/40 to-stone-100 relative">
-        <div className="container-lg">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 items-center">
-            {/* Cột giới thiệu */}
-            <div className="lg:col-span-6 space-y-5">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-700 text-xs font-semibold">
-                <CubeTransparentIcon className="w-4 h-4 text-amber-600" />
-                <span>Công Nghệ Three.js WebGL</span>
-              </div>
 
-              <h2 className="text-2xl sm:text-4xl font-serif font-bold text-gray-900 leading-tight">
-                Chạm Vào Hiện Vật & <br />
-                <span className="text-primary">Không Gian Văn Học Ba Chiều</span>
-              </h2>
-
-              <p className="text-sm sm:text-base text-gray-600 leading-relaxed font-light">
-                Di sản không chỉ nằm trên những trang giấy tĩnh. Chúng tôi ứng dụng đồ họa không gian ba chiều thời gian thực (Real-time 3D) để đưa người xem đến gần hơn với từng hiện vật, thư tịch cổ và bối cảnh sử thi hào hùng của đồng bào các dân tộc.
-              </p>
-
-              <div className="space-y-3 pt-2">
-                <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center flex-shrink-0 mt-0.5 font-bold text-xs">
-                    ✓
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-800 text-sm">Tương tác trực quan 360°</h4>
-                    <p className="text-xs text-gray-500">Người dùng có thể tự do dùng chuột hoặc cảm ứng để ngắm nhìn chi tiết từng góc cạnh.</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-secondary/10 text-secondary-600 flex items-center justify-center flex-shrink-0 mt-0.5 font-bold text-xs">
-                    ✓
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-800 text-sm">Ánh sáng & Hạt tinh hoa mềm mại</h4>
-                    <p className="text-xs text-gray-500">Mô phỏng đốm lửa bập bùng và tinh hoa văn hóa truyền đời trong không gian mộng ảo.</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-2">
-                <Link
-                  to="/works"
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary-700 transition"
-                >
-                  <span>Khám phá các kho tàng tác phẩm</span>
-                  <ArrowRightIcon className="w-4 h-4" />
-                </Link>
-              </div>
-            </div>
-
-            {/* Cột Mô hình Three.js 3D */}
-            <div className="lg:col-span-6">
-              <HeritageArtifact3D 
-                title="Cổ Thư Di Sản Dân Tộc" 
-                subtitle="Cuốn sách huyền tích được tái hiện trong không gian 3D" 
-              />
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* CTA Section */}
       <section className="py-14 sm:py-24 relative overflow-hidden">

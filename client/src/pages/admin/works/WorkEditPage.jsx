@@ -481,10 +481,16 @@ const WorkEditPage = () => {
         </div>
 
         <div>
-          <label className="label">Tóm tắt nội dung</label>
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="label mb-0">Tóm tắt nội dung</label>
+            <span className={`text-xs ${(formData.summary || '').length > 3800 ? 'text-amber-600 font-medium' : 'text-gray-400'}`}>
+              {(formData.summary || '').length} / 4.000 ký tự
+            </span>
+          </div>
           <textarea
             name="summary"
             rows="3"
+            maxLength={4000}
             value={formData.summary}
             onChange={handleChange}
             className="input"
@@ -515,6 +521,7 @@ const WorkEditPage = () => {
               onChange={handleCoverChange}
               className="text-xs sm:text-sm text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
             />
+            <p className="text-xs text-gray-400 mt-1">Hỗ trợ JPG, PNG, WEBP (tối đa 35MB)</p>
             {coverPreview && (
               <div className="mt-3 relative aspect-video rounded-xl overflow-hidden border border-gray-200 w-full sm:w-48 shadow-sm">
                 <img src={coverPreview} alt="Cover preview" className="w-full h-full object-cover" />
@@ -531,6 +538,7 @@ const WorkEditPage = () => {
               onChange={handleNewGalleryChange}
               className="text-xs sm:text-sm text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
             />
+            <p className="text-xs text-gray-400 mt-1">Hỗ trợ JPG, PNG, WEBP (tối đa 35MB mỗi ảnh)</p>
             {newGalleryPreviews.length > 0 && (
               <div className="grid grid-cols-3 gap-2 mt-3">
                 {newGalleryPreviews.map((preview, idx) => (

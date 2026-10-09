@@ -43,7 +43,7 @@ const locationSchema = new mongoose.Schema(
     },
     mapOrder:       { type: Number, default: 0 },
     ethnicGroup:    { type: mongoose.Schema.Types.ObjectId, ref: 'EthnicGroup' },
-    shortDescription: { type: String, trim: true, maxlength: 500, default: '' },
+    shortDescription: { type: String, trim: true, maxlength: [2000, 'Mô tả ngắn không được vượt quá 2.000 ký tự.'], default: '' },
     description:    { type: String, default: '' },
     images:         [imageSchema],
     videos:         [videoSchema],

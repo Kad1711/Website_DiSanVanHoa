@@ -134,9 +134,16 @@ const LocationDetailPage = () => {
                 <SparklesIcon className="w-5 h-5 text-secondary" />
                 Giá Trị Văn Hóa & Lịch Sử
               </h2>
-              <div className="prose prose-stone max-w-none text-gray-700 leading-relaxed text-xs sm:text-base whitespace-pre-line">
-                {location.description || location.shortDescription || 'Nội dung chi tiết đang được cập nhật.'}
-              </div>
+              {/<[a-z][\s\S]*>/i.test(location.description || '') ? (
+                <div
+                  className="prose prose-stone max-w-none text-gray-700 leading-relaxed text-xs sm:text-base"
+                  dangerouslySetInnerHTML={{ __html: location.description }}
+                />
+              ) : (
+                <div className="prose prose-stone max-w-none text-gray-700 leading-relaxed text-xs sm:text-base whitespace-pre-line">
+                  {location.description || location.shortDescription || 'Nội dung chi tiết đang được cập nhật.'}
+                </div>
+              )}
             </div>
 
             {/* Gallery images */}

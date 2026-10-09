@@ -38,7 +38,7 @@ const anyFilter = (req, file, cb) => {
     : cb(new Error('Định dạng file không được hỗ trợ.'), false);
 };
 
-const uploadImage = multer({ storage, fileFilter: imageFilter, limits: { fileSize: 10 * 1024 * 1024 } });
+const uploadImage = multer({ storage, fileFilter: imageFilter, limits: { fileSize: 35 * 1024 * 1024 } });
 const uploadVideo = multer({ storage, fileFilter: videoFilter, limits: { fileSize: 500 * 1024 * 1024 } });
 const uploadAny   = multer({ storage, fileFilter: anyFilter,   limits: { fileSize: 500 * 1024 * 1024 } });
 

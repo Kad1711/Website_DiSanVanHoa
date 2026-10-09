@@ -113,11 +113,18 @@ const EthnicGroupDetailPage = () => {
                 <SparklesIcon className="w-5 h-5 text-secondary" />
                 Đặc Trưng Văn Hóa & Phong Tục
               </h2>
-              <div className="prose prose-stone max-w-none text-gray-700 leading-relaxed text-xs sm:text-base whitespace-pre-line">
-                {ethnicGroup.cultureSummary ||
-                  ethnicGroup.description ||
-                  'Nội dung văn hóa đang tiếp tục được sưu tầm và số hóa.'}
-              </div>
+              {/<[a-z][\s\S]*>/i.test(ethnicGroup.cultureSummary || '') ? (
+                <div
+                  className="prose prose-stone max-w-none text-gray-700 leading-relaxed text-xs sm:text-base"
+                  dangerouslySetInnerHTML={{ __html: ethnicGroup.cultureSummary }}
+                />
+              ) : (
+                <div className="prose prose-stone max-w-none text-gray-700 leading-relaxed text-xs sm:text-base whitespace-pre-line">
+                  {ethnicGroup.cultureSummary ||
+                    ethnicGroup.description ||
+                    'Nội dung văn hóa đang tiếp tục được sưu tầm và số hóa.'}
+                </div>
+              )}
             </div>
 
             {/* Works List */}

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ethnicGroupService } from '../../../services/ethnicGroup.service';
 import { REGIONS, STATUSES } from '../../../constants';
+import RichContentEditor from '../../../components/admin/RichContentEditor';
 import { ArrowLeftIcon, PhotoIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 
@@ -124,15 +125,15 @@ const EthnicGroupCreatePage = () => {
         </div>
 
         <div>
-          <label className="label">Đặc trưng văn hóa & Phong tục tập quán</label>
-          <textarea
-            name="cultureSummary"
-            rows="5"
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="label mb-0">Đặc trưng văn hóa & Phong tục tập quán</label>
+            <span className="text-xs text-gray-500 font-normal">Hỗ trợ dán trực tiếp từ Word hoặc tải lên file .docx</span>
+          </div>
+          <RichContentEditor
             value={formData.cultureSummary}
-            onChange={handleChange}
+            onChange={(val) => setFormData((prev) => ({ ...prev, cultureSummary: val }))}
             placeholder="Tóm tắt về lễ hội, kiến trúc nhà cửa, trang phục truyền thống, văn hóa dân gian..."
-            className="input"
-          ></textarea>
+          />
         </div>
 
         {/* Media Uploads */}

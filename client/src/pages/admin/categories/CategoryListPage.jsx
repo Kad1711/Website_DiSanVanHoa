@@ -15,22 +15,55 @@ import Pagination from '../../../components/ui/Pagination';
 import ConfirmDialog from '../../../components/ui/ConfirmDialog';
 import toast from 'react-hot-toast';
 
-const PRESET_COLORS = [
-  '#0284c7', // Sky
-  '#6366f1', // Indigo
-  '#dc2626', // Red
-  '#7c3aed', // Purple
-  '#059669', // Emerald
-  '#d97706', // Amber
-  '#10b981', // Green
-  '#f59e0b', // Yellow
-  '#ea580c', // Orange
-  '#ec4899', // Pink
-  '#8b5cf6', // Violet
-  '#475569', // Slate
+const COLOR_PALETTES = [
+  { name: 'Đỏ thắm', hex: '#dc2626' },
+  { name: 'Đỏ hồng', hex: '#e11d48' },
+  { name: 'Hồng sen', hex: '#db2777' },
+  { name: 'Hồng phấn', hex: '#ec4899' },
+  { name: 'Cam cháy', hex: '#ea580c' },
+  { name: 'Cam đào', hex: '#f97316' },
+  { name: 'Hổ phách', hex: '#d97706' },
+  { name: 'Vàng rực rỡ', hex: '#eab308' },
+  { name: 'Xanh lá mạ', hex: '#84cc16' },
+  { name: 'Lục bảo', hex: '#10b981' },
+  { name: 'Xanh ngọc', hex: '#059669' },
+  { name: 'Xanh teal', hex: '#0d9488' },
+  { name: 'Xanh cyan', hex: '#06b6d4' },
+  { name: 'Xanh da trời', hex: '#0284c7' },
+  { name: 'Xanh coban', hex: '#2563eb' },
+  { name: 'Xanh chàm', hex: '#4f46e5' },
+  { name: 'Tím hoa cà', hex: '#7c3aed' },
+  { name: 'Tím đinh hương', hex: '#9333ea' },
+  { name: 'Tím fuchsia', hex: '#c026d3' },
+  { name: 'Nâu đất', hex: '#854d0e' },
+  { name: 'Đỏ gạch thổ cẩm', hex: '#9a3412' },
+  { name: 'Nâu trầm', hex: '#78350f' },
+  { name: 'Xám khói', hex: '#475569' },
+  { name: 'Huyền bí', hex: '#1e293b' },
 ];
 
-const PRESET_ICONS = ['🧚', '🌌', '⚔️', '✨', '📜', '🎵', '💬', '😄', '📚', '🏛️', '🎭', '🌾'];
+const EMOTION_CATEGORIES = [
+  {
+    category: 'Cảm xúc & Tình cảm',
+    icons: ['🥰', '😍', '💖', '❤️', '🥺', '😢', '😂', '😄', '😇', '🥳', '🤔', '🕊️', '💫', '💌'],
+  },
+  {
+    category: 'Thần thoại & Dân gian',
+    icons: ['🧚', '🧙‍♂️', '🐉', '🦄', '✨', '🌟', '🌌', '🌕', '⚡', '🔮', '🧞', '🦅', '🐅', '🦌'],
+  },
+  {
+    category: 'Sử thi & Hào khí',
+    icons: ['⚔️', '🛡️', '🏹', '🏇', '👑', '🔥', '🏆', '🚩', '🗡️', '🏔️', '⛺', '🧭'],
+  },
+  {
+    category: 'Thơ ca & Âm nhạc',
+    icons: ['🎵', '🎶', '🎸', '🪕', '🥁', '🪈', '🎼', '📜', '🖋️', '📖', '📚', '🎙️', '💬'],
+  },
+  {
+    category: 'Lễ hội & Di sản',
+    icons: ['🎭', '🎪', '🏮', '🏛️', '⛩️', '🏺', '🧵', '🧶', '🌾', '🎋', '🌸', '🌺', '🍃', '🎍'],
+  },
+];
 
 const CategoryListPage = () => {
   const [data, setData] = useState({ categories: [], pagination: null });
@@ -48,6 +81,7 @@ const CategoryListPage = () => {
     description: '',
     status: 'published',
   });
+  const [activeEmotionTab, setActiveEmotionTab] = useState(0);
   const [submitting, setSubmitting] = useState(false);
 
   // Delete Dialog State
@@ -203,9 +237,22 @@ const CategoryListPage = () => {
                   data.categories.map((item) => (
                     <tr key={item._id} className="hover:bg-gray-50/60 transition-colors">
                       <td className="px-6 py-4 font-medium text-gray-900">
-                        <div className="flex items-center gap-2.5">
-                          <span className="text-xl flex-shrink-0">{item.icon || '📚'}</span>
-                          <span className="font-semibold text-gray-900">{item.name}</span>
+                        <div className="flex items-center gap-3">
+                          <div
+                            className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shadow-xs border transition-transform hover:scale-110 flex-shrink-0"
+                            style={{ backgroundColor: `${item.color || '#ea580c'}15`, borderColor: `${item.color || '#ea580c'}30` }}
+                          >
+                            {item.icon || '📚'}
+                          </div>
+                          <div>
+                            <span className="font-bold text-gray-900 block text-sm">{item.name}</span>
+                            <span
+                              className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold mt-0.5"
+                              style={{ backgroundColor: `${item.color || '#ea580c'}18`, color: item.color || '#ea580c' }}
+                            >
+                              {item.icon || '📚'} {item.name}
+                            </span>
+                          </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 font-mono text-xs text-gray-500">
@@ -214,10 +261,10 @@ const CategoryListPage = () => {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <span
-                            className="w-4 h-4 rounded-full border border-gray-200 shadow-xs"
+                            className="w-5 h-5 rounded-full border-2 border-white shadow-sm ring-1 ring-gray-200"
                             style={{ backgroundColor: item.color || '#ea580c' }}
                           />
-                          <span className="text-xs text-gray-500 font-mono">{item.color || '#ea580c'}</span>
+                          <span className="text-xs text-gray-600 font-mono font-medium">{item.color || '#ea580c'}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-center">
@@ -279,21 +326,52 @@ const CategoryListPage = () => {
 
       {/* Modal Thêm / Chỉnh sửa Thể loại */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden border border-gray-100 animate-in fade-in duration-200">
-            <div className="p-5 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-              <h3 className="font-serif font-bold text-lg text-gray-900">
-                {editingCategory ? 'Chỉnh sửa Thể loại' : 'Thêm Thể loại mới'}
-              </h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/50 backdrop-blur-xs overflow-y-auto">
+          <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden border border-gray-100 my-8 animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-gray-50 to-orange-50/30">
+              <div className="flex items-center gap-2.5">
+                <span className="text-2xl">{formValues.icon || '📚'}</span>
+                <div>
+                  <h3 className="font-serif font-bold text-base sm:text-lg text-gray-900">
+                    {editingCategory ? 'Chỉnh sửa Thể loại Văn học' : 'Thêm Thể loại Văn học Mới'}
+                  </h3>
+                  <p className="text-xs text-gray-500">Tùy biến biểu tượng cảm xúc và màu sắc nhận diện</p>
+                </div>
+              </div>
               <button
                 onClick={() => setModalOpen(false)}
-                className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+                className="p-1.5 rounded-xl text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
               >
                 <XMarkIcon className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmitForm} className="p-6 space-y-4">
+            <form onSubmit={handleSubmitForm} className="p-4 sm:p-6 space-y-4 sm:space-y-5 max-h-[80vh] overflow-y-auto">
+              {/* Thẻ xem trước thực tế */}
+              <div
+                className="p-3.5 rounded-2xl border transition-all duration-300 flex items-center justify-between gap-4"
+                style={{
+                  backgroundColor: `${formValues.color || '#ea580c'}10`,
+                  borderColor: `${formValues.color || '#ea580c'}35`,
+                }}
+              >
+                <div className="space-y-0.5">
+                  <span className="text-xs font-semibold text-gray-700 block">Xem trước huy hiệu thể loại:</span>
+                  <span className="text-[11px] text-gray-500">Cách thể loại hiển thị trên thẻ truyện và bản đồ</span>
+                </div>
+                <div
+                  className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold shadow-sm border transition-transform hover:scale-105"
+                  style={{
+                    backgroundColor: `${formValues.color || '#ea580c'}22`,
+                    borderColor: `${formValues.color || '#ea580c'}40`,
+                    color: formValues.color || '#ea580c',
+                  }}
+                >
+                  <span className="text-base">{formValues.icon || '📚'}</span>
+                  <span>{formValues.name || 'Tên thể loại'}</span>
+                </div>
+              </div>
+
               <div>
                 <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
                   Tên thể loại <span className="text-red-500">*</span>
@@ -301,67 +379,107 @@ const CategoryListPage = () => {
                 <input
                   type="text"
                   required
-                  placeholder="Ví dụ: Truyện cổ tích, Thần thoại, Sử thi..."
+                  placeholder="Ví dụ: Truyện cổ tích, Thần thoại, Sử thi, Ca dao..."
                   value={formValues.name}
                   onChange={(e) => setFormValues({ ...formValues, name: e.target.value })}
-                  className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                  className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-medium"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
-                    Biểu tượng (Icon/Emoji)
+              {/* BẢNG CHỌN MÀU SẮC PHONG PHÚ */}
+              <div className="p-4 bg-gray-50/70 rounded-2xl border border-gray-100 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Bảng màu sắc nhận diện (24 màu phong phú)
                   </label>
                   <div className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      value={formValues.icon}
-                      onChange={(e) => setFormValues({ ...formValues, icon: e.target.value })}
-                      className="w-16 text-center text-xl py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-primary"
-                    />
-                    <div className="flex gap-1 flex-wrap">
-                      {PRESET_ICONS.slice(0, 6).map((ic) => (
-                        <button
-                          key={ic}
-                          type="button"
-                          onClick={() => setFormValues({ ...formValues, icon: ic })}
-                          className={`w-7 h-7 rounded-lg text-sm flex items-center justify-center hover:bg-gray-100 ${
-                            formValues.icon === ic ? 'bg-primary/10 border border-primary' : 'border border-gray-200'
-                          }`}
-                        >
-                          {ic}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
-                    Màu sắc hiển thị
-                  </label>
-                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono font-semibold" style={{ color: formValues.color }}>
+                      {formValues.color}
+                    </span>
                     <input
                       type="color"
                       value={formValues.color}
                       onChange={(e) => setFormValues({ ...formValues, color: e.target.value })}
-                      className="w-10 h-10 rounded-xl border border-gray-200 cursor-pointer p-0.5"
+                      title="Chọn màu tùy chỉnh"
+                      className="w-7 h-7 rounded-lg border border-gray-300 cursor-pointer p-0"
                     />
-                    <div className="flex gap-1.5 flex-wrap">
-                      {PRESET_COLORS.slice(0, 6).map((c) => (
-                        <button
-                          key={c}
-                          type="button"
-                          onClick={() => setFormValues({ ...formValues, color: c })}
-                          style={{ backgroundColor: c }}
-                          className={`w-5 h-5 rounded-full border transition-transform ${
-                            formValues.color === c ? 'scale-125 ring-2 ring-primary ring-offset-1' : 'border-white'
-                          }`}
-                        />
-                      ))}
-                    </div>
                   </div>
+                </div>
+
+                <div className="grid grid-cols-6 sm:grid-cols-12 gap-2 pt-1">
+                  {COLOR_PALETTES.map((c) => (
+                    <button
+                      key={c.hex}
+                      type="button"
+                      title={`${c.name} (${c.hex})`}
+                      onClick={() => setFormValues({ ...formValues, color: c.hex })}
+                      style={{ backgroundColor: c.hex }}
+                      className={`w-7 h-7 rounded-xl transition-all duration-200 flex items-center justify-center shadow-xs ${
+                        formValues.color === c.hex
+                          ? 'scale-125 ring-2 ring-gray-900 ring-offset-2 z-10'
+                          : 'hover:scale-115 opacity-90 hover:opacity-100'
+                      }`}
+                    >
+                      {formValues.color === c.hex && (
+                        <span className="text-white text-[11px] font-black drop-shadow">✓</span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* BẢNG CHỌN EMOTION & BIỂU TƯỢNG PHONG PHÚ */}
+              <div className="p-4 bg-amber-50/40 rounded-2xl border border-amber-100 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Biểu tượng cảm xúc (Emotion & Emojis)
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-500">Tự nhập:</span>
+                    <input
+                      type="text"
+                      value={formValues.icon}
+                      onChange={(e) => setFormValues({ ...formValues, icon: e.target.value })}
+                      placeholder="Emoji..."
+                      className="w-16 text-center text-lg py-1 px-1 border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-primary font-emoji"
+                    />
+                  </div>
+                </div>
+
+                {/* Tabs phân loại emotion */}
+                <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-none border-b border-amber-200/60">
+                  {EMOTION_CATEGORIES.map((cat, idx) => (
+                    <button
+                      key={cat.category}
+                      type="button"
+                      onClick={() => setActiveEmotionTab(idx)}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
+                        activeEmotionTab === idx
+                          ? 'bg-amber-600 text-white shadow-xs font-semibold'
+                          : 'text-gray-600 hover:text-amber-800 hover:bg-amber-100/50'
+                      }`}
+                    >
+                      {cat.category}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Danh sách emoji thuộc tab hiện tại */}
+                <div className="flex gap-2 flex-wrap max-h-32 overflow-y-auto p-1">
+                  {EMOTION_CATEGORIES[activeEmotionTab].icons.map((ic) => (
+                    <button
+                      key={ic}
+                      type="button"
+                      onClick={() => setFormValues({ ...formValues, icon: ic })}
+                      className={`w-9 h-9 rounded-xl text-lg flex items-center justify-center transition-all duration-150 ${
+                        formValues.icon === ic
+                          ? 'bg-amber-500 text-white scale-125 shadow-md ring-2 ring-amber-600 ring-offset-1 z-10'
+                          : 'bg-white hover:bg-amber-100/60 border border-gray-200 hover:scale-110 shadow-xs'
+                      }`}
+                    >
+                      {ic}
+                    </button>
+                  ))}
                 </div>
               </div>
 

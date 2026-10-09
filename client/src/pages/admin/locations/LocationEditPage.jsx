@@ -7,6 +7,7 @@ import { STATUSES } from '../../../constants';
 import Loading from '../../../components/ui/Loading';
 import ErrorState from '../../../components/ui/ErrorState';
 import LocationCoordinatePicker from '../../../components/ui/LocationCoordinatePicker';
+import RichContentEditor from '../../../components/admin/RichContentEditor';
 import { ArrowLeftIcon, MapPinIcon, TrashIcon, BookOpenIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 
@@ -374,10 +375,16 @@ const LocationEditPage = () => {
         </div>
 
         <div>
-          <label className="label">Mô tả ngắn</label>
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="label mb-0">Mô tả ngắn</label>
+            <span className={`text-xs ${(formData.shortDescription || '').length > 1800 ? 'text-amber-600 font-medium' : 'text-gray-400'}`}>
+              {(formData.shortDescription || '').length} / 2.000 ký tự
+            </span>
+          </div>
           <textarea
             name="shortDescription"
             rows="2"
+            maxLength={2000}
             value={formData.shortDescription}
             onChange={handleChange}
             placeholder="Tóm tắt về địa danh trong 1-2 câu..."
@@ -386,15 +393,18 @@ const LocationEditPage = () => {
         </div>
 
         <div>
-          <label className="label">Nội dung chi tiết & Giá trị văn hóa lịch sử</label>
-          <textarea
-            name="description"
-            rows="5"
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="label mb-0">Nội dung chi tiết & Giá trị văn hóa lịch sử</label>
+            <span className="text-xs text-gray-500 font-normal">Hỗ trợ dán trực tiếp từ Word hoặc tải lên file .docx</span>
+          </div>
+          <RichContentEditor
             value={formData.description}
-            onChange={handleChange}
+            onChange={(val) => {
+              setFormData((prev) => ({ ...prev, description: val }));
+              markDirty();
+            }}
             placeholder="Mô tả cụ thể về di tích, cảnh quan, câu chuyện sử thi gắn liền..."
-            className="input"
-          ></textarea>
+          />
         </div>
 
         {/* Existing Images */}
@@ -429,6 +439,7 @@ const LocationEditPage = () => {
             onChange={handleNewImageChange}
             className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
           />
+          <p className="text-xs text-gray-400 mt-1">Hỗ trợ JPG, PNG, WEBP (tối đa 35MB mỗi ảnh)</p>
 
           {newImagePreviews.length > 0 && (
             <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3">

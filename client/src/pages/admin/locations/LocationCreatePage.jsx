@@ -5,6 +5,7 @@ import { ethnicGroupService } from '../../../services/ethnicGroup.service';
 import { workService } from '../../../services/work.service';
 import { STATUSES } from '../../../constants';
 import LocationCoordinatePicker from '../../../components/ui/LocationCoordinatePicker';
+import RichContentEditor from '../../../components/admin/RichContentEditor';
 import { ArrowLeftIcon, PhotoIcon, MapPinIcon, BookOpenIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 
@@ -335,10 +336,16 @@ const LocationCreatePage = () => {
         </div>
 
         <div>
-          <label className="label">Mô tả ngắn</label>
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="label mb-0">Mô tả ngắn</label>
+            <span className={`text-xs ${(formData.shortDescription || '').length > 1800 ? 'text-amber-600 font-medium' : 'text-gray-400'}`}>
+              {(formData.shortDescription || '').length} / 2.000 ký tự
+            </span>
+          </div>
           <textarea
             name="shortDescription"
             rows="2"
+            maxLength={2000}
             value={formData.shortDescription}
             onChange={handleChange}
             placeholder="Tóm tắt về địa danh trong 1-2 câu..."
@@ -347,15 +354,18 @@ const LocationCreatePage = () => {
         </div>
 
         <div>
-          <label className="label">Thông tin chi tiết</label>
-          <textarea
-            name="description"
-            rows="5"
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="label mb-0">Nội dung chi tiết & Giá trị văn hóa lịch sử</label>
+            <span className="text-xs text-gray-500 font-normal">Hỗ trợ dán trực tiếp từ Word hoặc tải lên file .docx</span>
+          </div>
+          <RichContentEditor
             value={formData.description}
-            onChange={handleChange}
-            placeholder="Lịch sử hình thành, giá trị văn hóa, các truyền thuyết gắn liền..."
-            className="input"
-          ></textarea>
+            onChange={(val) => {
+              setFormData((prev) => ({ ...prev, description: val }));
+              markDirty();
+            }}
+            placeholder="Lịch sử hình thành, giá trị văn hóa, các truyền thuyết sử thi gắn liền..."
+          />
         </div>
 
         <div className="space-y-4 pt-2 border-t border-gray-100">
@@ -368,6 +378,7 @@ const LocationCreatePage = () => {
               onChange={handleImageChange}
               className="text-xs sm:text-sm text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
             />
+            <p className="text-xs text-gray-400 mt-1">Hỗ trợ JPG, PNG, WEBP (tối đa 35MB mỗi ảnh)</p>
             {imagePreviews.length > 0 && (
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-3">
                 {imagePreviews.map((preview, idx) => (

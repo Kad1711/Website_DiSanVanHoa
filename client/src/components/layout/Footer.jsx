@@ -41,11 +41,11 @@ export const Footer = () => {
           </div>
 
           <h3 className="text-xl md:text-3xl font-bold text-slate-900 tracking-tight font-serif">
-            Đăng ký Newsletter để nghe mình kể chuyện nhiều hơn
+            Đăng ký Newsletter để lắng nghe những câu chuyện sử thi &amp; huyền tích
           </h3>
 
           <p className="text-xs md:text-sm text-slate-500 max-w-lg mx-auto">
-            Nhận thông báo về những câu chuyện dân gian mới, tư liệu văn hóa quý và trải nghiệm di sản số độc đáo ngay trong hộp thư của bạn.
+            Nhận thông báo về những câu chuyện dân gian mới, tư liệu văn hóa quý và trải nghiệm bản đồ di sản số độc đáo ngay trong hộp thư của bạn.
           </p>
 
           {subscribed ? (
@@ -94,21 +94,27 @@ export const Footer = () => {
             {/* Column 1: Logo & Bio (md:col-span-5) */}
             <div className="md:col-span-5 space-y-4">
               <div>
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-white uppercase leading-none font-sans">
-                  MYSPACE
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-white uppercase leading-none font-serif">
+                  DI SẢN VĂN HỌC
                 </h2>
-                <div className="text-[11px] md:text-xs font-bold tracking-[0.28em] text-[#c499f6] mt-2 uppercase">
-                  PERSONAL WORKSPACE
+                <div className="text-[11px] md:text-xs font-bold tracking-[0.25em] text-[#c499f6] mt-2 uppercase">
+                  KHÔNG GIAN DI SẢN SỐ
                 </div>
               </div>
 
               <p className="text-xs md:text-sm text-slate-400 font-medium leading-relaxed max-w-md pt-2">
-                MySpace AI là nơi mình chia sẻ kiến thức, tài liệu, công cụ và kinh nghiệm thực tế về lập kế hoạch &amp; xếp lịch cá nhân hóa - giúp bạn học dễ hơn, làm nhanh hơn và tự tin bắt đầu con đường của mình.
+                Nền tảng số hóa và lưu giữ kho tàng văn học dân gian các dân tộc thiểu số Việt Nam. Ứng dụng công nghệ tương tác trực quan, bản đồ hành trình số và tư liệu bản địa nhằm bảo tồn và lan tỏa tinh hoa văn hóa truyền đời đến thế hệ trẻ.
               </p>
 
-              <div className="pt-2 text-xs text-slate-500">
-                <span>Dự án Di sản Văn học các Dân tộc Thiểu số Việt Nam • By </span>
-                <span className="text-slate-300 font-semibold">[KaD]</span>
+              <div className="pt-2 text-xs text-slate-500 space-y-1">
+                <div>
+                  <span className="text-slate-400">Trường: </span>
+                  <span className="text-slate-300 font-medium">Trường Đại học Sư phạm - Đại học Đà Nẵng</span>
+                </div>
+                <div>
+                  <span className="text-slate-400">Dự án môn học • By: </span>
+                  <span className="text-slate-300 font-semibold">[KaD]</span>
+                </div>
               </div>
             </div>
 
@@ -132,7 +138,7 @@ export const Footer = () => {
                     to="/works"
                     className="hover:text-white hover:translate-x-1 transition-all inline-block"
                   >
-                    Tác phẩm văn học
+                    Kho tàng tác phẩm
                   </Link>
                 </li>
                 <li>
@@ -149,6 +155,14 @@ export const Footer = () => {
                     className="hover:text-white hover:translate-x-1 transition-all inline-block"
                   >
                     Bản đồ di sản số
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/about"
+                    className="hover:text-white hover:translate-x-1 transition-all inline-block"
+                  >
+                    Giới thiệu dự án
                   </Link>
                 </li>
               </ul>
@@ -220,7 +234,7 @@ export const Footer = () => {
           {/* Floating Scroll To Top Button (Lavender Pill matching Image 1 & 2) */}
           <div className="flex justify-between items-center mt-12 pt-8 border-t border-white/5">
             <p className="text-xs text-slate-500 font-medium">
-              © {new Date().getFullYear()} MYSPACE • Di Sản Văn Học. All rights reserved.
+              © {new Date().getFullYear()} Di Sản Văn Học • Thực hiện bởi KaD. All rights reserved.
             </p>
 
             <button

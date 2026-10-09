@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { ArrowRightIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { PlayIcon, MapIcon, SparklesIcon } from '@heroicons/react/24/solid';
 import HeritageHero3D from '../../components/three/HeritageHero3D';
 
 const HomePage = () => {
+  const { user, openAuthModal } = useAuth();
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section với Hiệu ứng 3D Sông Núi & Đom Đóm Di Sản */}
@@ -72,24 +74,24 @@ const HomePage = () => {
                 desc: 'Khám phá sự phân bố không gian và nguồn gốc địa lý của từng tác phẩm, từng dân tộc qua bản đồ tương tác.',
                 icon: MapIcon,
                 color: 'text-primary',
-                bg: 'bg-primary-50',
+                bg: 'bg-primary-100/70',
               },
               {
                 title: 'Tác phẩm đa phương tiện',
                 desc: 'Đọc văn bản, nghe Audio, và xem video AI tái hiện lại các câu chuyện cổ tích, truyền thuyết một cách chân thực.',
                 icon: PlayIcon,
-                color: 'text-secondary-600',
-                bg: 'bg-secondary-50',
+                color: 'text-secondary-700',
+                bg: 'bg-secondary-100/70',
               },
               {
                 title: 'Nghiên cứu văn hóa',
                 desc: 'Hệ thống tra cứu chuyên sâu giúp người đọc dễ dàng tìm hiểu về phong tục, tập quán và con người của 54 dân tộc anh em.',
                 icon: MagnifyingGlassIcon,
-                color: 'text-earth',
-                bg: 'bg-orange-50',
+                color: 'text-primary-700',
+                bg: 'bg-primary-50',
               }
             ].map((feature, i) => (
-              <div key={i} className="card-hover p-6 sm:p-8 text-center group cursor-pointer border-none bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm">
+              <div key={i} className="card-hover p-6 sm:p-8 text-center group cursor-pointer border border-amber-900/5 bg-white/85 backdrop-blur-sm rounded-3xl shadow-sm hover:shadow-lg transition-all duration-300">
                 <div className={`w-14 h-14 sm:w-16 sm:h-16 mx-auto rounded-2xl ${feature.bg} flex items-center justify-center mb-5 sm:mb-6 group-hover:scale-110 transition-transform duration-300`}>
                   <feature.icon className={`w-7 h-7 sm:w-8 sm:h-8 ${feature.color}`} />
                 </div>
@@ -101,21 +103,33 @@ const HomePage = () => {
         </div>
       </section>
 
-
-
-      {/* CTA Section */}
-      <section className="py-14 sm:py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-primary-900"></div>
-        <div className="absolute inset-0 bg-[url('/src/assets/hero-pattern.svg')] opacity-10"></div>
-        
-        <div className="container-lg relative z-10 flex flex-col items-center text-center">
-          <h2 className="text-2xl sm:text-4xl md:text-5xl font-serif font-bold text-white mb-4 sm:mb-6">Bạn đã sẵn sàng bước vào?</h2>
-          <p className="text-primary-100 mb-8 sm:mb-10 max-w-xl text-sm sm:text-lg">
-            Đăng ký tài khoản ngay hôm nay để lưu lại những tác phẩm yêu thích và tham gia đóng góp cho cộng đồng.
-          </p>
-          <Link to="/register" className="px-6 sm:px-8 py-3.5 sm:py-4 bg-secondary text-white font-medium text-sm sm:text-lg rounded-full hover:bg-secondary-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-            Tạo tài khoản miễn phí
-          </Link>
+      {/* CTA Section - Floating Card with Rounded-3xl, separating from Footer */}
+      <section className="py-12 sm:py-20 bg-cream relative z-20">
+        <div className="container-lg">
+          <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-primary-800 via-primary to-primary-950 p-8 sm:p-16 text-center text-white shadow-2xl border border-secondary/20">
+            <div className="absolute inset-0 bg-[url('/src/assets/hero-pattern.svg')] opacity-10 pointer-events-none"></div>
+            
+            <div className="relative z-10 max-w-2xl mx-auto flex flex-col items-center">
+              <h2 className="text-2xl sm:text-4xl md:text-5xl font-serif font-bold text-white mb-4 sm:mb-6">
+                Bạn đã sẵn sàng bước vào?
+              </h2>
+              <p className="text-primary-100 mb-8 sm:mb-10 max-w-xl text-sm sm:text-lg">
+                Đăng ký tài khoản ngay hôm nay để lưu lại những tác phẩm yêu thích và tham gia đóng góp cho cộng đồng.
+              </p>
+              {user ? (
+                <Link to="/works" className="px-6 sm:px-8 py-3.5 sm:py-4 bg-secondary text-white font-medium text-sm sm:text-lg rounded-full hover:bg-secondary-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                  Khám phá tác phẩm ngay
+                </Link>
+              ) : (
+                <button 
+                  onClick={() => openAuthModal('register')} 
+                  className="px-6 sm:px-8 py-3.5 sm:py-4 bg-secondary hover:bg-secondary-600 text-white font-bold text-sm sm:text-lg rounded-full shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+                >
+                  Tạo tài khoản miễn phí
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       </section>
     </div>

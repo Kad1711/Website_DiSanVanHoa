@@ -70,11 +70,11 @@ const EthnicGroupDetailPage = () => {
       </div>
 
       {/* Hero Header */}
-      <div className="bg-gradient-to-br from-earth via-orange-800 to-amber-900 text-white py-10 sm:py-14 lg:py-20 relative overflow-hidden">
+      <div className="bg-gradient-to-r from-primary-950 via-primary to-primary-950 text-white py-12 sm:py-16 lg:py-20 relative overflow-hidden border-b border-primary-900">
         <div className="absolute inset-0 bg-[url('/src/assets/hero-pattern.svg')] opacity-15"></div>
         <div className="container-lg relative z-10">
           <div className="flex flex-col sm:flex-row items-center gap-5 sm:gap-8 text-center sm:text-left">
-            <div className="w-24 h-24 sm:w-36 sm:h-36 rounded-full overflow-hidden border-4 border-white/40 shadow-2xl bg-orange-100 flex-shrink-0">
+            <div className="w-24 h-24 sm:w-36 sm:h-36 rounded-full overflow-hidden border-4 border-white/40 shadow-2xl bg-primary/10 flex-shrink-0">
               {ethnicGroup.thumbnail?.url ? (
                 <img
                   src={ethnicGroup.thumbnail.url}
@@ -82,19 +82,19 @@ const EthnicGroupDetailPage = () => {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-earth">
+                <div className="w-full h-full flex items-center justify-center text-primary-200">
                   <UsersIcon className="w-12 h-12 sm:w-16 sm:h-16 opacity-70" />
                 </div>
               )}
             </div>
 
             <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur text-xs font-semibold uppercase tracking-wider mb-2 sm:mb-3">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur text-xs font-semibold uppercase tracking-wider mb-2 sm:mb-3 text-secondary-300">
                 <GlobeAmericasIcon className="w-3.5 h-3.5" />
                 <span>{ethnicGroup.region || 'Việt Nam'}</span>
               </div>
               <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-bold mb-2 sm:mb-3">{ethnicGroup.name}</h1>
-              <p className="text-orange-100 text-xs sm:text-base max-w-2xl font-light leading-relaxed">
+              <p className="text-primary-100 text-xs sm:text-base max-w-2xl font-light leading-relaxed">
                 {ethnicGroup.description || 'Không gian văn hóa và kho tàng văn học dân gian truyền thống.'}
               </p>
             </div>
@@ -196,13 +196,13 @@ const EthnicGroupDetailPage = () => {
                     <Link
                       to={`/locations/${loc.slug}`}
                       key={loc._id}
-                      className="p-3 rounded-2xl bg-orange-50/50 hover:bg-orange-50 border border-orange-100 flex items-start gap-3 transition-colors group block"
+                      className="p-3 rounded-2xl bg-primary/5 hover:bg-primary/10 border border-primary/15 flex items-start gap-3 transition-colors group block"
                     >
-                      <div className="p-2 rounded-xl bg-earth text-white mt-0.5 flex-shrink-0">
+                      <div className="p-2 rounded-xl bg-primary text-white mt-0.5 flex-shrink-0 shadow-sm">
                         <MapPinIcon className="w-3.5 h-3.5" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-xs text-gray-900 group-hover:text-earth transition-colors truncate">
+                        <h4 className="font-bold text-xs text-gray-900 group-hover:text-primary transition-colors truncate">
                           {loc.name}
                         </h4>
                         <p className="text-[11px] text-gray-500">{loc.province}</p>

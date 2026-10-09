@@ -2,12 +2,14 @@ import { BrowserRouter } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import AppRouter from './router/AppRouter';
+import AuthModal from './components/ui/AuthModal';
 
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <AppRouter />
+        <AuthModal />
         <Toaster
           position="top-right"
           toastOptions={{

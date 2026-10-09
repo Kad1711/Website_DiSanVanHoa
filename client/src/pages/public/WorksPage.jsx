@@ -55,9 +55,12 @@ const WorksPage = () => {
   return (
     <div className="bg-cream min-h-screen pb-16 font-sans">
       {/* Header Banner */}
-      <div className="bg-primary text-white py-10 sm:py-16 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/src/assets/hero-pattern.svg')] opacity-10"></div>
+      <div className="bg-gradient-to-r from-primary-950 via-primary to-primary-950 text-white py-12 sm:py-18 relative overflow-hidden border-b border-primary-900">
+        <div className="absolute inset-0 bg-[url('/src/assets/hero-pattern.svg')] opacity-15"></div>
         <div className="container-lg relative z-10 text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-3 text-secondary-300 text-xs font-semibold uppercase tracking-wider">
+            Thư Viện Dân Gian Số
+          </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold mb-3 sm:mb-4">Kho Tàng Tác Phẩm</h1>
           <p className="text-primary-100 max-w-2xl mx-auto text-xs sm:text-base font-light px-2">
             Khám phá và đắm chìm vào những câu chuyện cổ tích, truyền thuyết, sử thi hào hùng của 54 dân tộc anh em.
@@ -67,7 +70,7 @@ const WorksPage = () => {
 
       <div className="container-lg mt-6 sm:mt-8">
         {/* Filters & Search */}
-        <div className="bg-white rounded-2xl shadow-sm p-3.5 sm:p-4 mb-6 sm:mb-8 flex flex-col md:flex-row gap-3 sm:gap-4 items-stretch md:items-center justify-between border border-gray-100">
+        <div className="bg-white rounded-3xl shadow-sm p-3.5 sm:p-5 mb-6 sm:mb-8 flex flex-col md:flex-row gap-3 sm:gap-4 items-stretch md:items-center justify-between border border-gray-100">
           {/* Scrollable Category pills */}
           <div className="flex gap-2 overflow-x-auto no-scrollbar w-full md:w-auto pb-1 md:pb-0 scroll-smooth">
             <button 
@@ -107,7 +110,7 @@ const WorksPage = () => {
               name="search"
               placeholder="Tìm kiếm tác phẩm..."
               defaultValue={params.search}
-              className="w-full bg-gray-50 border border-gray-200/80 focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 rounded-xl sm:rounded-full pl-10 pr-4 py-2 text-xs sm:text-sm transition-all outline-none"
+              className="w-full bg-gray-50 border border-gray-200/80 focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 rounded-2xl sm:rounded-full pl-10 pr-4 py-2 text-xs sm:text-sm transition-all outline-none"
             />
           </form>
         </div>
@@ -121,7 +124,11 @@ const WorksPage = () => {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
               {data.works.map(work => (
-                <Link to={`/works/${work.slug}`} key={work._id} className="card-hover group flex flex-col h-full bg-white rounded-2xl">
+                <Link 
+                  to={`/works/${work.slug}`} 
+                  key={work._id} 
+                  className="card-hover group flex flex-col h-full bg-white rounded-3xl border border-gray-100/90 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300"
+                >
                   <div className="aspect-[4/3] w-full overflow-hidden bg-gray-100 relative">
                     {work.coverImage?.url ? (
                       <SmartImage 

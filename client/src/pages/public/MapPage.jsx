@@ -53,14 +53,14 @@ const createLocationPin = (order, name = '', workCount = 0, isActive = false, ha
   const size = isActive ? 44 : 36;
   const pinBg = hasWorks
     ? isActive
-      ? 'linear-gradient(135deg, #fbbf24, #d97706)'
-      : 'linear-gradient(135deg, #ea580c, #c2410c)'
+      ? 'linear-gradient(135deg, #F1D79F, #C8973A)'
+      : 'linear-gradient(135deg, #5E1A05, #3B0F00)'
     : 'linear-gradient(135deg, #64748b, #475569)';
 
   const glow = isActive
-    ? 'rgba(245,158,11,0.65)'
+    ? 'rgba(200,151,58,0.7)'
     : hasWorks
-    ? 'rgba(234,88,12,0.45)'
+    ? 'rgba(59,15,0,0.5)'
     : 'rgba(100,116,139,0.3)';
 
   return L.divIcon({
@@ -125,7 +125,7 @@ const createLocationPin = (order, name = '', workCount = 0, isActive = false, ha
           <span>${hasWorks ? `${order}. ` : ''}${name || 'Địa danh'}</span>
           ${
             workCount > 1
-              ? `<span style="background:rgba(234,88,12,0.8);color:#fff;font-size:9px;padding:0px 4px;border-radius:4px;font-weight:bold;">${workCount} tác phẩm</span>`
+              ? `<span style="background:rgba(59,15,0,0.85);color:#fff;font-size:9px;padding:0px 4px;border-radius:4px;font-weight:bold;">${workCount} tác phẩm</span>`
               : ''
           }
           ${

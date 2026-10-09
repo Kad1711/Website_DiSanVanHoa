@@ -579,26 +579,26 @@ const WorkEditPage = () => {
         )}
 
         {/* ── TÍCH HỢP VIDEO ── */}
-        <div className="p-4 sm:p-5 bg-purple-50/50 rounded-2xl border border-purple-100 space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-purple-100 pb-3">
+        <div className="p-4 sm:p-5 bg-primary/5 rounded-2xl border border-primary/20 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-primary/10 pb-3">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-2xl bg-purple-600 text-white shadow-md shadow-purple-600/20">
+              <div className="p-2.5 rounded-2xl bg-primary text-white shadow-md shadow-primary/20">
                 <VideoCameraIcon className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-purple-950">Tích hợp Video / AI Visualization</h3>
-                <p className="text-xs text-purple-700">Tải video mới (≤ 15 phút) hoặc nhúng link YouTube</p>
+                <h3 className="text-base font-bold text-gray-900">Tích hợp Video / AI Visualization</h3>
+                <p className="text-xs text-gray-600">Tải video mới (≤ 15 phút) hoặc nhúng link YouTube</p>
               </div>
             </div>
 
-            <div className="flex items-center bg-white p-1 rounded-2xl border border-purple-200 shadow-sm text-xs font-semibold">
+            <div className="flex items-center bg-white p-1 rounded-2xl border border-gray-200 shadow-sm text-xs font-semibold">
               <button
                 type="button"
                 onClick={openNativeFilePicker}
                 className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl transition-all cursor-pointer ${
                   videoMode === 'file'
-                    ? 'bg-purple-600 text-white shadow-sm font-bold'
-                    : 'text-gray-600 hover:text-purple-700 hover:bg-purple-50'
+                    ? 'bg-primary text-white shadow-sm font-bold'
+                    : 'text-gray-600 hover:text-primary hover:bg-gray-50'
                 }`}
               >
                 <ArrowUpTrayIcon className="w-3.5 h-3.5" />
@@ -609,8 +609,8 @@ const WorkEditPage = () => {
                 onClick={() => setVideoMode('url')}
                 className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl transition-all cursor-pointer ${
                   videoMode === 'url'
-                    ? 'bg-purple-600 text-white shadow-sm font-bold'
-                    : 'text-gray-600 hover:text-purple-700 hover:bg-purple-50'
+                    ? 'bg-primary text-white shadow-sm font-bold'
+                    : 'text-gray-600 hover:text-primary hover:bg-gray-50'
                 }`}
               >
                 <LinkIcon className="w-3.5 h-3.5" />
@@ -630,7 +630,7 @@ const WorkEditPage = () => {
           {videoMode === 'file' ? (
             <div className="space-y-3">
               {videoFile ? (
-                <div className="p-3 bg-white rounded-xl border border-purple-200 flex items-center justify-between">
+                <div className="p-3 bg-white rounded-xl border border-primary/20 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <CheckCircleIcon className="w-5 h-5 text-emerald-600 flex-shrink-0" />
                     <div>
@@ -654,7 +654,7 @@ const WorkEditPage = () => {
                 <button
                   type="button"
                   onClick={openNativeFilePicker}
-                  className="w-full py-4 border-2 border-dashed border-purple-300 rounded-xl text-center text-xs text-purple-700 hover:bg-purple-100/50 transition-colors"
+                  className="w-full py-4 border-2 border-dashed border-primary/30 rounded-xl text-center text-xs text-primary hover:bg-primary/5 transition-colors"
                 >
                   Bấm để chọn tệp video từ máy tính (tối đa 15 phút, 150MB)
                 </button>
@@ -674,13 +674,13 @@ const WorkEditPage = () => {
           )}
 
           {existingVideos.length > 0 && (
-            <div className="pt-3 border-t border-purple-100">
-              <label className="text-xs font-bold text-purple-950 block mb-2">Video hiện có ({existingVideos.length}):</label>
+            <div className="pt-3 border-t border-gray-100">
+              <label className="text-xs font-bold text-gray-900 block mb-2">Video hiện có ({existingVideos.length}):</label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {existingVideos.map((vid) => (
                   <div key={vid._id} className="p-3 bg-white rounded-xl border border-gray-200 flex items-center justify-between gap-3 text-xs shadow-sm">
                     <div className="flex items-center gap-2 truncate">
-                      <span className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] ${vid.type === 'ai-video' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}`}>
+                      <span className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] ${vid.type === 'ai-video' ? 'bg-primary/10 text-primary' : 'bg-secondary/15 text-secondary-800'}`}>
                         {vid.type === 'ai-video' ? 'AI Video' : 'Video thường'}
                       </span>
                       <span className="font-medium text-gray-800 truncate">{vid.title || 'Video tư liệu'}</span>

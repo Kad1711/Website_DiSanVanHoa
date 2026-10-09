@@ -13,7 +13,7 @@ const navLinks = [
 ];
 
 const Header = () => {
-  const { user, logout, isAdmin } = useAuth();
+  const { user, logout, isAdmin, openAuthModal } = useAuth();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -109,12 +109,18 @@ const Header = () => {
             </div>
           ) : (
             <div className="hidden sm:flex items-center gap-2">
-              <Link to="/login" className="text-sm font-medium text-gray-600 hover:text-primary px-3 py-2">
+              <button 
+                onClick={() => openAuthModal('login')} 
+                className="text-sm font-medium text-gray-700 hover:text-primary px-3.5 py-2 rounded-xl hover:bg-gray-50 transition-colors"
+              >
                 Đăng nhập
-              </Link>
-              <Link to="/register" className="btn-primary text-sm py-2 px-4">
+              </button>
+              <button 
+                onClick={() => openAuthModal('register')} 
+                className="btn-primary text-sm py-2 px-4 shadow-sm"
+              >
                 Đăng ký
-              </Link>
+              </button>
             </div>
           )}
 
@@ -184,20 +190,24 @@ const Header = () => {
             </div>
           ) : (
             <div className="flex gap-2 pt-3 mt-2 border-t border-gray-100">
-              <Link
-                to="/login"
-                onClick={() => setMobileOpen(false)}
+              <button
+                onClick={() => {
+                  setMobileOpen(false);
+                  openAuthModal('login');
+                }}
                 className="flex-1 btn-outline text-center text-sm py-2.5"
               >
                 Đăng nhập
-              </Link>
-              <Link
-                to="/register"
-                onClick={() => setMobileOpen(false)}
+              </button>
+              <button
+                onClick={() => {
+                  setMobileOpen(false);
+                  openAuthModal('register');
+                }}
                 className="flex-1 btn-primary text-center text-sm py-2.5"
               >
                 Đăng ký
-              </Link>
+              </button>
             </div>
           )}
         </div>

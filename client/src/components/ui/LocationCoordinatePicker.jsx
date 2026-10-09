@@ -13,7 +13,7 @@ const createPickerPin = () =>
     className: 'custom-picker-pin',
     html: `
       <div style="position:relative;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:grab;">
-        <div style="width:40px;height:40px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#ea580c;box-shadow:0 4px 15px rgba(234,88,12,0.6),0 2px 6px rgba(0,0,0,0.4);border:3px solid #fff;display:flex;align-items:center;justify-content:center;">
+        <div style="width:40px;height:40px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#3B0F00;box-shadow:0 4px 15px rgba(59,15,0,0.6),0 2px 6px rgba(0,0,0,0.4);border:3px solid #fff;display:flex;align-items:center;justify-content:center;">
           <div style="transform:rotate(45deg);color:#fff;font-size:16px;font-weight:bold;">📍</div>
         </div>
       </div>`,

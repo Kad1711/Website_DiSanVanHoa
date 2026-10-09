@@ -47,10 +47,34 @@ export const AuthProvider = ({ children }) => {
     return user;
   };
 
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState('login'); // 'login' | 'register'
+
+  const openAuthModal = useCallback((mode = 'login') => {
+    setAuthModalMode(mode);
+    setAuthModalOpen(true);
+  }, []);
+
+  const closeAuthModal = useCallback(() => {
+    setAuthModalOpen(false);
+  }, []);
+
   const isAdmin = user?.role === 'admin';
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, register, isAdmin }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      loading, 
+      login, 
+      logout, 
+      register, 
+      isAdmin,
+      authModalOpen,
+      authModalMode,
+      openAuthModal,
+      closeAuthModal,
+      setAuthModalMode
+    }}>
       {children}
     </AuthContext.Provider>
   );

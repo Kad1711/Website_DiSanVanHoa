@@ -162,13 +162,13 @@ const WorkDetailPage = () => {
       </div>
 
       {/* Hero Header */}
-      <div className="bg-gradient-to-r from-gray-900 via-primary-950 to-gray-900 text-white py-8 sm:py-12 lg:py-16 relative overflow-hidden">
+      <div className="bg-gradient-to-r from-primary-950 via-primary to-primary-950 text-white py-8 sm:py-12 lg:py-16 relative overflow-hidden border-b border-primary-900">
         <div className="absolute inset-0 bg-[url('/src/assets/hero-pattern.svg')] opacity-15"></div>
         <HeritageDust3D count={45} color="#f59e0b" />
         <div className="container-lg relative z-10">
           <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 items-center">
             {/* Cover image */}
-            <div className="w-48 sm:w-64 lg:w-72 aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl bg-gray-800 flex-shrink-0 border-2 border-white/20 relative group">
+            <div className="w-48 sm:w-64 lg:w-72 aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl bg-gray-800 flex-shrink-0 border-2 border-white/20 relative group">
               {work.coverImage?.url ? (
                 <SmartImage
                   src={work.coverImage.url}
@@ -315,7 +315,7 @@ const WorkDetailPage = () => {
                       <div className="p-3 bg-gray-900 text-white flex items-center justify-between gap-2">
                         <span className="text-xs sm:text-sm font-medium truncate">{vid.title || `Video minh họa #${idx + 1}`}</span>
                         {vid.type === 'ai-video' && (
-                          <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-2.5 py-0.5 rounded-full font-bold flex-shrink-0">
+                          <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] bg-gradient-to-r from-secondary-600 to-amber-600 text-white px-2.5 py-0.5 rounded-full font-bold flex-shrink-0 shadow-sm">
                             <SparklesIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> AI Visualized
                           </span>
                         )}

@@ -19,7 +19,7 @@ const pinIcon = L.divIcon({
   className: 'custom-leaflet-pin-detail',
   html: `
     <div style="
-      background: #c2410c;
+      background: #3B0F00;
       width: 32px;
       height: 32px;
       border-radius: 50% 50% 50% 0;
@@ -89,12 +89,12 @@ const LocationDetailPage = () => {
       </div>
 
       {/* Hero Header */}
-      <div className="bg-gradient-to-r from-orange-950 via-earth to-orange-900 text-white py-10 sm:py-14 lg:py-16 relative overflow-hidden">
+      <div className="bg-gradient-to-r from-primary-950 via-primary to-primary-950 text-white py-12 sm:py-16 lg:py-18 relative overflow-hidden border-b border-primary-900">
         <div className="absolute inset-0 bg-[url('/src/assets/hero-pattern.svg')] opacity-15"></div>
         <div className="container-lg relative z-10">
           <div className="max-w-3xl">
             <div className="flex flex-wrap items-center gap-2 mb-2 sm:mb-3">
-              <span className="badge bg-amber-400/20 text-amber-300 border border-amber-300/30 text-[11px] sm:text-xs px-2.5 sm:px-3 py-1 font-semibold">
+              <span className="badge bg-secondary/20 text-secondary-300 border border-secondary/30 text-[11px] sm:text-xs px-2.5 sm:px-3 py-1 font-semibold">
                 {location.province}
               </span>
               {location.ethnicGroup && (
@@ -150,7 +150,7 @@ const LocationDetailPage = () => {
             {location.images && location.images.length > 0 && (
               <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 p-4 sm:p-8">
                 <div className="flex items-center gap-2 text-base sm:text-lg font-serif font-bold text-gray-800 mb-4 sm:mb-6">
-                  <PhotoIcon className="w-5 h-5 sm:w-6 sm:h-6 text-earth" />
+                  <PhotoIcon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                   <span>Hình Ảnh Không Gian Di Sản</span>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-4">

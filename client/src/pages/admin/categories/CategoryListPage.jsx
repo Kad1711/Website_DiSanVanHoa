@@ -16,6 +16,9 @@ import ConfirmDialog from '../../../components/ui/ConfirmDialog';
 import toast from 'react-hot-toast';
 
 const COLOR_PALETTES = [
+  { name: 'Đỏ trầm di sản', hex: '#3B0F00' },
+  { name: 'Vàng hoàng kim', hex: '#C8973A' },
+  { name: 'Đỏ sơn mài', hex: '#82250B' },
   { name: 'Đỏ thắm', hex: '#dc2626' },
   { name: 'Đỏ hồng', hex: '#e11d48' },
   { name: 'Hồng sen', hex: '#db2777' },
@@ -77,7 +80,7 @@ const CategoryListPage = () => {
   const [formValues, setFormValues] = useState({
     name: '',
     icon: '📚',
-    color: '#0284c7',
+    color: '#3B0F00',
     description: '',
     status: 'published',
   });
@@ -115,7 +118,7 @@ const CategoryListPage = () => {
     setFormValues({
       name: '',
       icon: '📚',
-      color: '#0284c7',
+      color: '#3B0F00',
       description: '',
       status: 'published',
     });
@@ -127,7 +130,7 @@ const CategoryListPage = () => {
     setFormValues({
       name: cat.name || '',
       icon: cat.icon || '📚',
-      color: cat.color || '#0284c7',
+      color: cat.color || '#3B0F00',
       description: cat.description || '',
       status: cat.status || 'published',
     });
